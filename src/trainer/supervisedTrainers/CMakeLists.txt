@@ -1,0 +1,3 @@
+add_subdirectory(neuralNetworkTrainers)
+
+include_directories (neuralNetworkTrainers)

@@ -1,0 +1,3 @@
+add_subdirectory(neuralMachines)
+
+include_directories (neuralMachines)

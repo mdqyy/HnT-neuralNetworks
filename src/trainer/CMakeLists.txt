@@ -1,0 +1,7 @@
+add_subdirectory(criteria)
+add_subdirectory(errorMeasurers)
+add_subdirectory(supervisedTrainers)
+
+include_directories (criteria)
+include_directories(errorMeasurers)
+include_directories (supervisedTrainers)
