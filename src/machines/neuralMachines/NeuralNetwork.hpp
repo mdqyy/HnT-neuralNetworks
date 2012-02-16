@@ -103,13 +103,14 @@ class NeuralNetwork : public NeuralMachine {
    * Forward a feature vector.
    * \param signal Input feature vector.
    */
-  void forward(FeatureVector signal);
+  void forward(FeatureVector _signal);
 
   /*!
    * Backward an error vector.
-   * \param deltas Error vector.
+   * \param _target Neural network target.
+   * \param _learningRate Weight change rate.
    */
-  void backward(ErrorVector deltas);
+  void backward(FeatureVector _target, realv _learningRate);
   
 
   /*!

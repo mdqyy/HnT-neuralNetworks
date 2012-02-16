@@ -10,6 +10,7 @@
 #include <vector>
 #include <stdexcept>
 #include "FeatureVector.hpp"
+#include <opencv/cv.h>
 
 #define DS_REGRESSION 1
 #define DS_CLASSIFICATION 2
@@ -44,10 +45,9 @@ class Dataset {
  public:
 
   /*!
-   * Parameter constructor.
-   * \param _file File name.
+   * Default constructor.
    */
-  Dataset(std::string _file);
+  Dataset();
 
   /*!
    * Get name.
@@ -104,6 +104,12 @@ class Dataset {
    * \return Dataset type.
    */
   virtual int getDatasetType() const = 0 ;
+
+  /*! 
+   * Give a new name to the data set.
+   * \param _name New name of the dataset.
+   */
+  void setName(std::string _name);
   
   /*!
    * Get sequence at index. 

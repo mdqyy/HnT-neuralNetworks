@@ -29,7 +29,12 @@ FeatureVector NeuralNetwork::getInputSignal(){
 }
 
 FeatureVector NeuralNetwork::getOutputSignal(){
-  return  output.getOutputSignal();
+  FeatureVector outputSig(output.getNumUnits());
+  FeatureVector temp = output.getOutputSignal();
+  for(uint i=0;i<outputSig.getLength();i++){
+    outputSig[i]=temp[i];
+  }
+  return  outputSig;
 }
 
 void NeuralNetwork::setInputLayer(InputLayer& _input){
@@ -44,12 +49,13 @@ void NeuralNetwork::setOutputLayer(Layer& _output){
   output=_output;
 }
 
-void NeuralNetwork::forward(FeatureVector signal){
-  input.forward(signal);
+void NeuralNetwork::forward(FeatureVector _signal){
+  input.forward(_signal);
 }
 
-void NeuralNetwork::backward(ErrorVector deltas){
-
+void NeuralNetwork::backward(FeatureVector _target,realv _learningRate){
+  output.backwardDeltas(true, _target);
+  output.backwardWeights( _learningRate);
 }
 
 

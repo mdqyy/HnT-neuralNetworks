@@ -29,16 +29,21 @@ class LayerTanh : public Layer {
 
   /*! 
    * Forward a feature vector.
-   * \return Output feature vector. 
    */
   virtual void forward();
   
   /*!
    * Backward propagation of error.
-   * \param deltas Errors from above layers.
-   * \return Error vector of this layer.
+   * \param _output Calculate errors as an output layer.
+   * \param _target Target of the output layer.
    */
-  virtual void backward(ErrorVector deltas);
+  virtual void backwardDeltas(bool _output=false, FeatureVector _target=FeatureVector(0));
+
+  /*!
+   * Backward propagation of weight changes.
+   * \param _learningRate Weight change rate.
+   */
+  virtual void backwardWeights(realv _learningRate);
 
   /*!
    * Destructor.

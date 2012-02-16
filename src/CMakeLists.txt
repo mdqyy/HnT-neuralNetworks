@@ -21,6 +21,8 @@ add_library(Machines dataset/Dataset.cpp
   machines/neuralMachines/NeuralNetwork.cpp
   machines/neuralMachines/layers/Layer.cpp
   machines/neuralMachines/layers/LayerTanh.cpp
+  machines/neuralMachines/layers/LayerSigmoid.cpp
+  machines/neuralMachines/layers/LayerSoftMax.cpp
   machines/neuralMachines/layers/InputLayer.cpp
   machines/neuralMachines/connections/Connection.cpp
   machines/neuralMachines/connections/FullConnection.cpp
@@ -28,12 +30,15 @@ add_library(Machines dataset/Dataset.cpp
   trainer/Trainer.cpp
   trainer/errorMeasurers/ErrorMeasurer.cpp
   trainer/errorMeasurers/MSEMeasurer.cpp
+  trainer/errorMeasurers/ClassificationErrorMeasurer.cpp
   trainer/criteria/Criteria.cpp
   trainer/criteria/Criterion.cpp
   trainer/criteria/IterationCount.cpp
-  trainer/supervisedTrainers/neuralNetworkTrainers/NeuralNetworkTrainer.cpp
   trainer/supervisedTrainers/SupervisedTrainer.cpp
   trainer/supervisedTrainers/CrossValidationParams.cpp
+  trainer/supervisedTrainers/neuralNetworkTrainers/NeuralNetworkTrainer.cpp
+  trainer/supervisedTrainers/neuralNetworkTrainers/BackPropagation.cpp
+  trainer/supervisedTrainers/neuralNetworkTrainers/BackPropParams.cpp
 )
 
 add_library(TinyXML   

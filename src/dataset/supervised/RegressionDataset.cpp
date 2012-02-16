@@ -8,7 +8,7 @@
 
 using namespace std;
 
-RegressionDataset::RegressionDataset(string _fileName) : SupervisedDataset(_fileName){
+RegressionDataset::RegressionDataset() : SupervisedDataset(){
 
 }
 

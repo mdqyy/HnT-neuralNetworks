@@ -15,24 +15,39 @@ LayerTanh::LayerTanh(uint _numUnits,string _name) : Layer(_numUnits,_name){
 }
 
 void LayerTanh::forward(){
-  list<Connection*>::iterator it;
   outputSignal.reset(0.0);
   /* Accumulate neuron sum */
-  for(it=inputConnections.begin();it!=inputConnections.end();it++){
-    FeatureVector layerInputSignal=((*it)->getInputLayer()).getOutputSignal();
-    for(uint i=0;i<outputSignal.getLength();i++){
-      outputSignal[i]+=signalWeighting(layerInputSignal, (*it)->getWeightsNeuron(i));
-    }
+  FeatureVector layerInputSignal=(getInputConnection()->getInputLayer()).getOutputSignal();
+  for(uint i=0;i<numUnits;i++){
+    outputSignal[i]=tanh(signalWeighting(layerInputSignal, getInputConnection()->getWeightsToNeuron(i)));
   }
-  /* Tanh the sum */
-  for(uint i=0;i<outputSignal.getLength();i++){
-    outputSignal[i]=tanh(outputSignal[i]);
-
+  outputSignal[numUnits]=1.0;
+  if(getOutputConnection()>0){
+    getOutputConnection()->forward();
   }
 }
 
-void LayerTanh::backward(ErrorVector deltas){
+void LayerTanh::backwardDeltas(bool _output, FeatureVector _target){
+  deltas.reset(0.0);
+  if(_output){
+    for(uint i=0;i<deltas.getLength();i++){
+      deltas[i] = (1-outputSignal[i]*outputSignal[i])*(_target[i]-outputSignal[i]);  // error calculation if output layer
+    }
+  }
+  else {
+    ErrorVector layerOutputError((getOutputConnection()->getOutputLayer()).getErrorVector().getLength()-1);
+    for(uint j=0;j<layerOutputError.getLength() ;j++){
+      layerOutputError[j]=(getOutputConnection()->getOutputLayer()).getErrorVector()[j];
+    }
+    for(uint i=0;i<deltas.getLength();i++){
+      deltas[i]=(1-outputSignal[i]*outputSignal[i])*errorWeighting(layerOutputError,getOutputConnection()->getWeightsFromNeuron(i)); // error calculation if non output layer
+    }
+  }
+  getInputConnection()->getInputLayer().backwardDeltas();
+}
 
+void LayerTanh::backwardWeights(realv _learningRate){
+  getInputConnection()->backwardWeights(_learningRate);
 }
 
 LayerTanh::~LayerTanh(){
@@ -44,7 +59,5 @@ ostream& operator<<(ostream& os, const LayerTanh& l){
   os << "Tanh neuron layer : " << endl;
   os << "\t -Name :"<< l.getName() << endl;
   os << "\t -Units : "<<l.getNumUnits() << endl;
-  os << "\t -Input Connections objects : " << l.getInputConnections().size() <<endl;
-  os << "\t -Ouput Connections objects : "<< l.getOutputConnections().size() << endl;
   return os;
 }

@@ -74,17 +74,24 @@ class InputLayer : public Layer{
 
   /*! 
    * Forward a feature vector.
-   * \param signal Input signal.
+   * \param _signal Input signal.
    * \return Output feature vector. 
    */
-  void forward(FeatureVector signal);
+  void forward(FeatureVector _signal);
 
   /*!
    * Backward propagation of error.
-   * \param deltas Errors from above layers.
-   * \return Error vector of this layer.
+   * \param _output Calculate errors as an output layer.
+   * \param _target Target of the output layer.
    */
-  virtual void backward(ErrorVector deltas);
+  virtual void backwardDeltas(bool _output=true, FeatureVector _target=FeatureVector(0));
+
+
+  /*!
+   * Backward propagation of weight changes.
+   * \params _learningRate Weight change rate.
+   */
+  virtual void backwardWeights(realv _learningRate);
 
   /*!
    * Destructor.

@@ -31,7 +31,7 @@ class NeuralNetworkTrainer : public SupervisedTrainer {
    * \param _data Supervised dataset to use for learning.
    * \param _doStochastic Activate stochastic (random) forwarding of data.
    */
-  NeuralNetworkTrainer(NeuralNetwork& _neuralNet, SupervisedDataset& _data, CrossValidationParams _cvParams, bool _doStochastic=true );
+  NeuralNetworkTrainer(NeuralNetwork& _neuralNet, SupervisedDataset& _data, CrossValidationParams& _cvParams, bool _doStochastic=true );
 
   /*!
    * Parameter constructor to set a test and a validation dataset.

@@ -28,14 +28,14 @@ class Layer : public Machine {
   /*! Number of units of this layer */
   uint numUnits;
   /*! Input connections*/
-  std::list<Connection*> inputConnections;
+  Connection* inputConnection;
   /*! Output connections*/
-  std::list<Connection*> outputConnections;
+  Connection* outputConnection;
   /*!Output signal of the layer */
   FeatureVector outputSignal;
   /*! Output error of the layer */
   ErrorVector deltas;
-
+  
  public:
 
   /*!
@@ -52,16 +52,16 @@ class Layer : public Machine {
   uint getNumUnits() const;
   
   /*!
-   * Get input connections.
+   * Get input connection.
    * \return Input connections.
    */
-  std::list<Connection*> getInputConnections() const;
+  Connection* getInputConnection() const;
 
   /*!
-   * Get output connections.
-   * \return Output connections.
+   * Get output connection.
+   * \return Output connection.
    */
-  std::list<Connection*> getOutputConnections() const;
+  Connection* getOutputConnection() const;
 
   /*!
    * Get last output feature vector.
@@ -76,28 +76,23 @@ class Layer : public Machine {
   ErrorVector getErrorVector() const;
 
   /*!
-   * Set input connections.
-   * \param connections Input connections.
+   * Set error vector of the layer.
+   * \param _deltas New error vector.
+   * \remark Should only be used on the output layer.
    */
-  void setInputConnections(std::list<Connection*> connections);
+  void setErrorVector(ErrorVector _deltas);
 
   /*!
-   * Set output connections.
-   * \param connections  Output connections.
+   * Set input connection.
+   * \param connection Input connection.
    */
-  void setOutputConnections(std::list<Connection*> connections);
+  void setInputConnection(Connection* _connection);
 
   /*!
-   * Add input connections.
-   * \param _connection Input connections.
+   * Set output connection.
+   * \param _connection Output connection.
    */
-  void addInputConnections(Connection* _connection);
-
-  /*!
-   * Add output connections.
-   * \param _connection Output connections.
-   */
-  void addOutputConnections(Connection* _connection);
+  void setOutputConnection(Connection* _connection);
 
 
   /*! 
@@ -107,18 +102,32 @@ class Layer : public Machine {
 
   /*!
    * Backward propagation of error.
-   * \param deltas Errors from above layers.
-   * \return Error vector of this layer.
+   * \param _output Calculate errors as an output layer.
+   * \param _target Target of the output layer.
    */
-  virtual void backward(ErrorVector deltas)=0;
+  virtual void backwardDeltas(bool _output=false, FeatureVector _target=FeatureVector(0))=0;
+
+  /*!
+   * Backward propagation of weight changes.
+   */
+  virtual void backwardWeights(realv _learningRate)=0;
 
   /*!
    * Weight a signal coming in a neuron with respect to the weight matrix of this neuron.
-   * \param signal Input signal.
-   * \param weights Weight matrix.
+   * \param _signal Input signal.
+   * \param _weights Weight matrix.
    * \return Dot product.
    */
-  realv signalWeighting(FeatureVector signal, cv::Mat weights);
+  realv signalWeighting(FeatureVector _signal, cv::Mat _weights);
+
+  /*!
+   * Weight an error signal coming in a neuron with respect to the weight matrix of this neuron.
+   * \param _deltas Error signal.
+   * \param _weights Weight matrix.
+   * \return Dot product.
+   */
+  realv errorWeighting(ErrorVector _deltas, cv::Mat _weights);
+
 
   /*!
    * Destructor.

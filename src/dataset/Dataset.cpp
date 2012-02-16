@@ -9,7 +9,7 @@
 using namespace std;
 using namespace cv;
 
-Dataset::Dataset(string _file) :name(""), 
+Dataset::Dataset() :name(""), 
   data(vector< vector<FeatureVector> >()),
   numSamples(0),
   numSequences(0),
@@ -58,22 +58,31 @@ ValueVector Dataset::getStandardDeviation() const{
 
 vector<FeatureVector>& Dataset::operator[](uint _index){
   if(_index > data.size()-1){
-    throw out_of_range("Out of range index");
+    throw out_of_range("Dataset : Out of range index");
   }
   return data[_index];
 }
 
 const vector<FeatureVector>& Dataset::operator[](uint _index) const{
   if(_index > data.size()-1){
-    throw out_of_range("Out of range index");
+    throw out_of_range("Dataset : Out of range index");
   }
   return data[_index];
 }
 
+void Dataset::setName(string _name){
+  name=_name;
+}
+
 void Dataset::updateStatistics(FeatureVector _sample){
+  if(fvLength==0){
+    fvLength=_sample.getLength();
+    meanMat = ValueVector(fvLength);
+    Qmat = ValueVector(fvLength);
+  }
   numSamples+=1;
   if(_sample.getLength()!=fvLength){
-    throw length_error("Wrong sample size");
+    throw length_error("Dataset : Wrong sample size");
   }
   for(uint i=0;i<fvLength;i++){
     realv oldMean=meanMat[i];

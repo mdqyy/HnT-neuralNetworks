@@ -9,11 +9,11 @@
 using namespace cv;
 using namespace std;
 
-ValueVector::ValueVector(int length){
+ValueVector::ValueVector(int _length){
   #ifdef REAL_DOUBLE
-  data = Mat(length,1,CV_64FC1,0.0);
+  data = Mat(_length,1,CV_64FC1,0.0);
   #else
-  data = Mat(length,1CV_32FC1,0.0);
+  data = Mat(_length,1CV_32FC1,0.0);
   #endif
 }
 
@@ -30,25 +30,25 @@ uint ValueVector::getLength() const{
   return (uint)data.rows;
 }
 
-const realv& ValueVector::operator[](int i) const{
-  if(i<0 || i>data.rows){
-    throw out_of_range("out of range in vector access \n");
+const realv& ValueVector::operator[](int _index) const{
+  if(_index<0 || _index>data.rows){
+    throw out_of_range("Value Vector : Out of range in vector access \n");
   }
   #ifdef REAL_DOUBLE
-  return data.at<double>(i,0);
+  return data.at<double>(_index,0);
   #else 
-  return data.at<float>(i,0);
+  return data.at<float>(_index,0);
   #endif
 }
 
-realv& ValueVector::operator[](int i){
-  if(i<0 || i>data.rows){
-    throw out_of_range("out of range in vector access \n");
+realv& ValueVector::operator[](int _index){
+  if(_index<0 || _index>data.rows){
+    throw out_of_range("Value Vector : Out of range in vector access \n");
   }
   #ifdef REAL_DOUBLE
-  return data.at<double>(i,0);
+  return data.at<double>(_index,0);
   #else 
-  return data.at<float>(i,0);
+  return data.at<float>(_index,0);
   #endif
 }
 

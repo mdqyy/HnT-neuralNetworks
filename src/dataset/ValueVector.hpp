@@ -46,18 +46,18 @@ class ValueVector {
 
   /*!
    * Get an element in the matrix
-   * \param i Index of the element
+   * \param _index Index of the element
    * \return Access to the value vector element.
    */
-  const realv& operator[](int i) const;
+  const realv& operator[](int _index) const;
 
 
   /*!
    * Get access to an element in the matrix
-   * \param i Index of the element
+   * \param _index Index of the element
    * \return Access to the value vector element.
    */
-  realv& operator[](int i);
+  realv& operator[](int _index);
 
   /*!
    * Reset all values to a default one.

@@ -17,24 +17,25 @@ using namespace cv;
 
 int main (int argc, char* argv[]){
   ClassificationDataset dataset;
-  dataset.load("test.xml");
-  Mat testMat(5,1,CV_64FC1,1.0);
-  Mat meanMat(5,1,CV_64FC1,0.0);
-  Mat stdevMat(5,1,CV_64FC1,1.0);
-  FeatureVector testFv(testMat);
-  ValueVector mean(meanMat);
-  ValueVector stdev(stdevMat);
-  InputLayer il(5,mean,stdevMat);
-  cout << testFv ;
-  LayerTanh th(2);
-  cout << th ;
-  Connection c(il,th);
-  cout << th ;
-  cout << il;
-  cout << c;
-  il.forward(testFv);
-  cout << th.getOutputSignal();
-  cout << dataset;
-  /*dataset.save("temp.xml");*/
+  dataset.setName("PN");
+  dataset.addClass("positive");
+  dataset.addClass("negative");
+  RNG random;
+  for(int i=0;i<100;i++){
+    Mat tempMat(1,1,CV_64FC1,1.0);
+    random.next();
+    random.fill(tempMat,RNG::NORMAL,0.0,1.0);
+    FeatureVector tempVec(tempMat);
+    if(tempVec[0]>0){
+      dataset.addSequence(tempVec, "positive");
+    }
+    else{
+      dataset.addSequence(tempVec, "negative");
+    }
+  }
+  //  cout << dataset;
+  cout << dataset.getMean();
+  cout << dataset.getStandardDeviation();
+  dataset.save("pn.xml");
   return EXIT_SUCCESS;
 }

@@ -8,7 +8,7 @@
 
 using namespace std;
 
-SupervisedDataset::SupervisedDataset(string _file ) : Dataset(_file){
+SupervisedDataset::SupervisedDataset() : Dataset(){
 
 }
 

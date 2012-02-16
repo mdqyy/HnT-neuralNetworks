@@ -7,14 +7,20 @@
  */
 
 #include <opencv/cv.h>
-
+#include "../../errorMeasurers/MSEMeasurer.hpp"
+#include "../../errorMeasurers/ClassificationErrorMeasurer.hpp"
+#include "NeuralNetworkTrainer.hpp"
+#include "BackPropParams.hpp"
+#include <math.h>
 
 /*!
  * \class BackPropagation
  * Description
  */
-class BackPropagation {
+class BackPropagation : public NeuralNetworkTrainer {
  private :
+  BackPropParams bpp;
+  std::vector<realv> errorPerIteration;
 
  protected:
 
@@ -26,7 +32,7 @@ class BackPropagation {
    * \param _data Supervised dataset to use for learning.
    * \param _doStochastic Activate stochastic (random) forwarding of data.
    */
-  BackPropagation(NeuralNetwork& _neuralNet, SupervisedDataset& _data, CrossValidationParams _cvParams, bool _doStochastic=true);
+  BackPropagation(NeuralNetwork& _neuralNet, SupervisedDataset& _data, CrossValidationParams& _cvParams, BackPropParams& _bpparams);
 
   /*!
    * Parameter constructor to set a test and a validation dataset.
@@ -35,9 +41,9 @@ class BackPropagation {
    * \param _validationData Supervised dataset used for validation.
    * \param _trainData Supervised dataset used for testing.
    * \param _cvParams Cross Validation information.
-   * \param _doStochastic Activate stochastic (random) forwarding of data.
+   * \param _bpparams Activate stochastic (random) forwarding of data.
    */
-  BackPropagation(NeuralNetwork& _machine, SupervisedDataset& _trainData, SupervisedDataset& _validationData, SupervisedDataset& _testData, CrossValidationParams& _cvParams, bool _doStochastic=true);
+  BackPropagation(NeuralNetwork& _machine, SupervisedDataset& _trainData, SupervisedDataset& _validationData, SupervisedDataset& _testData, CrossValidationParams& _cvParams, BackPropParams& _bpparams);
 
   /*!
    * Train the neural network.

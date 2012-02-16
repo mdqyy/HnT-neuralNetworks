@@ -7,9 +7,9 @@
 #include "ClassificationDataset.hpp"
 
 using namespace std;
+using namespace cv;
 
-ClassificationDataset::ClassificationDataset(string _file) : SupervisedDataset(_file),/* classLabels(map<int,string>()),  classLabelIndex(map<string,int>()),*/classes(vector< vector<int> >()), maxClasses(0){
-  load(_file);
+ClassificationDataset::ClassificationDataset() : SupervisedDataset(),/* classLabels(map<int,string>()),  classLabelIndex(map<string,int>()),*/classes(vector< vector<int> >()), maxClasses(0){
 }
 
 map<int, string> ClassificationDataset::getClassLabelMap(){
@@ -23,7 +23,7 @@ map<string, int> ClassificationDataset::getClassLabelIndexMap(){
 int ClassificationDataset::getIndexLabel(string _class) const{
   map<string,int>::const_iterator it = classLabelIndex.find(_class);
   if(it==classLabelIndex.end()){
-    throw invalid_argument("Class name non existent");
+    throw invalid_argument("ClassificationDataset :  Class name non existent");
   }
   return it->second;
 }
@@ -31,7 +31,7 @@ int ClassificationDataset::getIndexLabel(string _class) const{
 string ClassificationDataset::getClassLabel(int _index) const{
   map<int, string>::const_iterator it = classLabels.find(_index);
   if(it==classLabels.end()){
-    throw invalid_argument("Class index non existent");
+    throw invalid_argument("ClassificationDataset : Class index non existent");
   }
   return it->second;
 }
@@ -47,7 +47,7 @@ vector<FeatureVector> ClassificationDataset::getTargetSequence(uint _i) const{
 FeatureVector ClassificationDataset::getTargetSample(uint _i, uint _j) const{
   int index = getSampleClassIndex(_i,_j);
   FeatureVector result(classLabels.size());
-  result[index]=1.0;
+  result[index-1]=1.0;
   return result;
 }
 
@@ -78,14 +78,30 @@ int ClassificationDataset::getDatasetType() const{
   return DS_CLASSIFICATION;
 }
 
+void ClassificationDataset::addSequence(FeatureVector _sequence, string _class ){
+  vector<FeatureVector> tempSeq;
+  vector<string> tempClasses;
+  tempSeq.push_back(_sequence);
+  tempClasses.push_back(_class);
+  addSequence(tempSeq, tempClasses);
+}
+
+void ClassificationDataset::addSequence(FeatureVector _sequence, int _class ){
+  vector<FeatureVector> tempSeq;
+  vector<int> tempClasses;
+  tempSeq.push_back(_sequence);
+  tempClasses.push_back(_class);
+  addSequence(tempSeq, tempClasses);
+}
+
 void ClassificationDataset::addSequence(vector<FeatureVector>& _sequence, vector<string>& _classes ){
   if(_sequence.size()<_classes.size()){
-    throw length_error("Sequence size should be greater or equal to classes size");
+    throw length_error("ClassificationDataset : Sequence size should be greater or equal to classes size");
   }
   vector<int> indexClasses;
   for(uint i=0;i<_classes.size();i++){
     if(classLabelIndex.find(_classes[i])==classLabelIndex.end()){
-      throw invalid_argument("class non existent");
+      throw invalid_argument("ClassificationDataset : Class non existent");
     }
     indexClasses.push_back(getIndexLabel(_classes[i]));
   }
@@ -94,7 +110,7 @@ void ClassificationDataset::addSequence(vector<FeatureVector>& _sequence, vector
 
 void ClassificationDataset::addSequence(vector<FeatureVector>& _sequence, vector<int>& _classes ){
   if(_sequence.size()<_classes.size()){
-    throw length_error("Sequence size should be greater or equal to classes size");
+    throw length_error("ClassificationDataset : Sequence size should be greater or equal to classes size");
   }
   data.push_back(_sequence);
   classes.push_back(_classes);
@@ -110,7 +126,7 @@ void ClassificationDataset::addSequence(vector<FeatureVector>& _sequence, vector
 void ClassificationDataset::addSample(FeatureVector& sample, string className, uint index){
   if(className.compare("")!=0){
     if(classLabelIndex.find(className)==classLabelIndex.end()){
-      throw invalid_argument("class non existent");
+      throw invalid_argument("ClassificationDataset : Class non existent");
     }
   }
   addSample(sample,getIndexLabel(className),index);
@@ -118,10 +134,10 @@ void ClassificationDataset::addSample(FeatureVector& sample, string className, u
 
 void ClassificationDataset::addSample(FeatureVector& sample, int classIndex, uint index){
   if(classLabels.find(classIndex)==classLabels.end()){
-    throw invalid_argument("Class number not existent");
+    throw invalid_argument("ClassificationDataset : Class number not existent");
   }
   if(index>data.size()-1){
-    throw out_of_range("Index out of range");
+    throw out_of_range("ClassificationDataset : Index out of range");
   }
   int insertIndex=index;
   if(insertIndex<0){ // if we are not adding data to an existing index
@@ -140,11 +156,20 @@ void ClassificationDataset::addSample(FeatureVector& sample, int classIndex, uin
   updateStatistics(sample);
 }
 
+void ClassificationDataset::addClass(string _class, int _index){
+  int newIndex=_index;
+  if(newIndex<0){
+    newIndex=classLabels.size()+1;
+  }
+  classLabels.insert(pair<int,string>(newIndex,_class));
+  classLabelIndex.insert(pair<string,int>(_class,newIndex));
+}
+
 void ClassificationDataset::load(std::string fileName){
   /* Open file */
   TiXmlDocument doc( fileName );
   if ( !doc.LoadFile() ){
-    throw invalid_argument("Uncorrect filename");
+    throw invalid_argument("ClassificationDataset : Uncorrect filename");
   }
   TiXmlHandle hdl(&doc);
   /* Get Dataset infos */
@@ -155,8 +180,7 @@ void ClassificationDataset::load(std::string fileName){
   for( child; child; child=child->NextSiblingElement() ){
     int key = 0;
     if(TIXML_SUCCESS==child->QueryIntAttribute("key",&key)){
-      classLabels.insert(pair<int,string>(key,child->GetText()));
-      classLabelIndex.insert(pair<string,int>(child->GetText(),key));
+      addClass(child->GetText(),key);
     }
   }
   /* Fill in data and classes*/
@@ -167,12 +191,7 @@ void ClassificationDataset::load(std::string fileName){
     for(secondChild; secondChild ; secondChild = secondChild->NextSiblingElement("featureVector")){
       int length = 0;
       if(TIXML_SUCCESS!=secondChild->QueryIntAttribute("length",&length)){
-	throw invalid_argument("Uncorrect attribute name");
-      }
-      if(fvLength==0){
-	fvLength=(uint)length;
-	meanMat = ValueVector(fvLength);
-	Qmat = ValueVector(fvLength);
+	throw invalid_argument("ClassificationDataset : Uncorrect attribute name");
       }
       FeatureVector fv(length);
       stringstream ss (stringstream::in | stringstream::out);
@@ -186,11 +205,9 @@ void ClassificationDataset::load(std::string fileName){
     secondChild = child->FirstChild("classes")->ToElement();
     int classLength = 0;
     if(TIXML_SUCCESS!=secondChild->QueryIntAttribute("classLength",&classLength)){
-      throw invalid_argument("Uncorrect attribute name");
+      throw invalid_argument("ClassificationDataset : Uncorrect attribute name");
     }
-
     vector<int> classes;
-    
     stringstream ss (stringstream::in | stringstream::out);
     ss <<  secondChild->GetText();
     for (int n=0; n<classLength; n++){
@@ -213,7 +230,7 @@ void ClassificationDataset::save(std::string fileName){
   dname->LinkEndChild(tname);
   datasetInfos->LinkEndChild(dname);
 
-  TiXmlElement * classMap = new TiXmlElement( "classMap" );
+  TiXmlElement * classMap = new TiXmlElement( "classesMap" );
   map<int,string>::iterator pos;
   for (pos = classLabels.begin(); pos != classLabels.end(); pos++) {
     TiXmlElement * dpair = new TiXmlElement( "pair" );
@@ -276,7 +293,7 @@ ostream& operator<<(ostream& os, ClassificationDataset& cd){
     }
     vector<int> classes = cd.getSequenceClassesIndex(i);
     for(uint j=0;j<classes.size();j++){
-      os << "\t \tWith classes " << classes[j] << " ";
+      os << "\t \t With classes " << classes[j] << " ";
     }
     os <<" ]"<<endl;
   }

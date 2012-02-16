@@ -23,7 +23,7 @@ class SupervisedDataset : public Dataset{
   /*!
    * Default constructor.
    */
-  SupervisedDataset(std::string _file);
+  SupervisedDataset();
 
   /*! 
    * Get the target feature vector for a sequence.

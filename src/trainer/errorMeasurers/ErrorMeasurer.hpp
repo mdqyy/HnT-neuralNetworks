@@ -9,6 +9,8 @@
 #include "../../General.hpp"
 #include "../../dataset/FeatureVector.hpp"
 #include "../../dataset/ErrorVector.hpp"
+#include <math.h>
+
 
 /*!
  * \class ErrorMeasurer
@@ -18,6 +20,11 @@ class ErrorMeasurer {
  private :
 
  protected:
+  /*! Total error */
+  realv error;
+
+  /*! Error per unit */
+  ErrorVector errPerUnit;
 
  public:
 
@@ -25,6 +32,30 @@ class ErrorMeasurer {
    * Default constructor.
    */
   ErrorMeasurer();
+
+  /*!
+   * Get total error.
+   * \return Previously calculatev total error.
+   */
+  realv getError();
+
+  /*!
+   * Get error per unit.
+   * \return Error per unit vector.
+   */
+  ErrorVector getErrorPerUnit();
+
+  /*!
+   * Set a new value for error.
+   * \param _error New error value.
+   */
+  void setError(realv _error);
+
+  /*!
+   * Set new values for the error per units.
+   * \param _errPerUnit New error per units.
+   */
+  void setErrorPerUnit(ErrorVector _errPerUnit);
   
   /*!
    * Measure error per unit.

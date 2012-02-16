@@ -86,24 +86,42 @@ class Connection {
   
   /*! 
    * Initialize weights according to a normal distribution.
-   * \param seed Random seed.
-   * \param mean Normal distribution mean
-   * \param stdev Normal distribution standard deviation.
+   * \param _seed Random seed.
+   * \param _mean Normal distribution mean
+   * \param _stdev Normal distribution standard deviation.
    */
-  void initializeWeights(uint seed,realv mean=0, realv stdev=0.1);
+  void initializeWeights(uint _seed,realv _mean=0, realv _stdev=0.1);
 
   /*!
    * Get the weights concerning the input neuron i
-   * \param i Input neuron.
+   * \param _i Input neuron.
    * \return Weight matrix.
    */
-  cv::Mat getWeightsNeuron(int i);
+  cv::Mat getWeightsToNeuron(int _i);
+
+ /*!
+   * Get the weights concerning the output neuron i
+   * \param _i Input neuron.
+   * \return Weight matrix.
+   */
+  cv::Mat getWeightsFromNeuron(int _i);
 
   /*!
    * Forward call to next layer.
    * \todo parallel networks…
    */
   void forward();
+
+  /*!
+   * Backward errors call to previous layer.
+   * \param _output The previous layer is an output.
+   */
+  void backwardDeltas(bool _output);
+
+  /*!
+   * Backward errors call to next layer.
+   */
+  void backwardWeights(realv _learningRate);
 
   /*!
    * Destructor.

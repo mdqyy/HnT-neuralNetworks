@@ -9,7 +9,7 @@
 using namespace std;
 using namespace cv;
 
-NeuralNetworkTrainer::NeuralNetworkTrainer(NeuralNetwork& _neuralNet, SupervisedDataset& _data, CrossValidationParams _cvParams, bool _doStochastic) : SupervisedTrainer(_neuralNet,_data,_cvParams), neuralNet(_neuralNet), doStochastic(_doStochastic){
+NeuralNetworkTrainer::NeuralNetworkTrainer(NeuralNetwork& _neuralNet, SupervisedDataset& _data, CrossValidationParams& _cvParams, bool _doStochastic) : SupervisedTrainer(_neuralNet,_data,_cvParams), neuralNet(_neuralNet), doStochastic(_doStochastic){
 
 }
 
@@ -24,10 +24,10 @@ vector<uint> NeuralNetworkTrainer::defineIndexOrderSelection(uint _numSequences)
   }
   if(doStochastic){
     int exchangeIndex=0;
-    for(uint i=0 ;  i<_numSequences; i++){
-      RNG random;
+    RNG random;
+    random.next();
+    for(uint i=0 ;  i<_numSequences; i++){	 
       exchangeIndex=random.uniform(0,_numSequences);
-      indexOrder.push_back(i);
       swap(indexOrder[i],indexOrder[exchangeIndex]);
     } 
   }

@@ -8,8 +8,7 @@
 
 #include "ErrorMeasurer.hpp"
 #include <stdexcept>
-
-
+#include <iostream>
 
 /*!
  * \class MSEMeasurer
@@ -28,6 +27,18 @@ class MSEMeasurer : public ErrorMeasurer {
   MSEMeasurer();
   
   /*!
+   * Get error.
+   * \return Mean square error.
+   */
+  realv getError();
+
+  /*!
+   * Get error per unit
+   * \return Mean square error per unit.
+   */
+  ErrorVector getErrorPerUnit();
+  
+  /*!
    * Measure error per unit.
    * \param ouput Machine output feature Vector.
    * \param target Dataset result to match.
@@ -36,7 +47,7 @@ class MSEMeasurer : public ErrorMeasurer {
   virtual ErrorVector errorPerUnit(FeatureVector _output, FeatureVector _target);
 
   /*!
-   * Measure error per unit.
+   * Measure total mean square error of all units.
    * \param ouput Machine output feature Vector.
    * \param target Dataset result to match.
    * \return The total error.
@@ -47,6 +58,14 @@ class MSEMeasurer : public ErrorMeasurer {
    * Destructor.
    */
   ~MSEMeasurer();
+
+  /*!
+   * Output stream operator.
+   * \param os Output stream.
+   * \param mse Error measurer.
+   * \return Output stream.
+   */
+  friend std::ostream& operator<< (std::ostream& os, MSEMeasurer& mse);
 
 };
 

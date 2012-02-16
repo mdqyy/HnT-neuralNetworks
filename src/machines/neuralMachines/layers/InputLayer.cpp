@@ -33,28 +33,32 @@ void InputLayer::setStandardDeviation(ValueVector _stdev){
   stdev=_stdev;
 }
 
-void InputLayer::forward(FeatureVector signal){
-  if(signal.getLength()!=numUnits){
+void InputLayer::forward(FeatureVector _signal){
+  if(_signal.getLength()!=numUnits){
     throw length_error("Wrong signal length");
   }
-  inputSignal = signal;
+  inputSignal = _signal;
   for (uint i = 0; i < numUnits; i++){
-    if(stdev[i]==0){
+    if(stdev[i]==0.0){
       outputSignal[i]=(inputSignal[i]-mean[i]);
     }
-    outputSignal[i]=(inputSignal[i]-mean[i])/stdev[i];
+    else{
+      outputSignal[i]=(inputSignal[i]-mean[i])/stdev[i];
+    }
   }
+  outputSignal[numUnits]=1.0;
   forward();
 }
 
 void InputLayer::forward(){
-  list<Connection*>::iterator it;
-  for(it=outputConnections.begin();it!=outputConnections.end();it++){
-    (*it)->forward();
-  }
+  getOutputConnection()->forward();
 }
 
-void InputLayer::backward(ErrorVector deltas){
+void InputLayer::backwardDeltas(bool _output, FeatureVector _target){
+
+}
+
+void InputLayer::backwardWeights(realv _learningRate){
 
 }
 
@@ -66,7 +70,5 @@ ostream& operator<<(ostream& os, const InputLayer& l){
   os << "Input neuron layer : " << endl;
   os << "\t -Name :"<< l.getName() << endl;
   os << "\t -Units : "<< l.getNumUnits() << endl;
-  os << "\t -Input Connections objects : " << l.getInputConnections().size() <<endl;
-  os << "\t-Ouput Connections objects : "<< l.getOutputConnections().size() << endl;
   return os;
 }

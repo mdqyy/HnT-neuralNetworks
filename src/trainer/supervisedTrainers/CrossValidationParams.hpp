@@ -1,5 +1,5 @@
 #ifndef __CROSSVALIDATIONPARAMS_HPP__
-#define __CROSSVALIDATIONPARAM_HPP__
+#define __CROSSVALIDATIONPARAMS_HPP__
 /*!
  * \file CrossValidationParams.hpp
  * Header of the CrossValidationParams class.

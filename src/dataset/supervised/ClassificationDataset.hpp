@@ -6,13 +6,15 @@
  * \author Luc Mioulet
  */
 
-#include "SupervisedDataset.hpp"
-#include "../../tinyxml/tinyxml.h"
 #include <map>
 #include <string>
 #include <vector>
 #include <stdexcept>
 #include <iostream>
+#include <opencv/cv.h>
+#include "SupervisedDataset.hpp"
+#include "../../tinyxml/tinyxml.h"
+
 
 /*!
  * \class ClassificationDataset
@@ -37,10 +39,9 @@ class ClassificationDataset : public SupervisedDataset{
  public:
 
   /*!
-   * Parameter constructor loading from file.
-   * \param _file
+   * Default constructor.
    */
-  ClassificationDataset(std::string _file);
+  ClassificationDataset();
 
   /*!
    * Get class label mapping.
@@ -91,7 +92,8 @@ class ClassificationDataset : public SupervisedDataset{
 
   /*! 
    * Get the target feature vector for a sequence.
-   * \param _index Sequence index.
+   * \param _i Sequence index.
+   * \param _j Sample index in sequence.
    * \return The target sequence targets.
    */
   virtual FeatureVector getTargetSample(uint _i, uint _j) const;
@@ -117,6 +119,20 @@ class ClassificationDataset : public SupervisedDataset{
    * \return Dataset type.
    */
   virtual int getDatasetType() const;
+
+  /*!
+   * Add a sequence and its label.
+   * \param _sequence Add a feature vector as a complete sequence.
+   * \param _classes Classes as an int.
+   */
+  void addSequence(FeatureVector _sequence,int _class);
+
+  /*!
+   * Add a sequence and its label.
+   * \param _sequence Add a feature vector as a complete sequence.
+   * \param _classes Classes as a string.
+   */
+  void addSequence(FeatureVector _sequence,std::string _class);
  
   /*!
    * Add a sequence and its label.
@@ -147,6 +163,13 @@ class ClassificationDataset : public SupervisedDataset{
    * \param index Sequence index.
    */
   void addSample(FeatureVector& sample, std::string className = "", uint index = -1);
+  
+  /*! 
+   * Add a class to the class maps.
+   * \param _class Name of the class.
+   * \param _index Index of the class. If not defined will be added to the map as the follozing point.
+   */
+  void addClass(std::string _class, int _index=-1);
 
   /*!
    * Load a database from a file.

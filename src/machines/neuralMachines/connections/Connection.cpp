@@ -11,20 +11,20 @@ using namespace cv;
 
 Connection::Connection(Layer& _from, Layer& _to, uint _seed) : from(_from), to(_to), weights(cv::Mat()){
   int rows=to.getNumUnits();
-  int cols=from.getNumUnits();
+  int cols=from.getNumUnits()+1;
   #ifdef REAL_DOUBLE
   weights = cv::Mat(rows,cols,CV_64FC1,0.0);
   #else
   weights = cv::Mat(rows,cols,CV_32FC1,0.0);
   #endif
-  from.addOutputConnections(this);
-  to.addInputConnections(this);
+  from.setOutputConnection(this);
+  to.setInputConnection(this);
   initializeWeights(_seed);
 }
 
 Connection::Connection(Layer& _from, Layer& _to, cv::Mat _weights) : from(_from), to(_to), weights(_weights){
   int rows=to.getNumUnits();
-  int cols=from.getNumUnits();
+  int cols=from.getNumUnits()+1;
   assert(rows==weights.rows);
   assert(cols==weights.cols);
 }
@@ -46,7 +46,7 @@ void Connection::setWeights(Mat _weights){
     weights=_weights;
   }
   else{
-    throw("Wrong weight matrix size");
+    throw("Connection : Wrong weight matrix size");
   }
 }
 
@@ -55,7 +55,7 @@ void Connection::setInputLayer(Layer& _input){
     from=_input;
   }
   else{
-    throw("Wrong input size");
+    throw("Connection : Wrong input size");
   }
 }
 
@@ -64,21 +64,40 @@ void Connection::setOutputLayer(Layer& _output){
     to=_output;   
   }
   else{
-    throw("Wrong output size");
+    throw("Connection : Wrong output size");
   }
 }
 
-void Connection::initializeWeights(uint seed, realv mean, realv stdev){
-  RNG random(seed);
-  random.fill(weights,RNG::NORMAL,mean,stdev);
+void Connection::initializeWeights(uint _seed, realv _mean, realv _stdev){
+  RNG random(_seed);
+  random.next();
+  random.fill(weights,RNG::NORMAL,_mean,_stdev);
 }
 
-Mat Connection::getWeightsNeuron(int i){
-  return weights.row(i);
+Mat Connection::getWeightsToNeuron(int _i){
+  return weights.row(_i);
+}
+
+Mat Connection::getWeightsFromNeuron(int _i){
+  return weights.col(_i);
 }
 
 void Connection::forward(){
-  to.forward();
+    to.forward();
+}
+
+void Connection::backwardDeltas(bool _output){
+  from.backwardDeltas(_output);
+}
+
+void Connection::backwardWeights(realv _learningRate){
+  ErrorVector ev=to.getErrorVector();
+  for(int i=0;i<weights.rows;i++){
+    for(int j=0;j<weights.cols;j++){
+      weights.at<realv>(i,j)=weights.at<realv>(i,j)+_learningRate*ev[i]*from.getOutputSignal()[j];
+    }
+  }
+  from.backwardWeights(_learningRate);
 }
 
 Connection::~Connection(){

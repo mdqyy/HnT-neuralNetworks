@@ -7,6 +7,7 @@
  */
 
 #include "ValueVector.hpp"
+#include <opencv/cv.h>
 
 
 /*!

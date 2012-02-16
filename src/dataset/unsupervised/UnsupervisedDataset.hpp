@@ -23,7 +23,7 @@ class UnsupervisedDataset : public Dataset {
   /*!
    * Default constructor.
    */
-  UnsupervisedDataset(std::string _filename);
+  UnsupervisedDataset();
  
  /*!
    * Add a sequence.

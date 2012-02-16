@@ -23,7 +23,7 @@ class RegressionDataset : public SupervisedDataset{
   /*!
    * Default constructor.
    */
-  RegressionDataset(std::string _fileName);
+  RegressionDataset();
 
   /*!
    * Get dataset type.
