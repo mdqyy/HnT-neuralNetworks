@@ -22,8 +22,6 @@ class RegressionMeasurer {
    */
   RegressionMeasurer();
 
-  /* Todo : Methods*/
-
   /*!
    * Destructor.
    */
