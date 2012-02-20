@@ -94,6 +94,11 @@ class Layer : public Machine {
    */
   void setOutputConnection(Connection* _connection);
 
+  /*!
+   * Forward a sequence.
+   * \param _sequence Sequence of feature vectors.
+   */
+  virtual void forwardSequence(std::vector<FeatureVector> _sequence);
 
   /*! 
    * Forward a feature vector.

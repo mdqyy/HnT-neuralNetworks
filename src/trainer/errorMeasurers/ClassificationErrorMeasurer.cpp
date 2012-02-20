@@ -20,6 +20,7 @@ ErrorVector ClassificationErrorMeasurer::errorPerUnit(FeatureVector _output, Fea
   ErrorVector result(_output.getLength());
   realv maxOutputValue = _output[0];
   int maxOutputIndex = 0;
+  int targetIndex = 0;
   for(uint i=0;i<_output.getLength();i++){
     if(_output[i]>maxOutputValue){
       maxOutputValue=_output[i];
@@ -27,7 +28,7 @@ ErrorVector ClassificationErrorMeasurer::errorPerUnit(FeatureVector _output, Fea
     }
   }
   if(_target[maxOutputIndex]!=1.0){
-    result[maxOutputIndex]=1.0;
+    result[targetIndex]=maxOutputIndex;
   }
   errPerUnit=result;
   return result;

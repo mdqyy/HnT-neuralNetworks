@@ -2,13 +2,16 @@ add_subdirectory(executables)
 add_subdirectory(machines)
 add_subdirectory(dataset)
 add_subdirectory(trainer)
+add_subdirectory(performanceMeasurers)
 
 include_directories (dataset)
 include_directories (machines)
 include_directories (tinyxml)
 include_directories (trainer)
+include_directories (performanceMeasurers)
 
 add_library(Machines dataset/Dataset.cpp 
+  dataset/Mask.cpp 
   dataset/ValueVector.cpp 
   dataset/ErrorVector.cpp 
   dataset/FeatureVector.cpp 
@@ -35,7 +38,7 @@ add_library(Machines dataset/Dataset.cpp
   trainer/criteria/Criterion.cpp
   trainer/criteria/IterationCount.cpp
   trainer/supervisedTrainers/SupervisedTrainer.cpp
-  trainer/supervisedTrainers/CrossValidationParams.cpp
+  performanceMeasurers/CrossValidationParams.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/NeuralNetworkTrainer.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/BackPropagation.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/BackPropParams.cpp

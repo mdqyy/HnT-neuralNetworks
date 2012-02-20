@@ -36,8 +36,9 @@ class NeuralNetwork : public NeuralMachine {
   FeatureVector inputSignal;
   /*! Output signal */
   FeatureVector outputSignal;
-  
-
+  /*! Forward or backward sequence processing. */
+  bool readForward;
+    
  public:
 
   /*! 
@@ -46,9 +47,10 @@ class NeuralNetwork : public NeuralMachine {
    * \param _hidden Hidden layers.
    * \param _output Output layer.
    * \param _connections Connections between layers.
+   * \param _forward Controlling the sequence processing of the machine.
    * \param _name Machine name.
    */
-  NeuralNetwork(InputLayer& _input, std::list<Layer*> _hidden, Layer& _output, std::list<Connection*> _connections, std::string _name);
+  NeuralNetwork(InputLayer& _input, std::list<Layer*> _hidden, Layer& _output, std::list<Connection*> _connections, bool _forward=true,std::string _name="neural network");
 
   /*!
    * Get input layer.
@@ -81,6 +83,12 @@ class NeuralNetwork : public NeuralMachine {
   FeatureVector getOutputSignal();
 
   /*!
+   * Get the forward 
+   * \return True if the network reads the sequence in a forward manner. False if it reads it backwards.
+   */
+  bool isForward();
+
+  /*!
    * Set an input layer.
    * \param _input Input layer.
    */
@@ -98,6 +106,11 @@ class NeuralNetwork : public NeuralMachine {
    */
   void setOutputLayer(Layer& _output);
 
+  /*!
+   * Forward a sequence.
+   * \param _sequence Sequence of feature vectors.
+   */
+  virtual void forwardSequence(std::vector<FeatureVector> _sequence);
 
   /*!
    * Forward a feature vector.

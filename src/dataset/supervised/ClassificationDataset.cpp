@@ -12,6 +12,11 @@ using namespace cv;
 ClassificationDataset::ClassificationDataset() : SupervisedDataset(),/* classLabels(map<int,string>()),  classLabelIndex(map<string,int>()),*/classes(vector< vector<int> >()), maxClasses(0){
 }
 
+
+int ClassificationDataset::getNumberOfClasses(){
+  return classLabels.size();
+}
+
 map<int, string> ClassificationDataset::getClassLabelMap(){
   return classLabels;
 }

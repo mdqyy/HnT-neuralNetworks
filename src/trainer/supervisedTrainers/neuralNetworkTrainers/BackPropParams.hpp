@@ -17,19 +17,37 @@ class BackPropParams {
  private :
 
  protected:
+  /*! Do stochastic learning (randomize sequence selection).*/
   bool doStochastic;
+
+  /*! Learning rate for weight change. */
   realv learningRate;
+
+  /*! Learning rate decrease between each step. */
   realv learningRateDecrease;
+
+  /*! Maximum number of iterations */
   uint maxIterations;
+
+  /*! Minimum error change between two steps*/
   realv minError;
+  
+  /*! Minimum error change between two iterations */
   realv minChangeError;
+
+  /*! Validation modulo steps */
+  uint validationSteps;
+
+  /*! Backpropagation is working for a classification problem */
+  bool classificationTask;
+  
 
  public:
 
   /*!
    * Default constructor.
    */
-  BackPropParams(bool _doStochastic=true,realv _learningRate=0.001, realv _learningRateDecrease=0.0, uint _maxIterations=10, realv _minError=0.1, realv _minChangeStop=0.001);
+  BackPropParams(bool _doStochastic=true,realv _learningRate=0.1, realv _learningRateDecrease=0.95, uint _maxIterations=10, realv _minError=0.01, realv _minChangeStop=1.0e-9, uint _validationSteps=0, bool _classificationTask=false);
 
   /*!
    * Do stochastic.
@@ -66,6 +84,18 @@ class BackPropParams {
    * \return Minimum error change.
    */
   realv getMinChangeError();
+  
+  /*!
+   * Get the validation step intervals.
+   * \return Validation steps spacing.
+   */
+  uint getValidationSteps();
+  
+  /*!
+   * Get to know if the backpropagation is working for a classification problem.
+   * \return Is a classification task.
+   */
+  bool getClassificationTask();
 
   /*!
    * Set stochastic.
@@ -102,6 +132,18 @@ class BackPropParams {
    * \param _minChangeError Minimum error change between two iterations.
    */
   void setMinChangeError(realv _minChangeError);
+
+  /*!
+   * Set validation steps (a validation process will take place every time modulo(iteration,_validationSteps)=0).
+   * \param _validationSteps Validation steps.
+   */
+  void setValidationSteps(uint _validationSteps);
+
+  /*!
+   * Set the activity of the neural network to classification or regression.
+   * \param _classificationTask Classification or regression.
+   */
+  void setClassificationTask(bool _classificationTask);
 
   /*!
    * Destructor.

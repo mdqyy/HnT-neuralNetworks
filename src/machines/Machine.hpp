@@ -6,7 +6,9 @@
  * \author Luc Mioulet
  */
 
+#include "../dataset/FeatureVector.hpp"
 #include <string>
+#include <vector>
 
 /*!
  * \class Machine
@@ -26,7 +28,6 @@ class Machine {
    */
   Machine();
 
-
   /*!
    * Constructor.
    * \param _name Machine name. 
@@ -44,6 +45,13 @@ class Machine {
    * \param _name New name.
    */
   void setName(std::string _name);
+
+  /*!
+   * Forward a sequence.
+   * \param _sequence Sequence to pass forward.
+   */
+  virtual void forwardSequence(std::vector<FeatureVector> _sequence)=0;
+
 
   /*!
    * Destructor.

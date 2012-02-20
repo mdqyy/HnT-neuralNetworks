@@ -7,6 +7,7 @@
 
 #include "../dataset/supervised/ClassificationDataset.hpp"
 #include "../dataset/ValueVector.hpp"
+#include "../dataset/Mask.hpp"
 #include "../dataset/FeatureVector.hpp"
 #include "../machines/neuralMachines/NeuralNetwork.hpp"
 #include "../machines/neuralMachines/layers/InputLayer.hpp"
@@ -42,14 +43,13 @@ int main (int argc, char* argv[]){
   cout << c1;
   cout << c2;
 
-  CrossValidationParams params;
-
+  Mask mask;
   BackPropParams bpp;
   bpp.setLearningRate(1.0);
   bpp.setLearningRateDecrease(0.95);
   bpp.setMinChangeError(1.0e-09);
   bpp.setMaxIterations(100);
-  BackPropagation bp(nnTest,dataset,params,bpp);
+  BackPropagation bp(nnTest,dataset,bpp,mask,mask);
   bp.train();
 
   cout << c1;

@@ -65,6 +65,20 @@ class ValueVector {
    */
   void reset(realv _default);
 
+  /*! 
+   * Get minimum value and location.
+   * \param _min Pointer to the minimum value.
+   * \param _minLoc Pointer to the minimum index.
+   */
+  void getMin(realv *_min,int *_minLoc);
+
+  /*! 
+   * Get maximum value and location.
+   * \param _max Pointer to the maximum value.
+   * \param _maxLoc Pointer to the maximum index.
+   */
+  void getMax(realv *_max,int *_maxLoc);
+
   /*!
    * Destructor.
    */

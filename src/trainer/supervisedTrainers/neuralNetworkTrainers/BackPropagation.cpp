@@ -10,12 +10,8 @@
 using namespace cv;
 using namespace std;
 
-BackPropagation::BackPropagation(NeuralNetwork& _neuralNet, SupervisedDataset& _data, CrossValidationParams& _cvParams, BackPropParams& _bpparams) : NeuralNetworkTrainer(_neuralNet, _data, _cvParams, _bpparams.getDoStochastic()), bpp(_bpparams), errorPerIteration(vector<realv>()){ 
+BackPropagation::BackPropagation(NeuralNetwork& _neuralNet, SupervisedDataset& _data, BackPropParams& _bpparams, Mask& _featureMask, Mask& _indexMask) : NeuralNetworkTrainer(_neuralNet, _data, _featureMask, _indexMask, _bpparams.getDoStochastic()), bpp(_bpparams){ 
   
-}
-
-BackPropagation::BackPropagation(NeuralNetwork& _neuralNet, SupervisedDataset& _trainData, SupervisedDataset& _validationData, SupervisedDataset& _testData, CrossValidationParams& _cvParams,BackPropParams& _bpparams) : NeuralNetworkTrainer(_neuralNet, _trainData, _validationData, _testData, _cvParams,_bpparams.getDoStochastic()), bpp(_bpparams){
-
 }
 
 void BackPropagation::train(){
@@ -29,6 +25,9 @@ void BackPropagation::train(){
     }
     bpp.setLearningRate(bpp.getLearningRate()*bpp.getLearningRateDecrease());
     cout << "Iteration : "<< i << " ; Error : " << errorPerIteration[i-1]<< endl;
+    /*    if(i%bpp.getValidationSteps()==0){ does not work (Floating point exception)
+      //      measurePerformance(getValidationDataset());
+      }*/
   }while(i<bpp.getMaxIterations() && change>bpp.getMinChangeError() && errorPerIteration[i-1]>bpp.getMinError());
 }
 
@@ -36,23 +35,32 @@ void BackPropagation::trainOneIteration(){
   vector<uint> indexOrderSelection=defineIndexOrderSelection(data.getNumSequences());
   uint index=0;
   realv error= 0;
-  realv ce=0;
   MSEMeasurer mse;
-  ClassificationErrorMeasurer ceo(data.getNumSequences());
   FeatureVector dataOutput;
   for(uint i=0; i<data.getNumSequences();i++){
     index=indexOrderSelection[i];
-    for(uint j=0;j<data[index].size() ; j++){
-      neuralNet.forward(data[index][j]);
-      error += mse.totalError(neuralNet.getOutputSignal(),trainData.getTargetSample(index,j));
-      FeatureVector target=trainData.getTargetSample(index,j);
-      neuralNet.backward(target, bpp.getLearningRate());
-      ce +=ceo.totalError(neuralNet.getOutputSignal(),trainData.getTargetSample(index,j));
+    if(neuralNet.isForward()){
+      for(uint j=0;j<data[index].size() ; j++){
+	neuralNet.forward(data[index][j]);
+	FeatureVector target=trainData.getTargetSample(index,j);
+	error += mse.totalError(neuralNet.getOutputSignal(),target);
+	neuralNet.backward(target, bpp.getLearningRate());
+      }
+    }
+    else{
+      for(uint j=data.getNumSequences();j>=0 ; j--){
+	neuralNet.forward(data[index][j]);
+	FeatureVector target=trainData.getTargetSample(index,j);
+	error += mse.totalError(neuralNet.getOutputSignal(),target);
+	neuralNet.backward(target, bpp.getLearningRate());
+      }
     }
   }
-  cout << "classificatication error :" << ce <<endl;
+  cout << error/data.getNumSequences() << endl;
   errorPerIteration.push_back(error/data.getNumSequences());
 }
+
+
 
 BackPropagation::~BackPropagation(){
 

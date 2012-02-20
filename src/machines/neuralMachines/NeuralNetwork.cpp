@@ -7,8 +7,9 @@
 #include "NeuralNetwork.hpp"
 
 using namespace std;
+using namespace cv;
 
-NeuralNetwork::NeuralNetwork(InputLayer& _input,list<Layer*> _hidden, Layer& _output, list<Connection*> _connections, string _name) : NeuralMachine(_name), input(_input), hiddenLayers(_hidden), output(_output), connections(_connections){
+NeuralNetwork::NeuralNetwork(InputLayer& _input,list<Layer*> _hidden, Layer& _output, list<Connection*> _connections, bool _forward,string _name) : NeuralMachine(_name), input(_input), hiddenLayers(_hidden), output(_output), connections(_connections), readForward(_forward){
 
 }
 
@@ -37,6 +38,10 @@ FeatureVector NeuralNetwork::getOutputSignal(){
   return  outputSig;
 }
 
+bool NeuralNetwork::isForward(){
+  return readForward;
+}
+
 void NeuralNetwork::setInputLayer(InputLayer& _input){
   input=_input;
 }
@@ -47,6 +52,19 @@ void NeuralNetwork::setHiddenLayers(std::list<Layer*> _hidden){
 
 void NeuralNetwork::setOutputLayer(Layer& _output){
   output=_output;
+}
+
+void NeuralNetwork::forwardSequence(std::vector<FeatureVector> _sequence){
+  if(readForward){
+    for(uint i=0;i<_sequence.size();i++){
+      forward(_sequence[i]);
+    }
+  }
+  else{
+    for(int i=_sequence.size()-1;i>=0;i--){
+      forward(_sequence[i]);
+    }
+  }
 }
 
 void NeuralNetwork::forward(FeatureVector _signal){

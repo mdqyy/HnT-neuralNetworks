@@ -42,6 +42,10 @@ void Layer::setInputConnection(Connection* _connection){
   inputConnection=_connection;
 }
 
+void Layer::forwardSequence(std::vector<FeatureVector> _sequence){
+
+}
+
 void Layer::setOutputConnection(Connection* _connection){
   outputConnection=_connection;
 }

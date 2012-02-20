@@ -31,7 +31,7 @@ uint ValueVector::getLength() const{
 }
 
 const realv& ValueVector::operator[](int _index) const{
-  if(_index<0 || _index>data.rows){
+  if(_index<0 || _index>=data.rows){
     throw out_of_range("Value Vector : Out of range in vector access \n");
   }
   #ifdef REAL_DOUBLE
@@ -42,7 +42,7 @@ const realv& ValueVector::operator[](int _index) const{
 }
 
 realv& ValueVector::operator[](int _index){
-  if(_index<0 || _index>data.rows){
+  if(_index<0 || _index>=data.rows){
     throw out_of_range("Value Vector : Out of range in vector access \n");
   }
   #ifdef REAL_DOUBLE
@@ -58,6 +58,32 @@ void ValueVector::reset(realv _default){
   #else
   data = Mat(getLength(),1CV_32FC1,_default);
   #endif
+}
+
+void ValueVector::getMin(realv *_min,int *_minLoc){
+  int minIndex=0;
+  realv minValue=this->operator[](0);
+  for(uint i=0;i<getLength();i++){
+    if(this->operator[](i)<minValue){
+      minValue=this->operator[](i);
+      minIndex=i;
+    }
+  }
+  *_min=minValue;
+  *_minLoc=minIndex;
+}
+
+void ValueVector::getMax(realv *_max, int *_maxLoc){
+  int maxIndex=0;
+  realv maxValue=this->operator[](0);
+  for(uint i=0;i<getLength();i++){
+    if(this->operator[](i)>maxValue){
+      maxValue=this->operator[](i);
+      maxIndex=i;
+    }
+  } 
+  *_max= maxValue;
+  *_maxLoc= maxIndex;
 }
 
 ValueVector::~ValueVector(){

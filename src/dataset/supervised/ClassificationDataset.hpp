@@ -44,6 +44,13 @@ class ClassificationDataset : public SupervisedDataset{
   ClassificationDataset();
 
   /*!
+   * Get the number of classes.
+   * \return The number of classes.
+   */
+  int getNumberOfClasses();
+  
+  
+  /*!
    * Get class label mapping.
    * \return Int to label map.
    */
