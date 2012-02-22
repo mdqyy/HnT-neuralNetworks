@@ -5,6 +5,7 @@
 #include <opencv/cv.h>
 
 #include "../dataset/supervised/ClassificationDataset.hpp"
+#include "../dataset/supervised/RegressionDataset.hpp"
 #include "../dataset/ValueVector.hpp"
 #include "../dataset/FeatureVector.hpp"
 #include "../machines/neuralMachines/layers/InputLayer.hpp"
@@ -36,5 +37,9 @@ int main (int argc, char* argv[]){
   cout << th.getOutputSignal();
   cout << dataset;
   /*dataset.save("temp.xml");*/
+  RegressionDataset regset;
+  regset.load("testRegression.xml");
+  cout << regset;
+  regset.save("saveReg.xml");
   return EXIT_SUCCESS;
 }
