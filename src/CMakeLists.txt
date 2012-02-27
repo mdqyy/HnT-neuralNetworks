@@ -22,6 +22,7 @@ add_library(Machines dataset/Dataset.cpp
   machines/Machine.cpp
   machines/neuralMachines/NeuralMachine.cpp
   machines/neuralMachines/NeuralNetwork.cpp
+  machines/neuralMachines/PBDNN.cpp
   machines/neuralMachines/layers/Layer.cpp
   machines/neuralMachines/layers/LayerTanh.cpp
   machines/neuralMachines/layers/LayerSigmoid.cpp
@@ -42,6 +43,7 @@ add_library(Machines dataset/Dataset.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/NeuralNetworkTrainer.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/BackPropagation.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/BackPropParams.cpp
+  trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBP.cpp
 )
 
 add_library(TinyXML   

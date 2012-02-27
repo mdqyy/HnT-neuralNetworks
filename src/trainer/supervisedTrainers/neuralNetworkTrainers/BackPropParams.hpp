@@ -9,6 +9,10 @@
 #include "../../../General.hpp"
 #include <opencv/cv.h>
 
+#define BP_CLASSIFICATION 0
+#define BP_REGRESSION 1
+#define BP_AUTOENCODER 2
+
 /*!
  * \class BackPropParams
  * Description
@@ -38,8 +42,8 @@ class BackPropParams {
   /*! Validation modulo steps */
   uint validationSteps;
 
-  /*! Backpropagation is working for a classification problem */
-  bool classificationTask;
+  /*! Problem type (BP_CLASSIFICATION, BP_REGRESSION, BP_AUTOENCODER) */
+  int task;
   
 
  public:
@@ -47,7 +51,7 @@ class BackPropParams {
   /*!
    * Default constructor.
    */
-  BackPropParams(bool _doStochastic=true,realv _learningRate=0.1, realv _learningRateDecrease=0.95, uint _maxIterations=10, realv _minError=0.01, realv _minChangeStop=1.0e-9, uint _validationSteps=0, bool _classificationTask=false);
+  BackPropParams(bool _doStochastic=true,realv _learningRate=0.1, realv _learningRateDecrease=0.95, uint _maxIterations=10, realv _minError=0.01, realv _minChangeStop=1.0e-9, uint _validationSteps=0, int _task=0);
 
   /*!
    * Do stochastic.
@@ -92,10 +96,10 @@ class BackPropParams {
   uint getValidationSteps();
   
   /*!
-   * Get to know if the backpropagation is working for a classification problem.
-   * \return Is a classification task.
+   * Get the task.
+   * \return The task (BP_CLASSIFICATION, BP_REGRESSION, BP_AUTOENCODER).
    */
-  bool getClassificationTask();
+  int getTask();
 
   /*!
    * Set stochastic.
@@ -140,10 +144,10 @@ class BackPropParams {
   void setValidationSteps(uint _validationSteps);
 
   /*!
-   * Set the activity of the neural network to classification or regression.
-   * \param _classificationTask Classification or regression.
+   * Set the task.
+   * \param _task Task to be achieved (BP_CLASSIFICATION, BP_REGRESSION, BP_AUTOENCODER).
    */
-  void setClassificationTask(bool _classificationTask);
+  void setTask(int _Task);
 
   /*!
    * Destructor.

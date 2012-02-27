@@ -34,13 +34,6 @@ class NeuralNetworkTrainer : public SupervisedTrainer {
   NeuralNetworkTrainer(NeuralNetwork& _neuralNet, SupervisedDataset& _data, Mask& _featureMask, Mask& _indexMask, bool _doStochastic=true );
 
   /*!
-   * Used to define the index order call of the different sequences during learning.
-   * \param _numSequences Number of sequences in the data.
-   * \return Vector of unsigned integers.
-   */
-  std::vector<uint> defineIndexOrderSelection(uint _numSequences);
-
-  /*!
    * Train the machine.
    */
   virtual void train() =0;

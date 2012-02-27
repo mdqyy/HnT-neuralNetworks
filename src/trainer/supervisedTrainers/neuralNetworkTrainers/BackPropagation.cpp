@@ -25,9 +25,6 @@ void BackPropagation::train(){
     }
     bpp.setLearningRate(bpp.getLearningRate()*bpp.getLearningRateDecrease());
     cout << "Iteration : "<< i << " ; Error : " << errorPerIteration[i-1]<< endl;
-    /*    if(i%bpp.getValidationSteps()==0){ does not work (Floating point exception)
-      //      measurePerformance(getValidationDataset());
-      }*/
   }while(i<bpp.getMaxIterations() && change>bpp.getMinChangeError() && errorPerIteration[i-1]>bpp.getMinError());
 }
 
@@ -42,7 +39,13 @@ void BackPropagation::trainOneIteration(){
     if(neuralNet.isForward()){
       for(uint j=0;j<data[index].size() ; j++){
 	neuralNet.forward(data[index][j]);
-	FeatureVector target=trainData.getTargetSample(index,j);
+	FeatureVector target;
+	if(bpp.getTask()!=BP_AUTOENCODER){
+	  target=trainData.getTargetSample(index,j);
+	}
+	else{
+	  target=data[index][j];
+	}
 	error += mse.totalError(neuralNet.getOutputSignal(),target);
 	neuralNet.backward(target, bpp.getLearningRate());
       }
@@ -50,7 +53,13 @@ void BackPropagation::trainOneIteration(){
     else{
       for(uint j=data.getNumSequences();j>=0 ; j--){
 	neuralNet.forward(data[index][j]);
-	FeatureVector target=trainData.getTargetSample(index,j);
+	FeatureVector target;
+	if(bpp.getTask()!=BP_AUTOENCODER){
+	  target=trainData.getTargetSample(index,j);
+	}
+	else{
+	  target=data[index][j];
+	}
 	error += mse.totalError(neuralNet.getOutputSignal(),target);
 	neuralNet.backward(target, bpp.getLearningRate());
       }

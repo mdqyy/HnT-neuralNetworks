@@ -23,9 +23,9 @@ using namespace cv;
 
 int main (int argc, char* argv[]){
   ClassificationDataset dataset;
-  dataset.load("xor.xml");
+  dataset.load("errxor.xml");
 
-  InputLayer il(2,dataset.getMean(),dataset.getStandardDeviation());
+  InputLayer il(4,dataset.getMean(),dataset.getStandardDeviation());
   LayerSigmoid th(20);
   LayerSigmoid out(2);
   Connection c1(il,th,20);
@@ -52,9 +52,6 @@ int main (int argc, char* argv[]){
   BackPropagation bp(nnTest,dataset,bpp,mask,mask);
   bp.train();
 
-  cout << c1;
-  cout << c2;
-
-  
+    
   return EXIT_SUCCESS;
 }

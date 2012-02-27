@@ -9,7 +9,7 @@
 using namespace cv;
 using namespace std;
 
-BackPropParams::BackPropParams(bool _doStochastic,realv _learningRate, realv _learningRateDecrease, uint _maxIterations, realv _minError, realv _minChangeError, uint _validationSteps, bool _classificationTask) : doStochastic(_doStochastic), learningRate(_learningRate), learningRateDecrease(_learningRateDecrease), maxIterations(_maxIterations), minError(_minError), minChangeError(_minChangeError), validationSteps(_validationSteps){
+BackPropParams::BackPropParams(bool _doStochastic,realv _learningRate, realv _learningRateDecrease, uint _maxIterations, realv _minError, realv _minChangeError, uint _validationSteps, int _task) : doStochastic(_doStochastic), learningRate(_learningRate), learningRateDecrease(_learningRateDecrease), maxIterations(_maxIterations), minError(_minError), minChangeError(_minChangeError), validationSteps(_validationSteps), task(_task){
 
 }
 
@@ -41,8 +41,8 @@ uint BackPropParams::getValidationSteps(){
   return validationSteps;
 }
 
-bool BackPropParams::getClassificationTask(){
-  return classificationTask;
+int BackPropParams::getTask(){
+  return task;
 }
 
 void BackPropParams::setDoStochastic(bool _doStochastic){
@@ -73,8 +73,8 @@ void BackPropParams::setValidationSteps(uint _validationSteps){
   validationSteps= _validationSteps;
 }
 
-void BackPropParams::setClassificationTask(bool _classificationTask){
-  classificationTask= _classificationTask;
+void BackPropParams::setTask(int _task){
+  task= _task;
 }
 
 BackPropParams::~BackPropParams(){

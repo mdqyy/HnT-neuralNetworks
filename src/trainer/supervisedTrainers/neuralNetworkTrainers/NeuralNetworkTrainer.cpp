@@ -14,23 +14,6 @@ NeuralNetworkTrainer::NeuralNetworkTrainer(NeuralNetwork& _neuralNet, Supervised
 
 }
 
-vector<uint> NeuralNetworkTrainer::defineIndexOrderSelection(uint _numSequences){
-  vector<uint> indexOrder;
-  for(uint i=0 ;  i<_numSequences; i++){
-    indexOrder.push_back(i);
-  }
-  if(doStochastic){
-    int exchangeIndex=0;
-    RNG random;
-    random.next();
-    for(uint i=0 ;  i<_numSequences; i++){	 
-      exchangeIndex=random.uniform(0,_numSequences);
-      swap(indexOrder[i],indexOrder[exchangeIndex]);
-    } 
-  }
-  return indexOrder;
-}
-
 NeuralNetworkTrainer::~NeuralNetworkTrainer(){
 
 }
