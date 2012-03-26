@@ -7,6 +7,10 @@
  */
 
 #include "NeuralNetwork.hpp"
+#include "connections/Connection.hpp"
+#include "layers/Layer.hpp"
+#include "layers/InputLayer.hpp"
+#include "layers/LayerSigmoid.hpp"
 #include "../../trainer/errorMeasurers/MSEMeasurer.hpp"
 
 /*!
@@ -15,7 +19,7 @@
  */
 class PBDNN : public NeuralMachine{
  private :
-  std::vector<NeuralNetwork*>& forwardPopulation;
+  std::vector<NeuralNetwork*> forwardPopulation;
   std::vector<FeatureVector> errors;
 
  protected:
@@ -25,7 +29,17 @@ class PBDNN : public NeuralMachine{
   /*!
    * Default constructor.
    */
-  PBDNN(std::vector<NeuralNetwork*>& _forwards);
+  PBDNN(std::vector<NeuralNetwork*> _forwards);
+
+  /*!
+   * Parameter constructor.
+   * \param _numNetworks Number of networks to build.
+   * \param _numEntries Number of entries for the networks.
+   * \param _hiddenLayerSize Number of hidden neurons.
+   * \param _mean Mean vector of the dataset.
+   * \param _stdev Standard deviation of the dataset.
+   */
+   PBDNN(uint _numNetworks, uint _numEntries, uint _hiddenLayerSize, ValueVector _mean, ValueVector _stdDev);
   
   /*!
    * Forward a sequence.
@@ -37,7 +51,7 @@ class PBDNN : public NeuralMachine{
    * Get the neural population.
    * \return The population.
    */
-  std::vector<NeuralNetwork*>& getPopulation() const;
+  std::vector<NeuralNetwork*> getPopulation() const;
 
   /*!
    * Get result of a forward propagation.

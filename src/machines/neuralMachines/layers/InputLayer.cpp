@@ -9,16 +9,29 @@
 using namespace cv;
 using namespace std;
 
-InputLayer::InputLayer(uint _numUnits, ValueVector _mean, ValueVector _stdev, string _name) : Layer(_numUnits, _name), mean(_mean), stdev(_stdev), inputSignal(_numUnits){
+InputLayer::InputLayer() : Layer(), meanVector(FeatureVector(0)), stdevVector(FeatureVector(0)){
 
 }
 
-ValueVector InputLayer::getMean(){
-  return mean;
+InputLayer::InputLayer(uint _numUnits, const ValueVector _mean, const ValueVector _stdev, string _name) : Layer(_numUnits, _name), meanVector(_mean), stdevVector(_stdev), inputSignal(_numUnits){
+
 }
 
-ValueVector InputLayer::getStandardDeviation(){
-  return stdev;
+InputLayer::InputLayer(const InputLayer& _cil) : Layer(_cil){
+  meanVector = _cil.getMean();
+  stdevVector = _cil.getStandardDeviation();
+}
+
+InputLayer* InputLayer::clone() const{
+  return new InputLayer(*this);
+}
+
+ValueVector InputLayer::getMean() const{
+  return meanVector;
+}
+
+ValueVector InputLayer::getStandardDeviation() const{
+  return stdevVector;
 }
 
 FeatureVector InputLayer::getInputSignal(){
@@ -26,24 +39,24 @@ FeatureVector InputLayer::getInputSignal(){
 }
 
 void InputLayer::setMean(ValueVector _mean){
-  mean=_mean;
+  meanVector=_mean;
 }
 
 void InputLayer::setStandardDeviation(ValueVector _stdev){
-  stdev=_stdev;
+  stdevVector=_stdev;
 }
 
 void InputLayer::forward(FeatureVector _signal){
   if(_signal.getLength()!=numUnits){
-    throw length_error("Wrong signal length");
+    throw length_error("InputLayer : Wrong signal length");
   }
   inputSignal = _signal;
   for (uint i = 0; i < numUnits; i++){
-    if(stdev[i]==0.0){
-      outputSignal[i]=(inputSignal[i]-mean[i]);
+    if(stdevVector[i]==0.0){
+      outputSignal[i]=(inputSignal[i]-meanVector[i]);
     }
     else{
-      outputSignal[i]=(inputSignal[i]-mean[i])/stdev[i];
+      outputSignal[i]=(inputSignal[i]-meanVector[i])/stdevVector[i];
     }
   }
   outputSignal[numUnits]=1.0;

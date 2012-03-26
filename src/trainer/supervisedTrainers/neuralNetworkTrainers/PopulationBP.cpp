@@ -9,7 +9,7 @@
 using namespace cv;
 using namespace std;
 
-PopulationBP::PopulationBP(PBDNN& _population, SupervisedDataset& _data, Mask& _featureMask, Mask& _indexMask) : SupervisedTrainer(_population, _data, _featureMask, _indexMask), population(_population){
+PopulationBP::PopulationBP(PBDNN& _population, SupervisedDataset& _data, PopulationBPParams& _params, Mask& _featureMask, Mask& _indexMask) : SupervisedTrainer(_population, _data, _featureMask, _indexMask), population(_population), params(_params){
 
 }
 
@@ -18,8 +18,8 @@ void PopulationBP::train(){
   do{
     i++;
     trainOneIteration();
-    /*bpp.setLearningRate(bpp.getLearningRate()*bpp.getLearningRateDecrease());*/
-  }while(i<100);
+    params.setLearningRate(params.getLearningRate()*params.getLearningRateDecrease());
+  }while(i<params.getMaxIterations());
 }
 
 void PopulationBP::trainOneIteration(){
@@ -50,11 +50,13 @@ void PopulationBP::trainOneIteration(){
       }
       list<int>::iterator iterIndex=indexList.begin();
       list<realv>::iterator iterScore=scoreList.begin();
-      realv errorDifference=minError*0.05;
-      while((*iterScore-minError)<errorDifference && iterScore!=scoreList.end()){
-	neuralNets[*iterIndex]->backward(data[index][j], 0.001);
+      realv errorDifference=minError*params.getErrorToFirst();
+      uint numberTrained=0;
+      while(abs(*iterScore-minError)<errorDifference && iterScore!=scoreList.end() && numberTrained<params.getMaxTrained() && numberTrained<neuralNets.size()/2){
+	neuralNets[*iterIndex]->backward(data[index][j], params.getLearningRate());
 	iterIndex++;
 	iterScore++;
+	numberTrained++;
       }
       iterationError+=minError;
     }

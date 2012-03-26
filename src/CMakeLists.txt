@@ -44,6 +44,7 @@ add_library(Machines dataset/Dataset.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/BackPropagation.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/BackPropParams.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBP.cpp
+  trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBPParams.cpp
 )
 
 add_library(TinyXML   

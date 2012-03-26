@@ -20,12 +20,26 @@ class LayerTanh : public Layer {
 
  public:
 
+  LayerTanh();
+
   /*!
    * Parameter constructor.
    * \param _numUnits Number of units in the layer.
    * \param _name Name of the layer.
    */
   LayerTanh(uint _numUnits,std::string _name="tanh layer");
+
+  /*!
+   * Copy cnstructor.
+   * \param _clth Layer to copy.
+   */
+  LayerTanh(const LayerTanh& _clth);
+
+  /*!
+   * Clone a layer
+   * \return Pointer to a clone.
+   */
+  virtual LayerTanh* clone() const;
 
   /*! 
    * Forward a feature vector.

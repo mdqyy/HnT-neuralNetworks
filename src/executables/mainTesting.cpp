@@ -4,6 +4,7 @@
 #include <iostream>
 #include <opencv/cv.h>
 
+#include "../dataset/unsupervised/UnsupervisedDataset.hpp"
 #include "../dataset/supervised/ClassificationDataset.hpp"
 #include "../dataset/supervised/RegressionDataset.hpp"
 #include "../dataset/ValueVector.hpp"
@@ -26,10 +27,10 @@ int main (int argc, char* argv[]){
   ValueVector mean(meanMat);
   ValueVector stdev(stdevMat);
   InputLayer il(5,mean,stdevMat);
-  cout << testFv ;
+  //cout << testFv ;
   LayerTanh th(2);
   cout << th ;
-  Connection c(il,th);
+  Connection c(&il,&th);
   cout << th ;
   cout << il;
   cout << c;
@@ -41,5 +42,49 @@ int main (int argc, char* argv[]){
   regset.load("testRegression.xml");
   cout << regset;
   regset.save("saveReg.xml");
+
+  /* Test unsupervised */
+  UnsupervisedDataset usset;
+  usset.load("testUnsupervised.xml");
+  cout << usset;
+  usset.save("saveUS.xml");
+  
+  /* Test copy constructor */
+  InputLayer cil(il);
+  cout << il << cil;
+  LayerTanh cth(th);
+  cout << th << cth;
+  Connection cc(c);
+  cout << c << cc;
+
+  /* Test clones */
+  InputLayer clil = *il.clone();
+  clil.setName("CloneIL");
+  cout << " Clones" <<endl ;
+  cout << clil;
+  Connection clc = *c.clone();
+  cout << clc;
+  LayerTanh clth = *th.clone();
+  cout << clth;
+  cout << th.clone()->getName() << endl;
+  clth.setName("CloneTh");
+
+  LayerTanh t = LayerTanh(3,"test");
+  LayerTanh* test = &t;
+  LayerTanh* copyTest = test->clone();
+  cout << test <<" "<<copyTest;
+  
+  /* Cloning and linking */
+  cout << endl << endl;
+  clil.setOutputConnection(&clc);
+  clc.setInputLayer(&clil);
+  clc.setOutputLayer(&clth);
+  clth.setInputConnection(&clc);
+  cout << clil << clc << clth;
+  cout << il << c << th ;
+
+  /*delete &clc;
+  delete &clth;
+  delete &clil;*/
   return EXIT_SUCCESS;
 }

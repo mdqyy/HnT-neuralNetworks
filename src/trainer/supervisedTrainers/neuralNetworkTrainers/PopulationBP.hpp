@@ -12,6 +12,7 @@
 #include "../SupervisedTrainer.hpp"
 #include "../../../machines/neuralMachines/PBDNN.hpp"
 #include "../../../machines/neuralMachines/NeuralNetwork.hpp"
+#include "PopulationBPParams.hpp"
 
 /*!
  * \class PopulationBP
@@ -21,14 +22,20 @@ class PopulationBP : public SupervisedTrainer{
  private :
 
  protected:
+  PopulationBPParams params;
   PBDNN& population;
 
  public:
 
   /*!
-   * Default constructor.
+   * Parameter constructor.
+   * \param _population The neural population.
+   * \param _data The training data.
+   * \param _params The training parameters.
+   * \param _featureMask Feature mask.
+   * \param _indexMask Index mask.
    */
-  PopulationBP(PBDNN& _population, SupervisedDataset& _data, Mask& _featureMask, Mask& _indexMask);
+  PopulationBP(PBDNN& _population, SupervisedDataset& _data, PopulationBPParams& _params, Mask& _featureMask, Mask& _indexMask);
 
   /*!
    * Train the neural networks.

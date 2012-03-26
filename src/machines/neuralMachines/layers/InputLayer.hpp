@@ -19,13 +19,15 @@ class InputLayer : public Layer{
 
  protected:
   /*! Mean */
-  ValueVector mean;
+  ValueVector meanVector;
   /*! Standard deviation */
-  ValueVector stdev;
+  ValueVector stdevVector;
   /*! Input signal */
   FeatureVector inputSignal;
 
  public:
+
+  InputLayer();
 
   /*!
    * Parameter constructor.
@@ -36,17 +38,29 @@ class InputLayer : public Layer{
    */
   InputLayer(uint _numUnits, ValueVector _mean, ValueVector _stdev, std::string _name="input layer");
 
+  /*! 
+   * Copy an existing InputLayer.
+   * \param _cil Input Layer to copy.
+   */
+  InputLayer(const InputLayer& _cil);
+
+  /*!
+   * Clone a layer
+   * \return Pointer to a clone.
+   */
+  virtual InputLayer* clone() const;
+
   /*!
    * Get mean value.
    * \return The mean value.
    */
-  ValueVector getMean();
+  ValueVector getMean() const;
 
   /*!
    * Get the standard deviation.
    * \return The standard deviation.
    */
-  ValueVector getStandardDeviation();
+  ValueVector getStandardDeviation() const;
 
   /*!
    * Get the last input signal.

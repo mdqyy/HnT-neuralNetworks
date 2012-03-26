@@ -127,7 +127,7 @@ RegressionDataset::~RegressionDataset(){
 }
 
 ostream& operator<<(ostream& os, RegressionDataset& rd){
-  os << "Classification dataset '" << rd.getName() << "' : " << endl;
+  os << "Regression dataset '" << rd.getName() << "' : " << endl;
   os << "\t - Sequences : " << rd.getNumSequences() << endl;
   os << "\t - Samples : " << rd.getNumSamples() << endl;
   for(uint i=0;i<rd.getNumSequences();i++){

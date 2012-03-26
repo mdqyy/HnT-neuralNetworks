@@ -8,6 +8,8 @@
 
 #include "../Dataset.hpp"
 #include <string>
+#include "../../tinyxml/tinyxml.h"
+#include <opencv/cv.h>
 
 /*!
  * \class UnsupervisedDataset
@@ -24,6 +26,12 @@ class UnsupervisedDataset : public Dataset {
    * Default constructor.
    */
   UnsupervisedDataset();
+
+  /*!
+   * Get dataset type.
+   * \return Dataset type.
+   */
+  virtual int getDatasetType() const;
  
  /*!
    * Add a sequence.
@@ -38,11 +46,24 @@ class UnsupervisedDataset : public Dataset {
    */
   void addSample(FeatureVector sample, int index=-1);
 
+ /*!
+   * Load a database from a file.
+   * \param fileName
+   */ 
+  virtual void load(std::string fileName);
+
+  /*!
+   * Save a database to a file.
+   * \param fileName
+   */ 
+  virtual void save(std::string fileName);
+
   /*!
    * Destructor.
    */
   ~UnsupervisedDataset();
 
+  friend  std::ostream& operator<<(std::ostream& os, UnsupervisedDataset& cd);
 };
 
 

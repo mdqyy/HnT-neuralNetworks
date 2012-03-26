@@ -9,6 +9,7 @@
 #include <list>
 #include <assert.h>
 #include "../../../General.hpp"
+#include "../../../Clonable.hpp"
 #include "../../../dataset/FeatureVector.hpp"
 #include "../../../dataset/ErrorVector.hpp"
 #include "../connections/Connection.hpp"
@@ -21,7 +22,7 @@ class Connection;
  * Abstract class.
  * Neural network layer.
  */
-class Layer : public Machine {
+class Layer : public Machine, public Clonable {
  private :
 
  protected:
@@ -38,12 +39,26 @@ class Layer : public Machine {
   
  public:
 
+  Layer();
+
   /*!
    * Parameter constructor.
    * \param _numUnits Number of units.
    * \param _name Name of the layer.
    */
   Layer(uint _numUnits, std::string _name);
+
+  /*!
+   * Copy constructor.
+   * \param _cl Layer to copy.
+   */
+  Layer(const Layer& _cl);
+  
+  /*!
+   * Clone method.
+   * \return A clone of a layer.
+   */
+  virtual Layer* clone() const = 0;
   
   /*!
    * Get the number of units.
@@ -138,6 +153,8 @@ class Layer : public Machine {
    * Destructor.
    */
   ~Layer();
+
+  friend std::ostream& operator<<(std::ostream& _os, const Layer& _l);
 
 };
 

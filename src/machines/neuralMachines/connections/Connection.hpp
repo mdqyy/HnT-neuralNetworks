@@ -10,6 +10,7 @@
 #include <iostream>
 #include "../layers/Layer.hpp"
 #include "../../../General.hpp"
+#include "../../../Clonable.hpp"
 #include <opencv/cv.h>
 
 class Layer;
@@ -18,14 +19,14 @@ class Layer;
  * \class Connection
  * Class used to connect two layers together. This is a full connection type class.
  */
-class Connection {
+class Connection : public Clonable{
  private :
 
  protected:
   /*! Pointer to input Layer */
-  Layer& from; 
+  Layer* from; 
   /*! Pointer to output Layer */
-  Layer& to; 
+  Layer* to; 
  /*! Weight matrix is organised as rows = outputs, cols = inputs, and is accessed as weights[rows/outputs][lines/inputs] */
   cv::Mat weights;
 
@@ -38,7 +39,7 @@ class Connection {
    * \param _to Reference to the destination layer.
    * \param _seed Weight initialization.
    */
-  Connection(Layer& _from, Layer& _to, uint _seed=42);
+  Connection(Layer* _from, Layer* _to, uint _seed=42);
 
   /*!
    * Parameter constructor.
@@ -46,7 +47,21 @@ class Connection {
    * \param _to Pointer to the destination layer.
    * \param _weight Weight matrix.
    */
-  Connection(Layer& _from, Layer& _to, cv::Mat _weight);
+  Connection(Layer* _from, Layer* _to, cv::Mat _weight);
+
+  /*!
+   * Copy constructor.
+   * \remark You should change the connections via the set methods to avoid problems.
+   * \param _c Connection to copy.
+   */
+  Connection(const Connection& _c);
+
+  /*!
+   * Clone an existing connection.
+   * \remark You should change the connections via the set methods to avoid problems.
+   * \return A pointer to the clone.
+   */
+  virtual Connection* clone() const;
 
   /*! 
    * Get weights.
@@ -58,13 +73,13 @@ class Connection {
    * Get input layer.
    * \return Input layer.
    */
-  Layer& getInputLayer() const;
+  Layer* getInputLayer() const;
 
   /*! 
    * Get output layer.
    * \return Output layer.
    */
-  Layer& getOutputLayer() const;
+  Layer* getOutputLayer() const;
 
   /*!
    * Set weights.
@@ -76,13 +91,13 @@ class Connection {
    * Set input layer.
    * \param _input Input layer.
    */
-  void setInputLayer(Layer& _input);
+  void setInputLayer(Layer* _input);
 
   /*!
    * Set output layer.
    * \param _output Output layer.
    */
-  void setOutputLayer(Layer& _output);
+  void setOutputLayer(Layer* _output);
   
   /*! 
    * Initialize weights according to a normal distribution.

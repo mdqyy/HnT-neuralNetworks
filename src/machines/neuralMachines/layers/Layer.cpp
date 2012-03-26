@@ -9,8 +9,16 @@
 using namespace std;
 using namespace cv;
 
+Layer::Layer() : Machine("Layer"), numUnits(1),inputConnection(0), outputConnection(0), outputSignal(FeatureVector(2)), deltas(ErrorVector(2)){
+
+}
+
 Layer::Layer(uint _numUnits, string _name) : Machine(_name), numUnits(_numUnits),inputConnection(0), outputConnection(0), outputSignal(FeatureVector(_numUnits+1)), deltas(ErrorVector(_numUnits+1)){
   assert(numUnits>0);
+
+}
+
+Layer::Layer(const Layer& _cl) : Machine(_cl.getName()+"copy"), numUnits(_cl.getNumUnits()),   inputConnection(_cl.getInputConnection()), outputConnection(_cl.getOutputConnection()), outputSignal(FeatureVector(numUnits+1)), deltas(ErrorVector(numUnits+1)){
 
 }
 
@@ -74,4 +82,11 @@ realv Layer::errorWeighting(ErrorVector _deltas, Mat _weights){
 
 Layer::~Layer(){
 
+}
+
+ostream& operator<<(ostream& os, const Layer& l){
+  os << "Neuron layer : " << endl;
+  os << "\t -Name :"<< l.getName() << endl;
+  os << "\t -Units : "<< l.getNumUnits() << endl;
+  return os;
 }
