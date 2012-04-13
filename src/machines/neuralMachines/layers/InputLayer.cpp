@@ -13,7 +13,7 @@ InputLayer::InputLayer() : Layer(), meanVector(FeatureVector(0)), stdevVector(Fe
 
 }
 
-InputLayer::InputLayer(uint _numUnits, const ValueVector _mean, const ValueVector _stdev, string _name) : Layer(_numUnits, _name), meanVector(_mean), stdevVector(_stdev), inputSignal(_numUnits){
+InputLayer::InputLayer(uint _numUnits, const ValueVector _mean, const ValueVector _stdev, string _name) : Layer(_numUnits, _name), meanVector(_mean), stdevVector(_stdev){
 
 }
 
@@ -32,10 +32,6 @@ ValueVector InputLayer::getMean() const{
 
 ValueVector InputLayer::getStandardDeviation() const{
   return stdevVector;
-}
-
-FeatureVector InputLayer::getInputSignal(){
-  return inputSignal;
 }
 
 void InputLayer::setMean(ValueVector _mean){

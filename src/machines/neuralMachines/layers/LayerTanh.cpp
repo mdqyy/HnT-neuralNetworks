@@ -30,13 +30,18 @@ void LayerTanh::forward(){
   outputSignal.reset(0.0);
   /* Accumulate neuron sum */
   FeatureVector layerInputSignal=getInputConnection()->getInputLayer()->getOutputSignal();
-  for(uint i=0;i<numUnits;i++){
-    outputSignal[i]=tanh(signalWeighting(layerInputSignal, getInputConnection()->getWeightsToNeuron(i)));
-  }
-  outputSignal[numUnits]=1.0;
+  forward(layerInputSignal);
   if(getOutputConnection()>0){
     getOutputConnection()->forward();
   }
+}
+
+void LayerTanh::forward(FeatureVector _signal){
+  inputSignal = _signal;
+  for(uint i=0;i<numUnits;i++){
+    outputSignal[i]=tanh(signalWeighting(inputSignal, getInputConnection()->getWeightsToNeuron(i)));
+  }
+  outputSignal[numUnits]=1.0;
 }
 
 void LayerTanh::backwardDeltas(bool _output, FeatureVector _target){

@@ -13,6 +13,7 @@
 #include "../../../machines/neuralMachines/PBDNN.hpp"
 #include "../../../machines/neuralMachines/NeuralNetwork.hpp"
 #include "PopulationBPParams.hpp"
+#include <boost/thread/thread.hpp>
 
 /*!
  * \class PopulationBP
@@ -22,8 +23,10 @@ class PopulationBP : public SupervisedTrainer{
  private :
 
  protected:
-  PopulationBPParams params;
+  /*! Network population */
   PBDNN& population;
+  /*! Learning parameters */
+  PopulationBPParams params;
 
  public:
 
@@ -41,6 +44,11 @@ class PopulationBP : public SupervisedTrainer{
    * Train the neural networks.
    */
   virtual void train();
+
+  /*! 
+   * Pretrain a population
+   */
+  void preTrain();
 
   /*!
    * Train the neural networks on one iteration.

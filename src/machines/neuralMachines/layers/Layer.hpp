@@ -14,6 +14,7 @@
 #include "../../../dataset/ErrorVector.hpp"
 #include "../connections/Connection.hpp"
 #include "../../Machine.hpp"
+#include <boost/shared_ptr.hpp>
 
 class Connection;
 
@@ -36,7 +37,9 @@ class Layer : public Machine, public Clonable {
   FeatureVector outputSignal;
   /*! Output error of the layer */
   ErrorVector deltas;
-  
+  /*! Input signal */
+  FeatureVector inputSignal;  
+
  public:
 
   Layer();
@@ -85,6 +88,12 @@ class Layer : public Machine, public Clonable {
   FeatureVector getOutputSignal() const;
 
   /*!
+   * Get the last input signal.
+   * \return The input signal.
+   */
+  FeatureVector getInputSignal();
+
+  /*!
    * Get last output error vector;
    * \return Error vector.
    */
@@ -119,6 +128,13 @@ class Layer : public Machine, public Clonable {
    * Forward a feature vector.
    */
   virtual void forward()=0;
+
+  /*! 
+   * Forward a feature vector.
+   * \param _signal Input signal.
+   * \return Output feature vector. 
+   */
+  virtual void forward(FeatureVector _signal)=0;
 
   /*!
    * Backward propagation of error.
@@ -158,5 +174,6 @@ class Layer : public Machine, public Clonable {
 
 };
 
+typedef boost::shared_ptr<Layer> LayerPtr;
 
 #endif

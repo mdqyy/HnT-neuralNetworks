@@ -12,6 +12,7 @@
 #include "../../../General.hpp"
 #include "../../../Clonable.hpp"
 #include <opencv/cv.h>
+#include <boost/shared_ptr.hpp>
 
 class Layer;
 
@@ -31,6 +32,8 @@ class Connection : public Clonable{
   cv::Mat weights;
 
  public:
+
+
 
   /*!
    * Parameter constructor.
@@ -58,7 +61,7 @@ class Connection : public Clonable{
 
   /*!
    * Clone an existing connection.
-   * \remark You should change the connections via the set methods to avoid problems.
+   * \remark You should change the layers via the set methods to avoid problems.
    * \return A pointer to the clone.
    */
   virtual Connection* clone() const;
@@ -152,5 +155,6 @@ class Connection : public Clonable{
   friend std::ostream& operator<<(std::ostream& os, const Connection& c);
 };
 
+typedef boost::shared_ptr<Connection> ConnectionPtr;
 
 #endif

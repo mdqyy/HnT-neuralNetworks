@@ -36,6 +36,6 @@ int main (int argc, char* argv[]){
   //  cout << dataset;
   cout << dataset.getMean();
   cout << dataset.getStandardDeviation();
-  dataset.save("pn.xml");
+  dataset.save("../xml/pn.xml");
   return EXIT_SUCCESS;
 }

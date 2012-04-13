@@ -5,16 +5,14 @@
  */
 
 #include "NeuralNetwork.hpp"
-#include <sstream>
-
 
 using namespace std;
 using namespace cv;
 
-NeuralNetwork::NeuralNetwork(InputLayer* _input,vector<Layer*> _hidden, Layer* _output, vector<Connection*> _connections, bool _forward,string _name) : NeuralMachine(_name), input(_input), hiddenLayers(_hidden), output(_output), connections(_connections), readForward(_forward){
-
+NeuralNetwork::NeuralNetwork(vector<LayerPtr> _hidden, vector<ConnectionPtr> _connections, bool _forward,string _name) : NeuralMachine(_name), hiddenLayers(_hidden), connections(_connections), readForward(_forward){
+  
 }
-
+/*
 NeuralNetwork::NeuralNetwork(const NeuralNetwork& _cnn) : NeuralMachine(_cnn.getName()+" copy"), input(_cnn.getInputLayer()->clone()),hiddenLayers(vector<Layer*>()), output(_cnn.getOutputLayer()->clone()), connections(vector<Connection*>()), readForward(_cnn.isForward()){
   vector<Layer *> tempLayers = _cnn.getHiddenLayers();
   for(int i=0;i<tempLayers.size();i++){
@@ -27,11 +25,7 @@ NeuralNetwork::NeuralNetwork(const NeuralNetwork& _cnn) : NeuralMachine(_cnn.get
     else{
       hiddenLayers.push_back(tempLayers[i]->clone());
     }
-    ostringstream temp;
-    temp<<i;
-    hiddenLayers[i]->setName(temp.str());
   }
-
   vector<Connection *> tempConnections = _cnn.getConnections();
   for (int i=0;i<tempConnections.size();i++){
     connections.push_back(tempConnections[i]->clone());
@@ -40,35 +34,52 @@ NeuralNetwork::NeuralNetwork(const NeuralNetwork& _cnn) : NeuralMachine(_cnn.get
     connections[i]->setOutputLayer(hiddenLayers[i+1]);
     hiddenLayers[i+1]->setInputConnection(connections[i]);
   }
+}*/
+
+NeuralNetwork::NeuralNetwork(const NeuralNetwork& _cnn) : NeuralMachine(_cnn.getName()+" copy"),hiddenLayers(vector<LayerPtr>()), connections(vector<ConnectionPtr>()), readForward(_cnn.isForward()){
+  vector<LayerPtr> tempLayers = _cnn.getHiddenLayers();
+  for(int i=0;i<tempLayers.size();i++){
+    hiddenLayers.push_back(LayerPtr(tempLayers[i]->clone()));
+  }
+  vector<ConnectionPtr> tempConnections = _cnn.getConnections();
+  for (int i=0;i<tempConnections.size();i++){
+    connections.push_back(ConnectionPtr(tempConnections[i]));
+    connections[i]->setInputLayer(hiddenLayers[i].get());
+    hiddenLayers[i]->setOutputConnection(connections[i].get());
+    connections[i]->setOutputLayer(hiddenLayers[i+1].get());
+    hiddenLayers[i+1]->setInputConnection(connections[i].get());
+  }
 }
+
+
 
 NeuralNetwork* NeuralNetwork::clone() const{
   return new NeuralNetwork(*this);
 }
 
-InputLayer* NeuralNetwork::getInputLayer() const{
-  return input;
+Layer* NeuralNetwork::getInputLayer() const{
+  return hiddenLayers[0].get();
 }
 
-vector<Layer*> NeuralNetwork::getHiddenLayers() const{
+vector<LayerPtr> NeuralNetwork::getHiddenLayers() const{
   return hiddenLayers;
 }
 
-vector<Connection*> NeuralNetwork::getConnections() const{
+vector<ConnectionPtr> NeuralNetwork::getConnections() const{
   return connections;
 }
 
 Layer* NeuralNetwork::getOutputLayer() const{
-  return output;
+  return hiddenLayers[hiddenLayers.size()-1].get();
 }
 
 FeatureVector NeuralNetwork::getInputSignal() const{
-  return  input->getInputSignal();
+  return  getInputLayer()->getInputSignal();
 }
 
 FeatureVector NeuralNetwork::getOutputSignal() const{
-  FeatureVector outputSig(output->getNumUnits());
-  FeatureVector temp = output->getOutputSignal();
+  FeatureVector outputSig(getOutputLayer()->getNumUnits());
+  FeatureVector temp = getOutputLayer()->getOutputSignal();
   for(uint i=0;i<outputSig.getLength();i++){
     outputSig[i]=temp[i];
   }
@@ -79,16 +90,8 @@ bool NeuralNetwork::isForward() const{
   return readForward;
 }
 
-void NeuralNetwork::setInputLayer(InputLayer* _input){
-  input=_input;
-}
-
-void NeuralNetwork::setHiddenLayers(std::vector<Layer*> _hidden){
+void NeuralNetwork::setHiddenLayers(std::vector<LayerPtr> _hidden){
   hiddenLayers=_hidden;
-}
-
-void NeuralNetwork::setOutputLayer(Layer* _output){
-  output=_output;
 }
 
 void NeuralNetwork::forwardSequence(std::vector<FeatureVector> _sequence){
@@ -105,12 +108,12 @@ void NeuralNetwork::forwardSequence(std::vector<FeatureVector> _sequence){
 }
 
 void NeuralNetwork::forward(FeatureVector _signal){
-  input->forward(_signal);
+  getInputLayer()->forward(_signal);
 }
 
 void NeuralNetwork::backward(FeatureVector _target,realv _learningRate){
-  output->backwardDeltas(true, _target);
-  output->backwardWeights( _learningRate);
+  getOutputLayer()->backwardDeltas(true, _target);
+  getOutputLayer()->backwardWeights( _learningRate);
 }
 
 

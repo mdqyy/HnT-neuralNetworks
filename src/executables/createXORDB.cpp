@@ -40,6 +40,6 @@ int main (int argc, char* argv[]){
   cout << "Negatives : " << numNeg <<endl;
   cout << dataset.getMean();
   cout << dataset.getStandardDeviation();
-  dataset.save("xor.xml");
+  dataset.save("../xml/xor.xml");
   return EXIT_SUCCESS;
 }

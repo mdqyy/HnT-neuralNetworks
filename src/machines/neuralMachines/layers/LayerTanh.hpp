@@ -45,6 +45,13 @@ class LayerTanh : public Layer {
    * Forward a feature vector.
    */
   virtual void forward();
+
+  /*! 
+   * Forward a feature vector.
+   * \param _signal Input signal.
+   * \return Output feature vector. 
+   */
+  void forward(FeatureVector _signal);
   
   /*!
    * Backward propagation of error.

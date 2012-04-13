@@ -22,8 +22,7 @@ class InputLayer : public Layer{
   ValueVector meanVector;
   /*! Standard deviation */
   ValueVector stdevVector;
-  /*! Input signal */
-  FeatureVector inputSignal;
+
 
  public:
 
@@ -61,12 +60,6 @@ class InputLayer : public Layer{
    * \return The standard deviation.
    */
   ValueVector getStandardDeviation() const;
-
-  /*!
-   * Get the last input signal.
-   * \return The input signal.
-   */
-  FeatureVector getInputSignal();
 
   /*!
    * Set the mean.

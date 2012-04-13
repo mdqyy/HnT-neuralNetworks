@@ -19,7 +19,7 @@ using namespace cv;
 
 int main (int argc, char* argv[]){
   ClassificationDataset dataset;
-  dataset.load("test.xml");
+  dataset.load("../xml/test.xml");
   Mat testMat(5,1,CV_64FC1,1.0);
   Mat meanMat(5,1,CV_64FC1,0.0);
   Mat stdevMat(5,1,CV_64FC1,1.0);
@@ -37,17 +37,17 @@ int main (int argc, char* argv[]){
   il.forward(testFv);
   cout << th.getOutputSignal();
   cout << dataset;
-  /*dataset.save("temp.xml");*/
+  dataset.save("../xml/test-copy.xml");
   RegressionDataset regset;
-  regset.load("testRegression.xml");
+  regset.load("../xml/testRegression.xml");
   cout << regset;
-  regset.save("saveReg.xml");
+  regset.save("../xml/saveReg.xml");
 
   /* Test unsupervised */
   UnsupervisedDataset usset;
-  usset.load("testUnsupervised.xml");
+  usset.load("../xml/testUnsupervised.xml");
   cout << usset;
-  usset.save("saveUS.xml");
+  usset.save("../xml/saveUS.xml");
   
   /* Test copy constructor */
   InputLayer cil(il);

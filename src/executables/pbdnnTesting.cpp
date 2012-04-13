@@ -25,7 +25,7 @@ using namespace cv;
 
 int main (int argc, char* argv[]){
   ClassificationDataset dataset;
-  dataset.load("xor.xml");
+  dataset.load("../xml/xor.xml");
 
    vector<NeuralNetwork*> forwardP=vector<NeuralNetwork*>();
 
@@ -107,6 +107,6 @@ int main (int argc, char* argv[]){
     testpop.forwardSequence(dataset[i]);
     errxor.addSequence(testpop.getOutputSequence()[0],dataset.getSampleClassIndex(i,0));
   }
-  errxor.save("errxor.xml");
+  errxor.save("../xml/errxor.xml");
   return EXIT_SUCCESS;
 }

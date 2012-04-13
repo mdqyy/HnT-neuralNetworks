@@ -19,7 +19,7 @@
  */
 class PBDNN : public NeuralMachine{
  private :
-  std::vector<NeuralNetwork*> forwardPopulation;
+  std::vector<NeuralNetworkPtr> forwardPopulation;
   std::vector<FeatureVector> errors;
 
  protected:
@@ -29,7 +29,7 @@ class PBDNN : public NeuralMachine{
   /*!
    * Default constructor.
    */
-  PBDNN(std::vector<NeuralNetwork*> _forwards);
+  PBDNN(std::vector<NeuralNetworkPtr> _forwards);
 
   /*!
    * Parameter constructor.
@@ -51,7 +51,7 @@ class PBDNN : public NeuralMachine{
    * Get the neural population.
    * \return The population.
    */
-  std::vector<NeuralNetwork*> getPopulation() const;
+  std::vector<NeuralNetworkPtr> getPopulation() const;
 
   /*!
    * Get result of a forward propagation.

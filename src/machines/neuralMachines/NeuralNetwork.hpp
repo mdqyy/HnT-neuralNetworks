@@ -16,6 +16,7 @@
 #include "../../dataset/FeatureVector.hpp"
 #include "../../dataset/ErrorVector.hpp"
 #include <vector>
+#include <boost/shared_ptr.hpp>
 
 
 /*!
@@ -26,14 +27,10 @@ class NeuralNetwork : public NeuralMachine, public Clonable {
  private :
 
  protected:
-  /*! Input layer */
-  InputLayer* input; 
   /*! Hidden layer */
-  std::vector<Layer*> hiddenLayers; 
-  /*! Output layer */
-  Layer* output; 
+  std::vector<LayerPtr> hiddenLayers; 
   /*! Connections between layers */
-  std::vector<Connection*> connections;
+  std::vector<ConnectionPtr> connections;
   /*! Input signal */
   FeatureVector inputSignal;
   /*! Output signal */
@@ -45,14 +42,12 @@ class NeuralNetwork : public NeuralMachine, public Clonable {
 
   /*! 
    * Parameter constructor. 
-   * \param _input Input layer.
    * \param _hidden Hidden layers.
-   * \param _output Output layer.
    * \param _connections Connections between layers.
    * \param _forward Controlling the sequence processing of the machine.
    * \param _name Machine name.
    */
-  NeuralNetwork(InputLayer* _input, std::vector<Layer*> _hidden, Layer* _output, std::vector<Connection*> _connections, bool _forward=true,std::string _name="neural network");
+  NeuralNetwork(std::vector<LayerPtr> _hidden, std::vector<ConnectionPtr> _connections, bool _forward=true,std::string _name="neural network");
 
   /*!
    * Copy constructor.
@@ -71,13 +66,13 @@ class NeuralNetwork : public NeuralMachine, public Clonable {
    * Get input layer.
    * \return Input layer.
    */
-  InputLayer* getInputLayer() const;
+  Layer* getInputLayer() const;
 
   /*!
    * Get hidden layers.
    * \return Hidden layers.
    */ 
-  std::vector<Layer*> getHiddenLayers() const;
+  std::vector<LayerPtr> getHiddenLayers() const;
 
   /*!
    * Get output layer.
@@ -101,7 +96,7 @@ class NeuralNetwork : public NeuralMachine, public Clonable {
    * Get Connections in the neural network.
    * \return Connections.
    */
-  std::vector<Connection*> getConnections() const;
+  std::vector<ConnectionPtr> getConnections() const;
 
   /*!
    * Get the forward 
@@ -110,22 +105,10 @@ class NeuralNetwork : public NeuralMachine, public Clonable {
   bool isForward() const;
 
   /*!
-   * Set an input layer.
-   * \param _input Input layer.
-   */
-  void setInputLayer(InputLayer* _input);
-
-  /*!
    * Set hidden layers.
    * \param _hidden Hidden layers.
    */
-  void setHiddenLayers(std::vector<Layer*> _hidden);
-
-  /*!
-   * Set an output layer.
-   * \param _output Output layer.
-   */
-  void setOutputLayer(Layer* _output);
+  void setHiddenLayers(std::vector<LayerPtr> _hidden);
 
   /*!
    * Forward a sequence.
@@ -154,5 +137,6 @@ class NeuralNetwork : public NeuralMachine, public Clonable {
 
 };
 
+typedef boost::shared_ptr<NeuralNetwork> NeuralNetworkPtr;
 
 #endif

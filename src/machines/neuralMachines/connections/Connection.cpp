@@ -109,7 +109,8 @@ void Connection::backwardWeights(realv _learningRate){
 }
 
 Connection::~Connection(){
-
+  from = 0;
+  to = 0;
 }
 
 ostream& operator<<(ostream& os, const Connection& c){

@@ -9,16 +9,16 @@
 using namespace std;
 using namespace cv;
 
-Layer::Layer() : Machine("Layer"), numUnits(1),inputConnection(0), outputConnection(0), outputSignal(FeatureVector(2)), deltas(ErrorVector(2)){
+Layer::Layer() : Machine("Layer"), numUnits(1),inputConnection(0), outputConnection(0), outputSignal(FeatureVector(2)), deltas(ErrorVector(2)), inputSignal(1){
 
 }
 
-Layer::Layer(uint _numUnits, string _name) : Machine(_name), numUnits(_numUnits),inputConnection(0), outputConnection(0), outputSignal(FeatureVector(_numUnits+1)), deltas(ErrorVector(_numUnits+1)){
+Layer::Layer(uint _numUnits, string _name) : Machine(_name), numUnits(_numUnits),inputConnection(0), outputConnection(0), outputSignal(FeatureVector(_numUnits+1)), deltas(ErrorVector(_numUnits+1)), inputSignal(_numUnits){
   assert(numUnits>0);
 
 }
 
-Layer::Layer(const Layer& _cl) : Machine(_cl.getName()+"copy"), numUnits(_cl.getNumUnits()),   inputConnection(_cl.getInputConnection()), outputConnection(_cl.getOutputConnection()), outputSignal(FeatureVector(numUnits+1)), deltas(ErrorVector(numUnits+1)){
+Layer::Layer(const Layer& _cl) : Machine(_cl.getName()), numUnits(_cl.getNumUnits()),   inputConnection(_cl.getInputConnection()), outputConnection(_cl.getOutputConnection()), outputSignal(FeatureVector(numUnits+1)), deltas(ErrorVector(numUnits+1)){
 
 }
 
@@ -32,6 +32,10 @@ Connection* Layer::getInputConnection() const{
 
 Connection* Layer::getOutputConnection() const{
   return outputConnection;
+}
+
+FeatureVector Layer::getInputSignal(){
+  return inputSignal;
 }
 
 FeatureVector Layer::getOutputSignal() const{
@@ -81,7 +85,8 @@ realv Layer::errorWeighting(ErrorVector _deltas, Mat _weights){
 }
 
 Layer::~Layer(){
-
+  inputConnection=0;
+  outputConnection = 0;
 }
 
 ostream& operator<<(ostream& os, const Layer& l){
