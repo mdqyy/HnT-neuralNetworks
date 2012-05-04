@@ -90,13 +90,36 @@ ValueVector::~ValueVector(){
 
 }
 
-ostream& operator<<(ostream& os, const ValueVector& fv){
+ostream& operator<<(ostream& os, const ValueVector& v){
   os << "Value vector : " << endl;
-  os << "\t -length :" << fv.getLength() << endl;
+  os << "\t -length :" << v.getLength() << endl;
   os << "\t -containing : ";
-  for (int i = 0; i < fv.getLength(); i++){
-    os << fv[i] <<" ; " ;
+  for (int i = 0; i < v.getLength(); i++){
+    os << v[i] <<" ; " ;
     }
   os << endl;
   return os;
+}
+
+ofstream& operator<<(ofstream& ofs, const ValueVector& v){
+  ofs << "< L " << v.getLength() << " [";
+  for (int i = 0; i < v.getLength(); i++){
+    ofs << " "<< v[i];
+    }
+  ofs << "] > "<< endl;
+  return ofs;
+}
+
+ifstream& operator>>(ifstream& ifs, ValueVector& v){
+  uint vLength;
+  realv value;
+  string temp;
+  ifs >> temp >> temp >> vLength >> temp;
+  v= ValueVector(vLength);
+  for (int i = 0; i < v.getLength(); i++){
+    ifs >> value ;
+    v[i]= value;
+  }
+  ifs >> temp >> temp;
+  return ifs;
 }

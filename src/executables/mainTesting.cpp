@@ -26,8 +26,8 @@ int main (int argc, char* argv[]){
   FeatureVector testFv(testMat);
   ValueVector mean(meanMat);
   ValueVector stdev(stdevMat);
-  InputLayer il(5,mean,stdevMat);
-  //cout << testFv ;
+ InputLayer il(5,mean,stdevMat);
+   //cout << testFv ;
   LayerTanh th(2);
   cout << th ;
   Connection c(&il,&th);
@@ -82,6 +82,19 @@ int main (int argc, char* argv[]){
   clth.setInputConnection(&clc);
   cout << clil << clc << clth;
   cout << il << c << th ;
+
+
+  /* Loading and saving */
+  cout << endl <<"Loading and saving" << endl;
+  ofstream out("test.txt");
+  out << mean << stdev << il << c;
+  cout << "saving done" << endl;
+  ifstream in("test.txt");
+  ValueVector mean2,stdev2;
+  InputLayer il2;
+  Connection c2;
+  in >> mean2 >> stdev2 >> il2 >> c2;
+  cout << "After loading "<< endl << mean2 << stdev2 << il2 << c2;
 
   /*delete &clc;
   delete &clth;

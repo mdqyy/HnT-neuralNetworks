@@ -27,77 +27,38 @@ int main (int argc, char* argv[]){
   ClassificationDataset dataset;
   dataset.load("../xml/xor.xml");
 
-   vector<NeuralNetwork*> forwardP=vector<NeuralNetwork*>();
+  /* vector<NeuralNetworkPtr> forwardP=vector<NeuralNetworkPtr>();
 
-  InputLayer il(2,dataset.getMean(),dataset.getStandardDeviation());
-  LayerSigmoid th(3);
-  LayerSigmoid out(2);
-  Connection c1(&il,&th,520);
-  Connection c2(&th,&out,523);
-  vector<Layer*> layers;
-  layers.push_back(&il);
-  layers.push_back(&th);
-  layers.push_back(&out);
-  vector<Connection*> connections;
-  connections.push_back(&c1);
-  connections.push_back(&c2);
-  NeuralNetwork nnTest(&il,layers,&out,connections,"f1");
-  forwardP.push_back(&nnTest);
+  LayerPtr il = LayerPtr(new InputLayer(2,dataset.getMean(),dataset.getStandardDeviation()));
+  LayerPtr th = LayerPtr(new LayerSigmoid(2));
+  LayerPtr out = LayerPtr(new LayerSigmoid(2));
+  ConnectionPtr c1 = ConnectionPtr(new Connection(il.get(),th.get(),20));
+  ConnectionPtr c2 = ConnectionPtr(new Connection(th.get(),out.get(),23));
 
-  InputLayer il1(2,dataset.getMean(),dataset.getStandardDeviation());
-  LayerSigmoid th1(3);
-  LayerSigmoid out1(2);
-  Connection c11(&il1,&th1,420);
-  Connection c12(&th1,&out1,423);
-  vector<Layer*> layers1;
-  layers1.push_back(&il1);
-  layers1.push_back(&th1);
-  layers1.push_back(&out1);
-  vector<Connection*> connections1;
-  connections1.push_back(&c11);
-  connections1.push_back(&c12);
-  NeuralNetwork nnTest1(&il1,layers1,&out1,connections1,"f2");
-  forwardP.push_back(&nnTest1);
+  vector<LayerPtr> layers;
+  layers.push_back(il);
+  layers.push_back(th);
+  layers.push_back(out);
+  vector<ConnectionPtr> connections;
+  connections.push_back(c1);
+  connections.push_back(c2);
+  NeuralNetwork nnTest(layers,connections,"testNN");
+  
 
-  InputLayer il2(2,dataset.getMean(),dataset.getStandardDeviation());
-  LayerSigmoid th2(3);
-  LayerSigmoid out2(2);
-  Connection c21(&il2,&th2,201);
-  Connection c22(&th2,&out2,232);
-  vector<Layer*> layers2;
-  layers2.push_back(&il2);
-  layers2.push_back(&th2);
-  layers2.push_back(&out2);
-  vector<Connection*> connections2;
-  connections2.push_back(&c21);
-  connections2.push_back(&c22);
-  NeuralNetwork nnTest2(&il2,layers2,&out2,connections2,"f3");
-  forwardP.push_back(&nnTest2);
+  forwardP.push_back(NeuralNetworkPtr(new NeuralNetwork(nnTest)));
+  forwardP.push_back(NeuralNetworkPtr(new NeuralNetwork(nnTest)));
+  forwardP.push_back(NeuralNetworkPtr(new NeuralNetwork(nnTest)));
 
-  InputLayer il3(2,dataset.getMean(),dataset.getStandardDeviation());
-  LayerSigmoid th3(3);
-  LayerSigmoid out3(2);
-  Connection c31(&il3,&th3,205);
-  Connection c32(&th3,&out3,231);
-  vector<Layer*> layers3;
-  layers3.push_back(&il3);
-  layers3.push_back(&th3);
-  layers3.push_back(&out3);
-  vector<Connection*> connections3;
-  connections3.push_back(&c31);
-  connections3.push_back(&c32);
-  NeuralNetwork nnTest3(&il3,layers3,&out3,connections3,"f4");
-  forwardP.push_back(&nnTest3);
-
-  PBDNN testpop(forwardP);
+  PBDNN testpop(forwardP);*/
+  PBDNN testpop(4,2,2,dataset.getMean(), dataset.getStandardDeviation());
   testpop.forwardSequence(dataset[0]);
   cout << testpop.getOutputSequence()[0];
 
   Mask mask;
   PopulationBPParams params;
   PopulationBP pbp(testpop,dataset,params,mask,mask);
+
   pbp.train();
-  
   ClassificationDataset errxor;
   errxor.setName("XorPoped");
   errxor.addClass("positive");
@@ -108,5 +69,17 @@ int main (int argc, char* argv[]){
     errxor.addSequence(testpop.getOutputSequence()[0],dataset.getSampleClassIndex(i,0));
   }
   errxor.save("../xml/errxor.xml");
+
+  cout << endl <<"Loading and saving" << endl;
+  ofstream outStream("testPopSave.txt");
+  outStream << testpop;
+  cout << "saving done" << endl;
+  ifstream in("testPopSave.txt");
+  PBDNN loadedPBDNN;
+  in >> loadedPBDNN;
+  testpop.forwardSequence(dataset[0]);
+  loadedPBDNN.forwardSequence(dataset[0]);
+  cout << testpop.getOutputSequence()[0];
+  cout << loadedPBDNN.getOutputSequence()[0];
   return EXIT_SUCCESS;
 }

@@ -15,12 +15,20 @@ Layer::Layer() : Machine("Layer"), numUnits(1),inputConnection(0), outputConnect
 
 Layer::Layer(uint _numUnits, string _name) : Machine(_name), numUnits(_numUnits),inputConnection(0), outputConnection(0), outputSignal(FeatureVector(_numUnits+1)), deltas(ErrorVector(_numUnits+1)), inputSignal(_numUnits){
   assert(numUnits>0);
-
 }
 
-Layer::Layer(const Layer& _cl) : Machine(_cl.getName()), numUnits(_cl.getNumUnits()),   inputConnection(_cl.getInputConnection()), outputConnection(_cl.getOutputConnection()), outputSignal(FeatureVector(numUnits+1)), deltas(ErrorVector(numUnits+1)){
-
+Layer::Layer(const Layer& _cl) : Machine(_cl.getName()), numUnits(_cl.getNumUnits()),   inputConnection(0), outputConnection(0), outputSignal(FeatureVector(numUnits+1)), deltas(ErrorVector(numUnits+1)){
+  if(_cl.getInputConnection() !=0){
+    inputConnection = _cl.getInputConnection();
+  }
+  if(_cl.getOutputConnection()!=0){
+    outputConnection = _cl.getOutputConnection();
+  }
 }
+
+/*int Layer::getLayerType() const{
+  return LAYER;
+  }*/
 
 uint Layer::getNumUnits() const{
   return numUnits;
@@ -44,6 +52,10 @@ FeatureVector Layer::getOutputSignal() const{
 
 ErrorVector Layer::getErrorVector() const{
   return deltas;
+}
+
+void Layer::setNumUnits(uint _numUnits){
+  numUnits=_numUnits;
 }
 
 void Layer::setErrorVector(ErrorVector _deltas){
@@ -89,9 +101,9 @@ Layer::~Layer(){
   outputConnection = 0;
 }
 
-ostream& operator<<(ostream& os, const Layer& l){
-  os << "Neuron layer : " << endl;
-  os << "\t -Name :"<< l.getName() << endl;
-  os << "\t -Units : "<< l.getNumUnits() << endl;
-  return os;
+ostream& operator<<(ostream& _os, const Layer& _l){
+  _l.print(_os);
+  return _os;
 }
+
+

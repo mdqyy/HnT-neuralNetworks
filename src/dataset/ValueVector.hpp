@@ -8,6 +8,7 @@
 
 #include "../General.hpp"
 #include <iostream>
+#include <fstream>
 #include <stdexcept>
 #include <opencv/cv.h>
 
@@ -90,7 +91,24 @@ class ValueVector {
    * \param fv Value vector.
    * \return Output stream.
    */
-  friend std::ostream& operator<<(std::ostream& os, const ValueVector& fv);
+  friend std::ostream& operator<<(std::ostream& os, const ValueVector& v);
+
+
+  /*!
+   * File output stream.
+   * \param ofs Output file stream.
+   * \param v Value layer.
+   * \return File Output stream.
+   */
+  friend std::ofstream& operator<<(std::ofstream& ofs, const ValueVector& v);
+
+  /*!
+   * File input stream.
+   * \param ifs Input file stream.
+   * \param v Value vector.
+   * \return File Input stream.
+   */
+  friend std::ifstream& operator>>(std::ifstream& ifs, ValueVector& v);
 
 };
 

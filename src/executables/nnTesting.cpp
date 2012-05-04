@@ -42,6 +42,8 @@ int main (int argc, char* argv[]){
   cout << *il << *th;
   cout << *c1;
   cout << *c2;
+  nnTest.forward(dataset[0][0]);
+ cout << nnTest.getOutputSignal() << endl;
 
   /* Copy test */
   cout << "Copy "<<  endl; 
@@ -82,5 +84,17 @@ int main (int argc, char* argv[]){
   cout << *nnc->getInputLayer()->getOutputConnection() << endl;
   cout << *nnc->getOutputLayer()->getInputConnection()->getInputLayer()->getInputConnection() << endl;
     
+
+  cout << endl <<"Loading and saving" << endl;
+  ofstream outStream("testNNSave.txt");
+  outStream << nnTest;
+  cout << "saving done" << endl;
+  ifstream in("testNNSave.txt");
+  NeuralNetwork loadedNN;
+  in >> loadedNN;
+  nnTest.forward(dataset[0][0]);
+  loadedNN.forward(dataset[0][0]);
+  cout << nnTest.getOutputSignal() << endl;
+  cout << loadedNN.getOutputSignal() << endl;
   return EXIT_SUCCESS;
 }

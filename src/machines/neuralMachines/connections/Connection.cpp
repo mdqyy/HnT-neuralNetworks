@@ -9,6 +9,9 @@
 using namespace std;
 using namespace cv;
 
+Connection::Connection() : from(0),to(0),weights(cv::Mat()){
+}
+
 Connection::Connection(Layer* _from, Layer* _to, uint _seed) : from(_from), to(_to), weights(cv::Mat()){
   int rows=to->getNumUnits();
   int cols=from->getNumUnits()+1;
@@ -29,7 +32,13 @@ Connection::Connection(Layer* _from, Layer* _to, cv::Mat _weights) : from(_from)
   assert(cols==weights.cols);
 }
 
-Connection::Connection(const Connection& _c) :  from(_c.getInputLayer()->clone()), to(_c.getOutputLayer()->clone()){
+Connection::Connection(const Connection& _c) :  from(0), to(0){
+  if(_c.getInputLayer()!=0){
+    from = _c.getInputLayer()->clone();
+  }
+  if(_c.getOutputLayer()!=0){
+    to = _c.getOutputLayer()->clone();
+  }
   weights = _c.getWeights().clone();
 }
 
@@ -50,16 +59,21 @@ Layer* Connection::getOutputLayer() const{
 }
 
 void Connection::setWeights(Mat _weights){
-  if(to->getNumUnits()==((uint)weights.rows) && from->getNumUnits()+1==((uint)weights.cols)){
-    weights=_weights;
+  if(from!=0 && to!=0){
+    if(to->getNumUnits()==((uint)weights.rows) && from->getNumUnits()+1==((uint)weights.cols)){
+      weights=_weights;
+    }
+    else{
+      throw("Connection : Wrong weight matrix size");
+    }
   }
   else{
-    throw("Connection : Wrong weight matrix size");
+      weights=_weights;
   }
 }
 
 void Connection::setInputLayer(Layer* _input){
-  if(from->getNumUnits()+1==((uint)weights.cols)){
+  if(_input->getNumUnits()+1==((uint)weights.cols)){
     from=_input;
   }
   else{
@@ -68,7 +82,7 @@ void Connection::setInputLayer(Layer* _input){
 }
 
 void Connection::setOutputLayer(Layer* _output){
-  if(to->getNumUnits()==((uint)weights.rows)){
+  if(_output->getNumUnits()==((uint)weights.rows)){
     to=_output;   
   }
   else{
@@ -114,7 +128,11 @@ Connection::~Connection(){
 }
 
 ostream& operator<<(ostream& os, const Connection& c){
-  os << "Connection between " << c.getInputLayer()->getName() <<" and " << c.getOutputLayer()->getName() << endl;
+  os << "Connection";
+  if(c.getInputLayer()!=0 && c.getOutputLayer()!=0){
+    os <<" between "<<  c.getInputLayer()->getName() <<" and " << c.getOutputLayer()->getName();
+  }
+  os << endl;
   os << " Weight matrix " << endl;
   Mat temp = c.getWeights();
   for(int i=0;i< temp.rows;i++){
@@ -124,4 +142,43 @@ ostream& operator<<(ostream& os, const Connection& c){
     os << endl;
   }
   return os;
+}
+
+ofstream& operator<<(ofstream& ofs, const Connection& l){
+  Mat weightsTmp = l.getWeights();
+  ofs << "< " << weightsTmp.rows << " "<< weightsTmp.cols <<" [" ;
+  for(uint i =0; i<weightsTmp.rows;i++){
+    for(uint j=0;j<weightsTmp.cols;j++){
+      ofs << " "<< weightsTmp.at<realv>(i,j);
+    }
+    ofs << endl;
+  }
+  ofs <<"] >"<< endl;
+  return ofs;
+}
+
+ifstream& operator>>(ifstream& ifs, Connection& l){
+  Mat weights;
+  string temp;
+  int cols,rows;
+  ifs >> temp;
+  ifs >> rows;
+  ifs >> cols;
+  ifs >> temp;
+  #ifdef REAL_DOUBLE
+  weights = cv::Mat(rows,cols,CV_64FC1,0.0);
+  #else
+  weights = cv::Mat(rows,cols,CV_32FC1,0.0);
+  #endif
+  realv value;
+  for(uint i=0; i<rows;i++){
+    for(uint j=0;j<cols;j++){
+      ifs >> value;
+      weights.at<realv>(i,j)=value ;
+    }
+  }
+  ifs >> temp;
+  ifs >> temp;
+  l.setWeights(weights);
+  return ifs;
 }

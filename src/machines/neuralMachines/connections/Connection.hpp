@@ -33,7 +33,10 @@ class Connection : public Clonable{
 
  public:
 
-
+  /*!
+   * Default constructor.
+   */
+  Connection();
 
   /*!
    * Parameter constructor.
@@ -147,12 +150,29 @@ class Connection : public Clonable{
   ~Connection();
 
   /*!
-   * Output stream fo
+   * Output stream.
    * \param os Output stream.
    * \param c Connection.
    * \return Output stream.
    */
   friend std::ostream& operator<<(std::ostream& os, const Connection& c);
+
+
+  /*!
+   * Output file stream.
+   * \param ofs Output file stream.
+   * \param c Connection.
+   * \return Output file stream.
+   */
+  friend std::ofstream& operator<<(std::ofstream& ofs, const Connection& c);
+
+  /*!
+   * Input file stream.
+   * \param ifs Input file stream.
+   * \param c Connection.
+   * \return Input file stream.
+   */
+  friend std::ifstream& operator>>(std::ifstream& ifs, Connection& c);
 };
 
 typedef boost::shared_ptr<Connection> ConnectionPtr;

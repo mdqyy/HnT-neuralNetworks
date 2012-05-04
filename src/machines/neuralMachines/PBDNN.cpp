@@ -9,6 +9,10 @@
 using namespace std;
 using namespace cv;
 
+PBDNN::PBDNN(){
+
+}
+
 PBDNN::PBDNN(vector<NeuralNetworkPtr> _forwards) : forwardPopulation(_forwards), errors(vector<FeatureVector>()) {
 
 }
@@ -57,4 +61,31 @@ vector<FeatureVector> PBDNN::getOutputSequence(){
 
 PBDNN::~PBDNN(){
 
+}
+
+ofstream& operator<<(ofstream& _ofs, const PBDNN& _pop){
+  _ofs << "< ";
+  vector<NeuralNetworkPtr> population= _pop.getPopulation();
+  _ofs << population.size() << endl;
+  for(uint i = 0; i<population.size();i++){
+    _ofs << *(population[i].get()) << endl;
+  }
+  _ofs << " >";
+  return _ofs;
+}
+
+ifstream& operator>>(ifstream& _ifs, PBDNN& _pop){
+  string temp;
+  int popSize;
+  vector<NeuralNetworkPtr> population = vector<NeuralNetworkPtr>();
+  _ifs >> temp;
+  _ifs >> popSize;
+  for(uint i = 0; i<popSize;i++){
+    NeuralNetwork nnTemp;
+    _ifs >> nnTemp;
+    population.push_back(NeuralNetworkPtr(new NeuralNetwork(nnTemp)));
+  }
+  _pop = PBDNN(population);
+  _ifs >> temp;
+  return _ifs;
 }

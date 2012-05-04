@@ -29,7 +29,13 @@ class PBDNN : public NeuralMachine{
   /*!
    * Default constructor.
    */
-  PBDNN(std::vector<NeuralNetworkPtr> _forwards);
+  PBDNN();
+
+  /*!
+   * Parameter constructor.
+   * \param _population Population of networks.
+   */
+  PBDNN(std::vector<NeuralNetworkPtr> _population);
 
   /*!
    * Parameter constructor.
@@ -63,6 +69,22 @@ class PBDNN : public NeuralMachine{
    * Destructor.
    */
   ~PBDNN();
+
+ /*!
+   * Output file stream.
+   * \param ofs Output file stream.
+   * \param c Connection.
+   * \return Output file stream.
+   */
+  friend std::ofstream& operator<<(std::ofstream& _ofs, const PBDNN& _pop);
+
+  /*!
+   * Input file stream.
+   * \param _ifs Input file stream.
+   * \param _pop Population of neural networks.
+   * \return Input file stream.
+   */
+  friend std::ifstream& operator>>(std::ifstream& _ifs, PBDNN& _pop);
 
 };
 

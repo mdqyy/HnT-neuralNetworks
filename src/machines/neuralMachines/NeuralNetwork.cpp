@@ -9,34 +9,15 @@
 using namespace std;
 using namespace cv;
 
+NeuralNetwork::NeuralNetwork() : NeuralMachine("perceptron"),hiddenLayers(vector<LayerPtr>()), connections(vector<ConnectionPtr>()), readForward(true){
+
+}
+
 NeuralNetwork::NeuralNetwork(vector<LayerPtr> _hidden, vector<ConnectionPtr> _connections, bool _forward,string _name) : NeuralMachine(_name), hiddenLayers(_hidden), connections(_connections), readForward(_forward){
   
 }
-/*
-NeuralNetwork::NeuralNetwork(const NeuralNetwork& _cnn) : NeuralMachine(_cnn.getName()+" copy"), input(_cnn.getInputLayer()->clone()),hiddenLayers(vector<Layer*>()), output(_cnn.getOutputLayer()->clone()), connections(vector<Connection*>()), readForward(_cnn.isForward()){
-  vector<Layer *> tempLayers = _cnn.getHiddenLayers();
-  for(int i=0;i<tempLayers.size();i++){
-    if(i==0){
-      hiddenLayers.push_back(input);
-    }
-    else if(i==tempLayers.size()-1){
-      hiddenLayers.push_back(output);
-    }
-    else{
-      hiddenLayers.push_back(tempLayers[i]->clone());
-    }
-  }
-  vector<Connection *> tempConnections = _cnn.getConnections();
-  for (int i=0;i<tempConnections.size();i++){
-    connections.push_back(tempConnections[i]->clone());
-    connections[i]->setInputLayer(hiddenLayers[i]);
-    hiddenLayers[i]->setOutputConnection(connections[i]);
-    connections[i]->setOutputLayer(hiddenLayers[i+1]);
-    hiddenLayers[i+1]->setInputConnection(connections[i]);
-  }
-}*/
 
-NeuralNetwork::NeuralNetwork(const NeuralNetwork& _cnn) : NeuralMachine(_cnn.getName()+" copy"),hiddenLayers(vector<LayerPtr>()), connections(vector<ConnectionPtr>()), readForward(_cnn.isForward()){
+NeuralNetwork::NeuralNetwork(const NeuralNetwork& _cnn) : NeuralMachine(_cnn.getName()),hiddenLayers(vector<LayerPtr>()), connections(vector<ConnectionPtr>()), readForward(_cnn.isForward()){
   vector<LayerPtr> tempLayers = _cnn.getHiddenLayers();
   for(int i=0;i<tempLayers.size();i++){
     hiddenLayers.push_back(LayerPtr(tempLayers[i]->clone()));
@@ -119,4 +100,111 @@ void NeuralNetwork::backward(FeatureVector _target,realv _learningRate){
 
 NeuralNetwork::~NeuralNetwork(){
 
+}
+
+ofstream& operator<<(ofstream& ofs, const NeuralNetwork& nn){
+  ofs << "< ";
+  ofs << nn.getName()<< " ";
+  ofs << nn.isForward()<< " ";
+  vector<ConnectionPtr> connections = nn.getConnections();
+  vector<LayerPtr> layers = nn.getHiddenLayers();  
+  ofs << layers.size()<< " " << connections.size()<< endl;
+  for(uint i=0;i<connections.size();i++){
+    ofs << *(connections[i].get());
+    ofs << endl;
+  }
+  for(uint i=0;i<layers.size();i++){
+    switch(layers[i]->getLayerType()){
+    case 1 :{
+      InputLayer* tempIn = (InputLayer*)((layers[i].get()));
+      ofs << layers[i]->getLayerType() <<" ";
+      ofs << *tempIn;      
+      break;}
+    case 2 :{
+      LayerSigmoid* tempSig = (LayerSigmoid*)((layers[i].get()));
+      ofs << layers[i]->getLayerType() <<" ";
+      ofs << *tempSig;      
+      break;}
+    case 3 :{
+      LayerTanh* tempTanh = (LayerTanh*)((layers[i].get()));
+      ofs << layers[i]->getLayerType() <<" ";
+      ofs << *tempTanh;      
+      break;}
+    case 4 :{
+      LayerSoftMax* tempSM = (LayerSoftMax*)((layers[i].get()));
+      ofs << layers[i]->getLayerType() <<" ";
+      ofs << *tempSM;      
+      break;}
+    default :{
+      break;}
+    }
+    ofs << endl;
+    }
+  ofs << " >"<< endl;
+  return ofs;
+}
+
+ifstream& operator>>(ifstream& ifs, NeuralNetwork& nn){
+  string name, temp;
+  int forwardInt, numConnections, numLayers, layerType;
+  bool forwardBool;
+  vector<ConnectionPtr> connections = vector<ConnectionPtr>();
+  vector<LayerPtr> layers = vector<LayerPtr>();
+  ifs >> temp ;
+  ifs >> name;
+  ifs >> forwardInt;
+  forwardBool = forwardBool==1;
+  ifs >> numLayers;
+  ifs >> numConnections;
+  for(uint i=0;i<numConnections;i++){
+    Connection tempCo;
+    ifs >> tempCo;
+    ConnectionPtr temp = ConnectionPtr(new Connection(tempCo));
+    connections.push_back(temp);
+  }
+  for(uint i=0;i<numLayers;i++){
+    ifs >> layerType;
+    switch(layerType){
+    case 1 :{
+      InputLayer tempLayer;
+      ifs >> tempLayer;
+      LayerPtr temp = LayerPtr(new InputLayer(tempLayer));
+      layers.push_back(temp);
+      break;
+    }
+    case 2 :{
+      LayerSigmoid tempLayer;
+      ifs >> tempLayer;
+      LayerPtr temp = LayerPtr(new LayerSigmoid(tempLayer));
+      layers.push_back(temp);
+      break;
+    }
+    case 3 :{
+      LayerTanh tempLayer;
+      ifs >> tempLayer;
+      LayerPtr temp = LayerPtr(new LayerTanh(tempLayer));
+      layers.push_back(temp);
+      break;
+    }
+    case 4 :{
+      LayerSoftMax tempLayer;
+      ifs >> tempLayer;
+      LayerPtr temp = LayerPtr(new LayerSoftMax(tempLayer));
+      layers.push_back(temp);
+      break;
+    }
+    default :{
+      break;
+    }
+    }
+  }  
+  for(uint i=0;i<numConnections;i++){
+    connections[i].get()->setInputLayer(layers[i].get());
+    layers[i]->setOutputConnection(connections[i].get());
+    connections[i]->setOutputLayer(layers[i+1].get());
+    layers[i+1]->setInputConnection(connections[i].get());
+  }
+  ifs >> temp;
+  nn = NeuralNetwork(layers,connections,forwardBool,name);
+  return ifs;
 }

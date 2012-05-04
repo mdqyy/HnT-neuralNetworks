@@ -26,6 +26,10 @@ InputLayer* InputLayer::clone() const{
   return new InputLayer(*this);
 }
 
+int InputLayer::getLayerType() const{
+  return LAYER_INPUT;
+}
+
 ValueVector InputLayer::getMean() const{
   return meanVector;
 }
@@ -75,9 +79,33 @@ InputLayer::~InputLayer(){
 
 }
 
-ostream& operator<<(ostream& os, const InputLayer& l){
-  os << "Input neuron layer : " << endl;
-  os << "\t -Name :"<< l.getName() << endl;
-  os << "\t -Units : "<< l.getNumUnits() << endl;
-  return os;
+//ostream& operator<<(ostream& os, const InputLayer& l){
+void InputLayer::print(std::ostream& _os) const{
+  _os << "Input neuron layer : " << endl;
+  _os << "\t -Name :"<< getName() << endl;
+  _os << "\t -Units : "<< getNumUnits() << endl;
+}
+
+ofstream& operator<<(ofstream& ofs, const InputLayer& l){
+  ofs << "< "<<l.getName()<<" "<<l.getNumUnits()<<" ";
+  ofs << l.getMean()<<" ";
+  ofs << l.getStandardDeviation()<<" >"<<endl;
+  return ofs;
+}
+
+ifstream& operator>>(ifstream& ifs, InputLayer& l){
+  int nUnits;
+  ValueVector meanV, stdV;
+  string name,temp;
+  ifs >> temp;
+  ifs >> name ;
+  ifs >> nUnits ;
+  ifs >> meanV ;
+  ifs >> stdV;
+  ifs >> temp;
+  l.setName(name);
+  l.setNumUnits(nUnits);
+  l.setMean(meanV);
+  l.setStandardDeviation(stdV);
+  return ifs;
 }

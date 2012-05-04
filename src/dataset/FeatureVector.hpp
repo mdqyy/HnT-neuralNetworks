@@ -48,6 +48,23 @@ class FeatureVector : public ValueVector{
    */
   friend std::ostream& operator<<(std::ostream& os, const FeatureVector& fv);
 
+
+  /*!
+   * File output stream.
+   * \param ofs Output file stream.
+   * \param fv Feature layer.
+   * \return File Output stream.
+   */
+  friend std::ofstream& operator<<(std::ofstream& ofs, const FeatureVector& fv);
+
+  /*!
+   * File input stream.
+   * \param ifs Input file stream.
+   * \param fv Feature vector.
+   * \return File Input stream.
+   */
+  friend std::ifstream& operator>>(std::ifstream& ifs, FeatureVector& fv);
+
 };
 
 

@@ -1,8 +1,8 @@
-#ifndef __LAYERTANH_HPP__
-#define __LAYERTANH_HPP__
+#ifndef __LAYERSIGMOID_HPP__
+#define __LAYERSIGMOID_HPP__
 /*!
- * \file LayerTanh.hpp
- * Header of the LayerTanh class.
+ * \file LayerSigmoid.hpp
+ * Header of the LayerSigmoid class.
  * \author Luc Mioulet
  */
 
@@ -10,42 +10,43 @@
 #include <stdexcept>
 
 /*!
- * \class LayerTanh
+ * \class LayerSigmoid
  * Hyperbolic tangent layer.
  */
-class LayerTanh : public Layer {
+class LayerSigmoid : public Layer {
  private :
 
  protected:
 
  public:
 
-  LayerTanh();
+  LayerSigmoid();
 
   /*!
    * Parameter constructor.
    * \param _numUnits Number of units in the layer.
    * \param _name Name of the layer.
    */
-  LayerTanh(uint _numUnits,std::string _name="tanh_layer");
-
+  LayerSigmoid(uint _numUnits,std::string _name="sigmoid_layer");
+  
   /*!
-   * Copy cnstructor.
-   * \param _clth Layer to copy.
+   * Copy constructor.
+   * \param _cls Layer to copy.
    */
-  LayerTanh(const LayerTanh& _clth);
+  LayerSigmoid(const LayerSigmoid& _cls);
 
+  
   /*!
    * Clone a layer
    * \return Pointer to a clone.
    */
-  LayerTanh* clone() const;
+  virtual LayerSigmoid* clone() const;
 
   /*!
    * Get the layer type.
    * \return Layer type.
    */
-  virtual int getLayerType() const;
+  int getLayerType() const;
 
   /*! 
    * Forward a feature vector.
@@ -75,7 +76,7 @@ class LayerTanh : public Layer {
   /*!
    * Destructor.
    */
-  virtual ~LayerTanh();
+  virtual ~LayerSigmoid();
 
   /*!
    * Output stream fo
@@ -83,24 +84,24 @@ class LayerTanh : public Layer {
    * \param l Layer.
    * \return Output stream.
    */
-  //friend std::ostream& operator<<(std::ostream& os, const LayerTanh& l);
+  //friend std::ostream& operator<<(std::ostream& os, const LayerSigmoid& l);
   void print(std::ostream& _os) const;
 
   /*!
    * File output stream.
    * \param ofs Output file stream.
-   * \param l Tanh layer.
+   * \param l Sigmoid layer.
    * \return File Output stream.
    */
-  friend std::ofstream& operator<<(std::ofstream& ofs, const LayerTanh& l);
+  friend std::ofstream& operator<<(std::ofstream& ofs, const LayerSigmoid& l);
 
   /*!
    * File input stream.
    * \param ifs Input file stream.
-   * \param l Tanh layer.
+   * \param l Sigmoid layer.
    * \return File Input stream.
    */
-  friend std::ifstream& operator>>(std::ifstream& ifs, LayerTanh& l);
+    friend std::ifstream& operator>>(std::ifstream& ifs, LayerSigmoid& l);
 };
 
 

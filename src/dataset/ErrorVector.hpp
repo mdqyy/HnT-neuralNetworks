@@ -42,10 +42,26 @@ class ErrorVector : public ValueVector{
   /*!
    * Output error vector data.
    * \param os Output stream.
-   * \param fv Error vector.
+   * \param ev Error vector.
    * \return Output stream.
    */
-  friend std::ostream& operator<<(std::ostream& os, const ErrorVector& fv);
+  friend std::ostream& operator<<(std::ostream& os, const ErrorVector& ev);
+
+  /*!
+   * File output stream.
+   * \param ofs Output file stream.
+   * \param l Input layer.
+   * \return File Output stream.
+   */
+  friend std::ofstream& operator<<(std::ofstream& ofs, const ErrorVector& ev);
+
+  /*!
+   * File input stream.
+   * \param ifs Input file stream.
+   * \param ev Error vector.
+   * \return File Input stream.
+   */
+  friend std::ifstream& operator>>(std::ifstream& ifs, ErrorVector& ev);
 
 };
 

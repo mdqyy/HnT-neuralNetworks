@@ -31,3 +31,28 @@ ostream& operator<<(ostream& os, const ErrorVector& fv){
   os << endl;
   return os;
 }
+
+ofstream& operator<<(ofstream& ofs, const ErrorVector& ev){
+  ofs << "< L " << ev.getLength() << " [";
+  for (int i = 0; i < ev.getLength(); i++){
+    ofs << " "<< ev[i];
+    }
+  ofs << "] > "<< endl;
+  return ofs;
+
+  return ofs;
+}
+
+ifstream& operator>>(ifstream& ifs, ErrorVector& ev){
+  uint vLength;
+  realv value;
+  string temp;
+  ifs >> temp >> vLength >> temp;
+  ev= ErrorVector(vLength);
+  for (int i = 0; i < ev.getLength(); i++){
+    ifs >> value ;
+    ev[i]= value;
+  }
+  ifs >> temp;
+  return ifs;
+}

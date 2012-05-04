@@ -15,11 +15,11 @@ PopulationBP::PopulationBP(PBDNN& _population, SupervisedDataset& _data, Populat
 
 void PopulationBP::train(){
   uint i=0;
-  preTrain();
   do{
     i++;
     trainOneIteration();
     params.setLearningRate(params.getLearningRate()*params.getLearningRateDecrease());
+    params.setErrorToFirst(params.getErrorToFirst()*params.getErrorToFirstIncrease());
   }while(i<params.getMaxIterations());
 }
 
@@ -36,7 +36,7 @@ void forwardBackwardNetworksThread(vector<NeuralNetworkPtr> neuralNets, uint j, 
   random.next();
   neuralNets[k]->forward(fv);
   (*mses)[k].totalError(neuralNets[k]->getOutputSignal(),fv);
-  neuralNets[k]->backward(fv, lr*random.gaussian(1.0));
+  neuralNets[k]->backward(fv, lr*random.gaussian(5.0));
   *error += ((*mses)[k].getError())/((realv)neuralNets.size());
 }
 
@@ -74,7 +74,6 @@ void PopulationBP::preTrain(){
 void PopulationBP::trainOneIteration(){
   vector<uint> indexOrderSelection=defineIndexOrderSelection(data.getNumSequences());
   uint index=0;
-
   vector<FeatureVector> errors;
   vector<NeuralNetworkPtr> neuralNets=population.getPopulation();
   vector<MSEMeasurer> mses(neuralNets.size());
@@ -110,36 +109,27 @@ void PopulationBP::trainOneIteration(){
       for(uint k=0;k<neuralNets.size();k++){
 	if(mses[k].getError()<minError){
 	  minError=mses[k].getError();
-	  scoreList.push_front(mses[k].getError());
-	  indexList.push_front(k);
-	}
-	else{
-	  scoreList.push_back(mses[k].getError());
-	  indexList.push_back(k);
 	}
       }
-      list<int>::iterator iterIndex=indexList.begin();
-      list<realv>::iterator iterScore=scoreList.begin();
-      realv errorDifference=params.getErrorToFirst();
+      realv similarity=params.getErrorToFirst();
       uint numberTrained=0;
       realv trainedError=0;
       vector<bool> trained(neuralNets.size(),false);
-      while(abs(minError/(*iterScore))>errorDifference && iterScore!=scoreList.end() && numberTrained<params.getMaxTrained() && numberTrained<neuralNets.size()){
-	trained[*iterIndex]=true;
-	neuralNets[*iterIndex]->backward(data[index][j], params.getLearningRate());
-	sampleError+= *iterScore;
-	trainedError += mses[*iterIndex].getError();
-	histogramOfTrainees[*iterIndex] = histogramOfTrainees[*iterIndex]+1;
-	for(int l=0;l<neuralNets.size();l++){
-	  if(l!=(*iterIndex) && trained[l]){
-	    correlatedTraining[l][*iterIndex] +=1;
-	    correlatedTraining[*iterIndex][l] +=1;
+      for(uint k=0;k<neuralNets.size();k++){
+	if(minError/mses[k].getError()>=similarity){
+	  trained[k]=true;
+	  neuralNets[k]->backward(data[index][j], params.getLearningRate());
+	  sampleError+= mses[k].getError();
+	  histogramOfTrainees[k] = histogramOfTrainees[k]+1;
+	  for(int l=0;l<neuralNets.size();l++){
+	    if(l!=k && trained[l]){
+	      correlatedTraining[l][k] +=1;
+	      correlatedTraining[k][l] +=1;
+	    }
 	  }
+	  numberTrained++;
+	  averageNumberTrained +=1.0;
 	}
-	iterIndex++;
-	iterScore++;
-	numberTrained++;
-	averageNumberTrained +=1.0;
       }
       seqError += sampleError/((realv)numberTrained);
     }
@@ -151,7 +141,7 @@ void PopulationBP::trainOneIteration(){
   cout << "Correlated trainings" << endl;
   for(uint k=0; k<neuralNets.size();k++){
     for(uint l=0; l<neuralNets.size();l++){
-      cout << correlatedTraining[k][l]<<" ";
+      cout << correlatedTraining[k][l]/((realv)data.getNumSamples())<<" ";
     }
     cout << endl;
   }

@@ -16,6 +16,13 @@
 #include "../../Machine.hpp"
 #include <boost/shared_ptr.hpp>
 
+#define LAYER 0
+#define LAYER_INPUT 1
+#define LAYER_SIGMOID 2
+#define LAYER_TANH 3
+#define LAYER_SOFTMAX 4
+
+
 class Connection;
 
 /*!
@@ -64,6 +71,12 @@ class Layer : public Machine, public Clonable {
   virtual Layer* clone() const = 0;
   
   /*!
+   * Get the layer type.
+   * \return Layer type.
+   */
+  virtual int getLayerType() const = 0;
+  
+  /*!
    * Get the number of units.
    * \return Number of units in the network.
    */
@@ -98,6 +111,13 @@ class Layer : public Machine, public Clonable {
    * \return Error vector.
    */
   ErrorVector getErrorVector() const;
+
+  /*!
+   * Set number of units.
+   * \remark Do not use after having connected this to a network …
+   * \param _numUnits Number of units.
+   */
+  void setNumUnits(uint _numUnits);
 
   /*!
    * Set error vector of the layer.
@@ -168,9 +188,11 @@ class Layer : public Machine, public Clonable {
   /*!
    * Destructor.
    */
-  ~Layer();
+  virtual ~Layer();
 
   friend std::ostream& operator<<(std::ostream& _os, const Layer& _l);
+
+  virtual void print(std::ostream& _os) const =0;
 
 };
 

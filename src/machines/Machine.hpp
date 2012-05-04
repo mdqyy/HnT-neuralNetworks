@@ -52,7 +52,6 @@ class Machine {
    */
   virtual void forwardSequence(std::vector<FeatureVector> _sequence)=0;
 
-
   /*!
    * Destructor.
    */

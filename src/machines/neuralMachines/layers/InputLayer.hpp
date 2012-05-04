@@ -35,7 +35,7 @@ class InputLayer : public Layer{
    * \param _stdev Standard deviation.
    * \param _name Name of the layer.
    */
-  InputLayer(uint _numUnits, ValueVector _mean, ValueVector _stdev, std::string _name="input layer");
+  InputLayer(uint _numUnits, ValueVector _mean, ValueVector _stdev, std::string _name="input_layer");
 
   /*! 
    * Copy an existing InputLayer.
@@ -47,7 +47,13 @@ class InputLayer : public Layer{
    * Clone a layer
    * \return Pointer to a clone.
    */
-  virtual InputLayer* clone() const;
+  InputLayer* clone() const;
+
+  /*!
+   * Get the layer type.
+   * \return Layer type.
+   */
+  int getLayerType() const;
 
   /*!
    * Get mean value.
@@ -77,7 +83,7 @@ class InputLayer : public Layer{
    * Forward a feature vector from a previous layer.
    * \return Output feature vector. 
    */
-   virtual void forward();
+  void forward();
 
   /*! 
    * Forward a feature vector.
@@ -91,28 +97,44 @@ class InputLayer : public Layer{
    * \param _output Calculate errors as an output layer.
    * \param _target Target of the output layer.
    */
-  virtual void backwardDeltas(bool _output=true, FeatureVector _target=FeatureVector(0));
+  void backwardDeltas(bool _output=true, FeatureVector _target=FeatureVector(0));
 
 
   /*!
    * Backward propagation of weight changes.
    * \params _learningRate Weight change rate.
    */
-  virtual void backwardWeights(realv _learningRate);
+  void backwardWeights(realv _learningRate);
 
   /*!
    * Destructor.
    */
-  ~InputLayer();
+  virtual ~InputLayer();
 
   /*!
-   * Output stream fo
+   * Output stream.
    * \param os Output stream.
    * \param l Layer.
    * \return Output stream.
    */
-  friend std::ostream& operator<<(std::ostream& os, const InputLayer& l);
+  // friend std::ostream& operator<<(std::ostream& os, const InputLayer& l);
+  void print(std::ostream& _os) const;
 
+  /*!
+   * File output stream.
+   * \param ofs Output file stream.
+   * \param l Input layer.
+   * \return File Output stream.
+   */
+  friend std::ofstream& operator<<(std::ofstream& ofs, const InputLayer& l);
+
+  /*!
+   * File input stream.
+   * \param ifs Input file stream.
+   * \param l Input layer.
+   * \return File Input stream.
+   */
+  friend std::ifstream& operator>>(std::ifstream& ifs, InputLayer& l);
 };
 
 

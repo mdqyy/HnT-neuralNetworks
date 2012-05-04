@@ -26,6 +26,10 @@ LayerTanh* LayerTanh::clone() const {
   return new LayerTanh(*this);
 }
 
+int LayerTanh::getLayerType() const{
+  return LAYER_TANH;
+}
+
 void LayerTanh::forward(){
   outputSignal.reset(0.0);
   /* Accumulate neuron sum */
@@ -72,9 +76,27 @@ LayerTanh::~LayerTanh(){
 }
 
 
-ostream& operator<<(ostream& os, const LayerTanh& l){
-  os << "Tanh neuron layer : " << endl;
-  os << "\t -Name :"<< l.getName() << endl;
-  os << "\t -Units : "<<l.getNumUnits() << endl;
-  return os;
+//ostream& operator<<(ostream& os, const LayerTanh& l){
+void LayerTanh::print(ostream& _os) const{
+  _os << "Tanh neuron layer : " << endl;
+  _os << "\t -Name :"<< getName() << endl;
+  _os << "\t -Units : "<< getNumUnits() << endl;
+}
+
+ofstream& operator<<(ofstream& ofs, const LayerTanh& l){
+  ofs << "< "<<l.getName()<<" "<<l.getNumUnits()<<" >"<<endl;
+  return ofs;
+}
+
+ifstream& operator>>(ifstream& ifs, LayerTanh& l){
+  int nUnits;
+  ValueVector meanV, stdV;
+  string name,temp;
+  ifs >> temp;
+  ifs >> name ;
+  ifs >> nUnits ;
+  ifs >> temp;
+  l.setName(name);
+  l.setNumUnits(nUnits);
+  return ifs;
 }

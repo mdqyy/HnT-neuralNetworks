@@ -9,6 +9,8 @@
 #include "NeuralMachine.hpp"
 #include "layers/Layer.hpp"
 #include "layers/InputLayer.hpp"
+#include "layers/LayerTanh.hpp"
+#include "layers/LayerSoftMax.hpp"
 #include "layers/LayerSigmoid.hpp"
 #include "connections/Connection.hpp"
 #include "../../General.hpp"
@@ -40,6 +42,11 @@ class NeuralNetwork : public NeuralMachine, public Clonable {
     
  public:
 
+  /*!
+   * Default constructor.
+   */
+  NeuralNetwork();
+
   /*! 
    * Parameter constructor. 
    * \param _hidden Hidden layers.
@@ -47,7 +54,7 @@ class NeuralNetwork : public NeuralMachine, public Clonable {
    * \param _forward Controlling the sequence processing of the machine.
    * \param _name Machine name.
    */
-  NeuralNetwork(std::vector<LayerPtr> _hidden, std::vector<ConnectionPtr> _connections, bool _forward=true,std::string _name="neural network");
+  NeuralNetwork(std::vector<LayerPtr> _hidden, std::vector<ConnectionPtr> _connections, bool _forward=true,std::string _name="neural_network");
 
   /*!
    * Copy constructor.
@@ -129,11 +136,26 @@ class NeuralNetwork : public NeuralMachine, public Clonable {
    */
   void backward(FeatureVector _target, realv _learningRate);
   
-
   /*!
    * Destructor.
    */
   ~NeuralNetwork();
+
+  /*!
+   * Output file stream.
+   * \param ofs Output file stream.
+   * \param c Connection.
+   * \return Output file stream.
+   */
+  friend std::ofstream& operator<<(std::ofstream& ofs, const NeuralNetwork& c);
+
+  /*!
+   * Input file stream.
+   * \param ifs Input file stream.
+   * \param c Connection.
+   * \return Input file stream.
+   */
+  friend std::ifstream& operator>>(std::ifstream& ifs, NeuralNetwork& c);
 
 };
 
