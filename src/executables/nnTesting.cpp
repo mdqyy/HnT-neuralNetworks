@@ -23,13 +23,13 @@ using namespace cv;
 
 int main (int argc, char* argv[]){
   ClassificationDataset dataset;
-  dataset.load("../xml/errxor.xml");
+  dataset.load("../xml/xor.xml");
 
-  LayerPtr il = LayerPtr(new InputLayer(4,dataset.getMean(),dataset.getStandardDeviation()));
-  LayerPtr th = LayerPtr(new LayerSigmoid(2));
+  LayerPtr il = LayerPtr(new InputLayer(2,dataset.getMean(),dataset.getStandardDeviation()));
+  LayerPtr th = LayerPtr(new LayerSigmoid(3));
   LayerPtr out = LayerPtr(new LayerSigmoid(2));
-  ConnectionPtr c1 = ConnectionPtr(new Connection(il.get(),th.get(),20));
-  ConnectionPtr c2 = ConnectionPtr(new Connection(th.get(),out.get(),23));
+  ConnectionPtr c1 = ConnectionPtr(new Connection(il.get(),th.get(),500));
+  ConnectionPtr c2 = ConnectionPtr(new Connection(th.get(),out.get(),700));
 
   vector<LayerPtr> layers;
   layers.push_back(il);
@@ -43,27 +43,39 @@ int main (int argc, char* argv[]){
   cout << *c1;
   cout << *c2;
   nnTest.forward(dataset[0][0]);
- cout << nnTest.getOutputSignal() << endl;
+  cout << nnTest.getOutputSignal() << dataset.getTargetSample(0,0) <<endl;
+  nnTest.forward(dataset[1][0]);
+  cout << nnTest.getOutputSignal() << dataset.getTargetSample(1,0) << endl;
+
 
   /* Copy test */
-  cout << "Copy "<<  endl; 
+  /* cout << "Copy "<<  endl; 
   NeuralNetworkPtr nnc=NeuralNetworkPtr(nnTest.clone());
 
   cout << *nnc->getInputLayer() << endl;
   cout << *nnTest.getInputLayer() << endl;
   cout << *nnc->getInputLayer()->getOutputConnection() << endl;
-
+  */
   cout << "Training" << endl;
   Mask mask;
   BackPropParams bpp;
-  bpp.setLearningRate(1.0);
+  bpp.setLearningRate(0.5);
   bpp.setLearningRateDecrease(0.95);
-  bpp.setMinChangeError(1.0e-09);
-  bpp.setMaxIterations(1);
+  bpp.setMinChangeError(1.0e-9);
+  bpp.setMaxIterations(1000);
+  bpp.setTask(BP_CLASSIFICATION);
   BackPropagation bp(nnTest,dataset,bpp,mask,mask);
   bp.train();
   cout << "Ended training" << endl;
-  
+  nnTest.forward(dataset[0][0]);
+  cout << nnTest.getOutputSignal() << endl;
+  nnTest.forward(dataset[1][0]);
+  cout << nnTest.getOutputSignal() << endl;
+
+ cout << *il << *th;
+  cout << *c1;
+  cout << *c2;
+  /*
   cout << nnc->getInputLayer();
   cout << *(nnc->getInputLayer()->getOutputConnection());
   cout << *(nnTest.getInputLayer()->getOutputConnection());
@@ -95,6 +107,6 @@ int main (int argc, char* argv[]){
   nnTest.forward(dataset[0][0]);
   loadedNN.forward(dataset[0][0]);
   cout << nnTest.getOutputSignal() << endl;
-  cout << loadedNN.getOutputSignal() << endl;
+  cout << loadedNN.getOutputSignal() << endl;*/
   return EXIT_SUCCESS;
 }

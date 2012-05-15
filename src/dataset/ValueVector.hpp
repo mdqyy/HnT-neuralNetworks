@@ -40,6 +40,18 @@ class ValueVector {
   ValueVector(cv::Mat _data);
 
   /*!
+   * Coupy constructor
+   * \param _vv Value vector to copy from.
+   */
+  ValueVector(const ValueVector& _vv);
+
+  /*!
+   * Get the Opencv matrix.
+   * \return The OpenCv mat.
+   */
+  cv::Mat getMat() const;
+
+  /*!
    * Get value vector length.
    * \return Value vector length.
    */
@@ -51,7 +63,6 @@ class ValueVector {
    * \return Access to the value vector element.
    */
   const realv& operator[](int _index) const;
-
 
   /*!
    * Get access to an element in the matrix

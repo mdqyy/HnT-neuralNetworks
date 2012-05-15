@@ -59,6 +59,10 @@ vector<FeatureVector> PBDNN::getOutputSequence(){
   return errors;
 }
 
+void PBDNN::print(std::ostream& _os) const{
+  _os << "Population of neural networkk " <<getName()<< " with "<< forwardPopulation.size()<< endl;
+}
+
 PBDNN::~PBDNN(){
 
 }

@@ -19,11 +19,15 @@
  */
 class BackPropagation : public NeuralNetworkTrainer {
  private :
-  BackPropParams bpp;
-  std::vector<realv> errorPerIteration;
+
 
  protected:
- 
+  BackPropParams bpp;
+  std::vector<realv> errorPerIteration;
+  
+  ErrorVector calculateDeltas(LayerPtr _layer, FeatureVector _target, ValueVector _derivatives, ErrorVector _previousLayerDelta);
+  ErrorVector calculateOutputDeltas(LayerPtr _layer, FeatureVector _target, ValueVector _derivatives);
+  void updateConnection(ConnectionPtr _connection, ErrorVector _deltas, realv _learningRate);
  public:
 
   /*!
@@ -45,6 +49,13 @@ class BackPropagation : public NeuralNetworkTrainer {
    * Train the neural network on one iteration.
    */
   void trainOneIteration();
+  
+  /*! 
+   * Backward errors from one target.
+   * \param _target Target feature vector.
+   * \param _learningRate Learning rate for weight changes.
+   */
+  void backward(FeatureVector _target, realv _learningRate);
 
   /*!
    * Destructor.

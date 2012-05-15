@@ -27,7 +27,7 @@ using namespace cv;
 int main (int argc, char* argv[]){
   
   RegressionDataset dataset;
-  dataset.load("../xml/IAM3.xml");
+  dataset.load("../xml/IAM-10.xml");
   cout << "dataset loaded" << endl ;
   int populationSize = atoi(argv[1]);
   int numberOfHiddenUnits =atoi(argv[2]);
@@ -49,6 +49,7 @@ int main (int argc, char* argv[]){
   vector<NeuralNetworkPtr> population= pop.getPopulation();
   RegressionDataset dataset2;
   dataset2.load("../xml/IAM.xml");
+  cout << "Recording Data" << endl;
   for(int i=0;i<population.size();i++){
     ostringstream name,path;
     name << "neuralNet" << i;
@@ -65,6 +66,9 @@ int main (int argc, char* argv[]){
     path<<filename<<name.str()<<".xml";
     nnData.save(path.str());
   }
+  cout << endl <<"Saving" << endl;
+  ofstream outStream("IAMpop.txt");
+  outStream << pop;
   
   return EXIT_SUCCESS;
 }

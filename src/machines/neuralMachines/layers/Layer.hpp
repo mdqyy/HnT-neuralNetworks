@@ -22,8 +22,8 @@
 #define LAYER_TANH 3
 #define LAYER_SOFTMAX 4
 
-
 class Connection;
+
 
 /*!
  * \class Layer
@@ -44,8 +44,12 @@ class Layer : public Machine, public Clonable {
   FeatureVector outputSignal;
   /*! Output error of the layer */
   ErrorVector deltas;
-  /*! Input signal */
-  FeatureVector inputSignal;  
+  /*! Input signal from network (not the actual recurrent input signal) */
+  FeatureVector inputNetworkSignal; 
+  /*! Boolean to indicate use of recurrent connections */
+  bool recurrent;
+  /*! Recurrent connections */
+  /*  Connection* recurrentConnection;*/
 
  public:
 
@@ -56,7 +60,7 @@ class Layer : public Machine, public Clonable {
    * \param _numUnits Number of units.
    * \param _name Name of the layer.
    */
-  Layer(uint _numUnits, std::string _name);
+  Layer(uint _numUnits, std::string _name, bool _recurrent=false);
 
   /*!
    * Copy constructor.
@@ -95,16 +99,34 @@ class Layer : public Machine, public Clonable {
   Connection* getOutputConnection() const;
 
   /*!
+   * Get output connection.
+   * \return Output connection.
+   */
+  /* Connection* getRecurrentConnection() const;*/
+
+  /*!
+   * Get recurrency information.
+   * \return True if recurrent.
+   */
+  bool isRecurrent() const;
+
+  /*!
    * Get last output feature vector.
    * \return Feature vector.
    */
   FeatureVector getOutputSignal() const;
 
   /*!
-   * Get the last input signal.
-   * \return The input signal.
+   * Get the last input signal from the network.
+   * \return The input signal from the network.
    */
-  FeatureVector getInputSignal();
+  FeatureVector getNetworkInputSignal() const;
+
+  /*!
+   * Get the last input signal from the network.
+   * \return The input signal from the network.
+   */
+  FeatureVector getInputSignal() const;
 
   /*!
    * Get last output error vector;
@@ -114,7 +136,7 @@ class Layer : public Machine, public Clonable {
 
   /*!
    * Set number of units.
-   * \remark Do not use after having connected this to a network …
+   * \remark Do not use after having connected this.
    * \param _numUnits Number of units.
    */
   void setNumUnits(uint _numUnits);
@@ -138,6 +160,12 @@ class Layer : public Machine, public Clonable {
    */
   void setOutputConnection(Connection* _connection);
 
+  /*
+   * Set recurrency.
+   * \param _state Turn on or off recurrency.
+   */
+  void setRecurent(bool _state);
+
   /*!
    * Forward a sequence.
    * \param _sequence Sequence of feature vectors.
@@ -155,6 +183,12 @@ class Layer : public Machine, public Clonable {
    * \return Output feature vector. 
    */
   virtual void forward(FeatureVector _signal)=0;
+
+  /*! 
+   * Process the derivative for the layer.
+   * \return A value vector containing the derivative.
+   */
+  virtual ValueVector getDerivatives() const =0;
 
   /*!
    * Backward propagation of error.
@@ -184,16 +218,16 @@ class Layer : public Machine, public Clonable {
    */
   realv errorWeighting(ErrorVector _deltas, cv::Mat _weights);
 
+  /*!
+   * Print data concerning the object.
+   * \param _os Output file stream.
+   */
+  virtual void print(std::ostream& _os) const=0;
 
   /*!
    * Destructor.
    */
   virtual ~Layer();
-
-  friend std::ostream& operator<<(std::ostream& _os, const Layer& _l);
-
-  virtual void print(std::ostream& _os) const =0;
-
 };
 
 typedef boost::shared_ptr<Layer> LayerPtr;

@@ -12,6 +12,7 @@
 #include <fstream>
 
 #include "../dataset/unsupervised/UnsupervisedDataset.hpp"
+#include "../dataset/supervised/RegressionDataset.hpp"
 #include "../dataset/ValueVector.hpp"
 #include "../dataset/FeatureVector.hpp"
 
@@ -19,7 +20,7 @@ using namespace std;
 using namespace cv;
 
 int main (int argc, char* argv[]){
-  UnsupervisedDataset dataset;
+  RegressionDataset dataset;
   dataset.load(argv[1]);
   uint rowsPerVector = atoi(argv[3]);
   vector<int> params=vector<int>();

@@ -19,11 +19,11 @@ NeuralNetwork::NeuralNetwork(vector<LayerPtr> _hidden, vector<ConnectionPtr> _co
 
 NeuralNetwork::NeuralNetwork(const NeuralNetwork& _cnn) : NeuralMachine(_cnn.getName()),hiddenLayers(vector<LayerPtr>()), connections(vector<ConnectionPtr>()), readForward(_cnn.isForward()){
   vector<LayerPtr> tempLayers = _cnn.getHiddenLayers();
-  for(int i=0;i<tempLayers.size();i++){
+  for(uint i=0;i<tempLayers.size();i++){
     hiddenLayers.push_back(LayerPtr(tempLayers[i]->clone()));
   }
   vector<ConnectionPtr> tempConnections = _cnn.getConnections();
-  for (int i=0;i<tempConnections.size();i++){
+  for (uint i=0;i<tempConnections.size();i++){
     connections.push_back(ConnectionPtr(tempConnections[i]));
     connections[i]->setInputLayer(hiddenLayers[i].get());
     hiddenLayers[i]->setOutputConnection(connections[i].get());
@@ -97,6 +97,13 @@ void NeuralNetwork::backward(FeatureVector _target,realv _learningRate){
   getOutputLayer()->backwardWeights( _learningRate);
 }
 
+void NeuralNetwork::print(ostream& _os) const{
+  int numWeights = 0;
+  for(uint i=0;i<connections.size();i++){
+    numWeights += connections[i]->getWeights().cols*connections[i]->getWeights().rows;
+  }
+  _os << "Neural network " <<getName()<< " with "<< hiddenLayers.size()<<" and " << numWeights<<" weights."<<endl;
+}
 
 NeuralNetwork::~NeuralNetwork(){
 
@@ -156,13 +163,13 @@ ifstream& operator>>(ifstream& ifs, NeuralNetwork& nn){
   forwardBool = forwardBool==1;
   ifs >> numLayers;
   ifs >> numConnections;
-  for(uint i=0;i<numConnections;i++){
+  for(int i=0;i<numConnections;i++){
     Connection tempCo;
     ifs >> tempCo;
     ConnectionPtr temp = ConnectionPtr(new Connection(tempCo));
     connections.push_back(temp);
   }
-  for(uint i=0;i<numLayers;i++){
+  for(int i=0;i<numLayers;i++){
     ifs >> layerType;
     switch(layerType){
     case 1 :{

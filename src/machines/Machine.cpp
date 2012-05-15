@@ -27,3 +27,8 @@ void Machine::setName(string _name){
 Machine::~Machine(){
 
 }
+
+ostream& operator<<(ostream& _os, const Machine& _m){
+  _m.print(_os);
+  return _os;
+}

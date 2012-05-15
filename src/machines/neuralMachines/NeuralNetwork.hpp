@@ -137,6 +137,12 @@ class NeuralNetwork : public NeuralMachine, public Clonable {
   void backward(FeatureVector _target, realv _learningRate);
   
   /*!
+   * Print data concerning the object.
+   * \param _os Output file stream.
+   */
+  void print(std::ostream& _os) const;
+
+  /*!
    * Destructor.
    */
   ~NeuralNetwork();

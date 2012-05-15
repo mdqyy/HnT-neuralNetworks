@@ -66,6 +66,12 @@ class PBDNN : public NeuralMachine{
   std::vector<FeatureVector> getOutputSequence();
 
   /*!
+   * Print data concerning the object.
+   * \param _os Output file stream.
+   */
+  void print(std::ostream& _os) const;
+
+  /*!
    * Destructor.
    */
   ~PBDNN();

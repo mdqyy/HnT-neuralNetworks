@@ -26,8 +26,9 @@ class LayerSigmoid : public Layer {
    * Parameter constructor.
    * \param _numUnits Number of units in the layer.
    * \param _name Name of the layer.
+   * \param _recurrent Activate recurrency.
    */
-  LayerSigmoid(uint _numUnits,std::string _name="sigmoid_layer");
+  LayerSigmoid(uint _numUnits,std::string _name="sigmoid_layer", bool _recurrent=false);
   
   /*!
    * Copy constructor.
@@ -59,6 +60,12 @@ class LayerSigmoid : public Layer {
    * \return Output feature vector. 
    */
   void forward(FeatureVector _signal);
+
+ /*! 
+   * Process the derivative for the layer.
+   * \return A value vector containing the derivative.
+   */
+  ValueVector getDerivatives() const;
   
   /*!
    * Backward propagation of error.
@@ -101,7 +108,7 @@ class LayerSigmoid : public Layer {
    * \param l Sigmoid layer.
    * \return File Input stream.
    */
-    friend std::ifstream& operator>>(std::ifstream& ifs, LayerSigmoid& l);
+    friend std::ifstream& operator>>(std::ifstream& _ifs, LayerSigmoid& _l);
 };
 
 

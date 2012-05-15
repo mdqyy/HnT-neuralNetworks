@@ -53,10 +53,23 @@ class Machine {
   virtual void forwardSequence(std::vector<FeatureVector> _sequence)=0;
 
   /*!
+   * Print data concerning the object.
+   * \param _os Output file stream.
+   */
+  virtual void print(std::ostream& _os) const =0;
+
+  /*!
    * Destructor.
    */
   ~Machine();
 
+  /*!
+   * Print some machine information.
+   * \param _os Output stream.
+   * \param _m Machine.
+   * \remark Uses the overloaded function print.
+   */
+  friend std::ostream& operator<<(std::ostream& _os, const Machine& _m);
 };
 
 

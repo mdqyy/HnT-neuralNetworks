@@ -60,11 +60,11 @@ void fillImageVector(char* _directoryName,int _mode, RegressionDataset& _dataset
 
 int main (int argc, char* argv[]){
   RegressionDataset dataset;
-  dataset.setName("IAM-sequenced2");
+  dataset.setName("IAM-sequenced10px");
   
-  fillImageVector(argv[1], 0, dataset, 3);
+  fillImageVector(argv[1], 0, dataset, 10);
   cout << dataset.getMean();
   cout << dataset.getStandardDeviation();
-  dataset.save("../xml/IAM3.xml");
+  dataset.save("../xml/IAM-10.xml");
   return EXIT_SUCCESS;
 }

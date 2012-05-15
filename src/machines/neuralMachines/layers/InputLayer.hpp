@@ -92,6 +92,12 @@ class InputLayer : public Layer{
    */
   void forward(FeatureVector _signal);
 
+  /*! 
+   * Process the derivative for the layer.
+   * \return A value vector containing the derivative.
+   */
+  ValueVector getDerivatives() const;
+
   /*!
    * Backward propagation of error.
    * \param _output Calculate errors as an output layer.

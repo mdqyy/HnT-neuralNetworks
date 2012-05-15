@@ -175,6 +175,7 @@ class Connection : public Clonable{
   friend std::ifstream& operator>>(std::ifstream& ifs, Connection& c);
 };
 
+/*! ConnectionPtr definition */
 typedef boost::shared_ptr<Connection> ConnectionPtr;
 
 #endif

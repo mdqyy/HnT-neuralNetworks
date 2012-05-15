@@ -36,7 +36,7 @@ void forwardBackwardNetworksThread(vector<NeuralNetworkPtr> neuralNets, uint j, 
   random.next();
   neuralNets[k]->forward(fv);
   (*mses)[k].totalError(neuralNets[k]->getOutputSignal(),fv);
-  neuralNets[k]->backward(fv, lr*random.gaussian(5.0));
+  //  backward(neuralNets[k],fv, lr*random.gaussian(5.0));
   *error += ((*mses)[k].getError())/((realv)neuralNets.size());
 }
 
@@ -118,10 +118,10 @@ void PopulationBP::trainOneIteration(){
       for(uint k=0;k<neuralNets.size();k++){
 	if(minError/mses[k].getError()>=similarity){
 	  trained[k]=true;
-	  neuralNets[k]->backward(data[index][j], params.getLearningRate());
+	  backward(neuralNets[k], data[index][j], params.getLearningRate());
 	  sampleError+= mses[k].getError();
 	  histogramOfTrainees[k] = histogramOfTrainees[k]+1;
-	  for(int l=0;l<neuralNets.size();l++){
+	  for(uint l=0;l<neuralNets.size();l++){
 	    if(l!=k && trained[l]){
 	      correlatedTraining[l][k] +=1;
 	      correlatedTraining[k][l] +=1;
@@ -147,6 +147,50 @@ void PopulationBP::trainOneIteration(){
   }
   averageNumberTrained/=((realv)data.getNumSamples());
   cout << "Iteration error " << (iterationError/((realv)data.getNumSequences())) <<", average number of networks trained "<< averageNumberTrained << endl;
+}
+
+void PopulationBP::backward(NeuralNetworkPtr _neuralNet,FeatureVector _target, realv _learningRate){
+  vector<ConnectionPtr> connections = _neuralNet->getConnections();
+  vector<LayerPtr> layers = _neuralNet->getHiddenLayers();
+  vector<ErrorVector> deltas = vector<ErrorVector>();/* pushed in inversed order so be careful */
+  for(uint i = layers.size() -1 ; i > 0; i--){
+    ValueVector derivatives = layers[i]->getDerivatives();
+    if(i == layers.size()-1){
+      deltas.push_back(calculateOutputDeltas(layers[i], _target, derivatives));
+    }
+    else{
+      deltas.push_back(calculateDeltas(layers[i], _target, derivatives, deltas[deltas.size()-1]));
+    }
+  }
+  for(uint i = 0; i < connections.size(); i++){
+    updateConnection(connections[i], deltas[connections.size()-i-1],_learningRate);
+  }
+}
+
+ErrorVector PopulationBP::calculateDeltas(LayerPtr _layer, FeatureVector _target, ValueVector _derivatives, ErrorVector _previousLayerDelta){
+  ErrorVector delta = ErrorVector(_layer->getNumUnits());
+  for(uint i=0;i<delta.getLength();i++){
+    delta[i]=_derivatives[i]*_layer->errorWeighting(_previousLayerDelta,_layer->getOutputConnection()->getWeightsFromNeuron(i));
+  }
+  return delta;
+}
+
+ErrorVector PopulationBP::calculateOutputDeltas(LayerPtr _layer, FeatureVector _target, ValueVector _derivatives){
+  ErrorVector delta = ErrorVector(_layer->getNumUnits());
+  for(uint i=0;i<_target.getLength();i++){
+    delta[i] = _derivatives[i]*(_target[i]-_layer->getOutputSignal()[i]);  // error calculation if output layer
+  }
+  return delta;
+}
+
+void PopulationBP::updateConnection(ConnectionPtr _connection, ErrorVector _deltas, realv _learningRate){
+  Mat weights = _connection->getWeights();
+  for(int i=0;i<weights.rows;i++){
+    for(int j=0;j<weights.cols;j++){
+      weights.at<realv>(i,j)=weights.at<realv>(i,j)+_learningRate*_deltas[i]*_connection->getInputLayer()->getOutputSignal()[j];
+    }
+  }
+  _connection->setWeights(weights);
 }
 
 PopulationBP::~PopulationBP(){

@@ -36,6 +36,12 @@ class NeuralMachine : public Machine {
   virtual void forwardSequence(std::vector<FeatureVector> _sequence)=0;
 
   /*!
+   * Print data concerning the object.
+   * \param _os Output file stream.
+   */
+  virtual void print(std::ostream& _os) const =0;
+
+  /*!
    * Destructor.
    */
   ~NeuralMachine();

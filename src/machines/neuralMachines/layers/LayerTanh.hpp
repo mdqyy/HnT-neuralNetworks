@@ -26,8 +26,9 @@ class LayerTanh : public Layer {
    * Parameter constructor.
    * \param _numUnits Number of units in the layer.
    * \param _name Name of the layer.
+   * \param _recurrent Activate recurrency.
    */
-  LayerTanh(uint _numUnits,std::string _name="tanh_layer");
+  LayerTanh(uint _numUnits,std::string _name="tanh_layer", bool _recurrent=false);
 
   /*!
    * Copy cnstructor.
@@ -58,6 +59,12 @@ class LayerTanh : public Layer {
    * \return Output feature vector. 
    */
   void forward(FeatureVector _signal);
+
+  /*! 
+   * Process the derivative for the layer.
+   * \return A value vector containing the derivative.
+   */
+  ValueVector getDerivatives() const;
   
   /*!
    * Backward propagation of error.
@@ -83,7 +90,6 @@ class LayerTanh : public Layer {
    * \param l Layer.
    * \return Output stream.
    */
-  //friend std::ostream& operator<<(std::ostream& os, const LayerTanh& l);
   void print(std::ostream& _os) const;
 
   /*!
@@ -92,7 +98,7 @@ class LayerTanh : public Layer {
    * \param l Tanh layer.
    * \return File Output stream.
    */
-  friend std::ofstream& operator<<(std::ofstream& ofs, const LayerTanh& l);
+  friend std::ofstream& operator<<(std::ofstream& _ofs, const LayerTanh& _l);
 
   /*!
    * File input stream.
@@ -100,7 +106,7 @@ class LayerTanh : public Layer {
    * \param l Tanh layer.
    * \return File Input stream.
    */
-  friend std::ifstream& operator>>(std::ifstream& ifs, LayerTanh& l);
+  friend std::ifstream& operator>>(std::ifstream& _ifs, LayerTanh& _l);
 };
 
 

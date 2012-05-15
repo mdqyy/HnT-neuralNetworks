@@ -50,13 +50,13 @@ void InputLayer::forward(FeatureVector _signal){
   if(_signal.getLength()!=numUnits){
     throw length_error("InputLayer : Wrong signal length");
   }
-  inputSignal = _signal;
+  inputNetworkSignal = _signal;
   for (uint i = 0; i < numUnits; i++){
     if(stdevVector[i]==0.0){
-      outputSignal[i]=(inputSignal[i]-meanVector[i]);
+      outputSignal[i]=(inputNetworkSignal[i]-meanVector[i]);
     }
     else{
-      outputSignal[i]=(inputSignal[i]-meanVector[i])/stdevVector[i];
+      outputSignal[i]=(inputNetworkSignal[i]-meanVector[i])/stdevVector[i];
     }
   }
   outputSignal[numUnits]=1.0;
@@ -65,6 +65,11 @@ void InputLayer::forward(FeatureVector _signal){
 
 void InputLayer::forward(){
   getOutputConnection()->forward();
+}
+
+ValueVector InputLayer::getDerivatives() const{
+  ValueVector deriv = ValueVector(numUnits+1);
+  return deriv;
 }
 
 void InputLayer::backwardDeltas(bool _output, FeatureVector _target){

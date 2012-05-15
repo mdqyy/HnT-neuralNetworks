@@ -14,7 +14,7 @@ LayerTanh::LayerTanh() : Layer(){
 
 }
 
-LayerTanh::LayerTanh(uint _numUnits,string _name) : Layer(_numUnits,_name){
+LayerTanh::LayerTanh(uint _numUnits,string _name, bool _recurrent) : Layer(_numUnits,_name, _recurrent){
 
 }
 
@@ -31,7 +31,9 @@ int LayerTanh::getLayerType() const{
 }
 
 void LayerTanh::forward(){
-  outputSignal.reset(0.0);
+  if(!isRecurrent()){
+    outputSignal.reset(0.0);
+  }
   /* Accumulate neuron sum */
   FeatureVector layerInputSignal=getInputConnection()->getInputLayer()->getOutputSignal();
   forward(layerInputSignal);
@@ -41,11 +43,19 @@ void LayerTanh::forward(){
 }
 
 void LayerTanh::forward(FeatureVector _signal){
-  inputSignal = _signal;
+  inputNetworkSignal = _signal;
   for(uint i=0;i<numUnits;i++){
-    outputSignal[i]=tanh(signalWeighting(inputSignal, getInputConnection()->getWeightsToNeuron(i)));
+    outputSignal[i]=tanh(signalWeighting(getInputSignal(), getInputConnection()->getWeightsToNeuron(i)));
   }
   outputSignal[numUnits]=1.0;
+}
+
+ValueVector LayerTanh::getDerivatives() const{
+  ValueVector deriv = ValueVector(numUnits+1);
+  for(uint i=0;i<deltas.getLength();i++){
+    deriv[i] = (1-outputSignal[i]*outputSignal[i]); 
+  }
+  return deriv;
 }
 
 void LayerTanh::backwardDeltas(bool _output, FeatureVector _target){
@@ -76,27 +86,41 @@ LayerTanh::~LayerTanh(){
 }
 
 
-//ostream& operator<<(ostream& os, const LayerTanh& l){
 void LayerTanh::print(ostream& _os) const{
   _os << "Tanh neuron layer : " << endl;
+  if(isRecurrent()){
+    _os << " \t -A recurrent layer." << endl;
+  }
   _os << "\t -Name :"<< getName() << endl;
   _os << "\t -Units : "<< getNumUnits() << endl;
 }
 
-ofstream& operator<<(ofstream& ofs, const LayerTanh& l){
-  ofs << "< "<<l.getName()<<" "<<l.getNumUnits()<<" >"<<endl;
-  return ofs;
+ofstream& operator<<(ofstream& _ofs, const LayerTanh& _l){
+  _ofs << "< "<< _l.getName()<<" "<< _l.getNumUnits()<<" "<< _l.isRecurrent();
+  /*  if(_l.isRecurrent()){
+    _ofs << " "<< *_l.getRecurrentConnection();
+    }*/
+  _ofs << " >"<<endl;
+  return _ofs;
 }
 
-ifstream& operator>>(ifstream& ifs, LayerTanh& l){
-  int nUnits;
+ifstream& operator>>(ifstream& _ifs, LayerTanh& _l){
+  int nUnits, intRecurrent;
+  bool boolRecurrent;
+  /* Connection recCo;*/
   ValueVector meanV, stdV;
   string name,temp;
-  ifs >> temp;
-  ifs >> name ;
-  ifs >> nUnits ;
-  ifs >> temp;
-  l.setName(name);
-  l.setNumUnits(nUnits);
-  return ifs;
+  _ifs >> temp;
+  _ifs >> name ;
+  _ifs >> nUnits ;
+  _ifs >> intRecurrent;
+  boolRecurrent = intRecurrent == 1;
+  /*  if(boolRecurrent) {
+    _ifs >> recCo;
+    _l.setRecurrentConnection(ConnectionPtr(new Connection(recCo)));
+    }*/
+  _ifs >> temp;
+  _l.setName(name);
+  _l.setNumUnits(nUnits);
+  return _ifs;
 }

@@ -26,8 +26,9 @@ class LayerSoftMax : public Layer {
    * Parameter constructor.
    * \param _numUnits Number of units in the layer.
    * \param _name Name of the layer.
+   * \param _recurrent Activate recurrency.
    */
-  LayerSoftMax(uint _numUnits,std::string _name="softMax_layer");
+  LayerSoftMax(uint _numUnits,std::string _name="softMax_layer", bool _recurrent=false);
 
   /*!
    * Copy constructor.
@@ -58,6 +59,12 @@ class LayerSoftMax : public Layer {
    * \return Output feature vector. 
    */
   void forward(FeatureVector _signal);
+
+  /*! 
+   * Process the derivative for the layer.
+   * \return A value vector containing the derivative.
+   */
+  ValueVector getDerivatives() const;
 
   /*!
    * Backward propagation of error.
@@ -100,7 +107,7 @@ class LayerSoftMax : public Layer {
    * \param l SoftMax layer.
    * \return File Input stream.
    */
-  friend std::ifstream& operator>>(std::ifstream& ifs, LayerSoftMax& l);
+  friend std::ifstream& operator>>(std::ifstream& _ifs, LayerSoftMax& _l);
 };
 
 

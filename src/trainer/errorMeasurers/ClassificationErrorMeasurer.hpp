@@ -26,7 +26,7 @@ class ClassificationErrorMeasurer : ErrorMeasurer{
   /*!
    * Default constructor.
    */
-  ClassificationErrorMeasurer(uint _numberOfExamples);
+  ClassificationErrorMeasurer();
   
   /*!
    * Measure error per unit.

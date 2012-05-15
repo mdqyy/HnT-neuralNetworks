@@ -26,6 +26,14 @@ ValueVector::ValueVector(Mat _data) : data(_data){
   assert(data.rows>0 && data.cols==1);
 }
 
+ValueVector::ValueVector(const ValueVector& _vv) : data(_vv.getMat().clone()){
+  
+}
+
+Mat ValueVector::getMat() const{
+  return data;
+}
+
 uint ValueVector::getLength() const{
   return (uint)data.rows;
 }

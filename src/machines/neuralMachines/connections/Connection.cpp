@@ -14,7 +14,14 @@ Connection::Connection() : from(0),to(0),weights(cv::Mat()){
 
 Connection::Connection(Layer* _from, Layer* _to, uint _seed) : from(_from), to(_to), weights(cv::Mat()){
   int rows=to->getNumUnits();
-  int cols=from->getNumUnits()+1;
+  int cols=0;
+  if(to->isRecurrent()){
+    cols = from->getNumUnits()+rows +1;
+  }
+  else{
+    cols = from->getNumUnits()+1;
+  }
+
   #ifdef REAL_DOUBLE
   weights = cv::Mat(rows,cols,CV_64FC1,0.0);
   #else
@@ -27,7 +34,13 @@ Connection::Connection(Layer* _from, Layer* _to, uint _seed) : from(_from), to(_
 
 Connection::Connection(Layer* _from, Layer* _to, cv::Mat _weights) : from(_from), to(_to), weights(_weights){
   int rows=to->getNumUnits();
-  int cols=from->getNumUnits()+1;
+  int cols=0;
+  if(to->isRecurrent()){
+    cols = from->getNumUnits()+rows +1;
+  }
+  else{
+    cols = from->getNumUnits()+1;
+  }
   assert(rows==weights.rows);
   assert(cols==weights.cols);
 }
@@ -60,7 +73,7 @@ Layer* Connection::getOutputLayer() const{
 
 void Connection::setWeights(Mat _weights){
   if(from!=0 && to!=0){
-    if(to->getNumUnits()==((uint)weights.rows) && from->getNumUnits()+1==((uint)weights.cols)){
+    if(to->getNumUnits()==((uint)weights.rows) && (from->getNumUnits()+1==((uint)weights.cols) || (from->getNumUnits()+1+to->getNumUnits()==((uint)weights.cols)&& to->isRecurrent())) ){
       weights=_weights;
     }
     else{
@@ -68,12 +81,12 @@ void Connection::setWeights(Mat _weights){
     }
   }
   else{
-      weights=_weights;
+    weights=_weights;
   }
 }
 
 void Connection::setInputLayer(Layer* _input){
-  if(_input->getNumUnits()+1==((uint)weights.cols)){
+  if(_input->getNumUnits()+1>=((uint)weights.cols)){ /*! Should changethis shitty condition */
     from=_input;
   }
   else{
@@ -109,7 +122,9 @@ void Connection::forward(){
 }
 
 void Connection::backwardDeltas(bool _output){
-  from->backwardDeltas(_output);
+  if(from!=to){
+    from->backwardDeltas(_output);
+  }
 }
 
 void Connection::backwardWeights(realv _learningRate){
@@ -119,7 +134,9 @@ void Connection::backwardWeights(realv _learningRate){
       weights.at<realv>(i,j)=weights.at<realv>(i,j)+_learningRate*ev[i]*from->getOutputSignal()[j];
     }
   }
-  from->backwardWeights(_learningRate);
+  if(from!=to){
+    from->backwardWeights(_learningRate);
+  }
 }
 
 Connection::~Connection(){
@@ -147,8 +164,8 @@ ostream& operator<<(ostream& os, const Connection& c){
 ofstream& operator<<(ofstream& ofs, const Connection& l){
   Mat weightsTmp = l.getWeights();
   ofs << "< " << weightsTmp.rows << " "<< weightsTmp.cols <<" [" ;
-  for(uint i =0; i<weightsTmp.rows;i++){
-    for(uint j=0;j<weightsTmp.cols;j++){
+  for(int i =0; i<weightsTmp.rows;i++){
+    for(int j=0;j<weightsTmp.cols;j++){
       ofs << " "<< weightsTmp.at<realv>(i,j);
     }
     ofs << endl;
@@ -171,8 +188,8 @@ ifstream& operator>>(ifstream& ifs, Connection& l){
   weights = cv::Mat(rows,cols,CV_32FC1,0.0);
   #endif
   realv value;
-  for(uint i=0; i<rows;i++){
-    for(uint j=0;j<cols;j++){
+  for(int i=0; i<rows;i++){
+    for(int j=0;j<cols;j++){
       ifs >> value;
       weights.at<realv>(i,j)=value ;
     }

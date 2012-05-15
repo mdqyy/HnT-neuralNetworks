@@ -19,9 +19,10 @@ vector<uint> SupervisedTrainer::defineIndexOrderSelection(uint _numSequences){
     indexOrder.push_back(i);
   }
   int exchangeIndex=0;
-  RNG random;
+  RNG random(getTickCount());
   random.next();
   for(uint i=0 ;  i<_numSequences; i++){	 
+    random.next();
     exchangeIndex=random.uniform(0,_numSequences);
     swap(indexOrder[i],indexOrder[exchangeIndex]);
   } 

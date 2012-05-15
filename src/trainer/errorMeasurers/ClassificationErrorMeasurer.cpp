@@ -9,7 +9,7 @@
 using namespace std;
 using namespace cv;
 
-ClassificationErrorMeasurer::ClassificationErrorMeasurer(uint _numberOfExamples){
+ClassificationErrorMeasurer::ClassificationErrorMeasurer(){
 
 }
 
