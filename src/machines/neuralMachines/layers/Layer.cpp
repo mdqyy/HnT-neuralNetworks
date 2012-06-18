@@ -9,15 +9,15 @@
 using namespace std;
 using namespace cv;
 
-Layer::Layer() : Machine("Layer"), numUnits(1),inputConnection(0), outputConnection(0), outputSignal(FeatureVector(2)), deltas(ErrorVector(2)), inputNetworkSignal(1), recurrent(false){
-
+Layer::Layer() : Machine("Layer"), numUnits(1),inputConnection(0), outputConnection(0), outputSignal(FeatureVector(2)), deltas(ErrorVector(2)), networkInputSignal(1), recurrent(false), inputSignals(std::vector<FeatureVector>()), outputSignals(std::vector<FeatureVector>()), inputSignal(0){
+  
 }
 
-Layer::Layer(uint _numUnits, string _name,bool _recurrent) : Machine(_name), numUnits(_numUnits),inputConnection(0), outputConnection(0), outputSignal(FeatureVector(_numUnits+1)), deltas(ErrorVector(_numUnits+1)), inputNetworkSignal(_numUnits), recurrent(_recurrent){
+Layer::Layer(uint _numUnits, string _name,bool _recurrent) : Machine(_name), numUnits(_numUnits),inputConnection(0), outputConnection(0), outputSignal(FeatureVector(_numUnits+1)), deltas(ErrorVector(_numUnits+1)), networkInputSignal(_numUnits), recurrent(_recurrent),inputSignals(std::vector<FeatureVector>()),outputSignals(std::vector<FeatureVector>()), inputSignal(0){
   assert(numUnits>0);
 }
-
-Layer::Layer(const Layer& _cl) : Machine(_cl.getName()), numUnits(_cl.getNumUnits()),   inputConnection(0), outputConnection(0), outputSignal(FeatureVector(numUnits+1)), deltas(ErrorVector(numUnits+1)), recurrent(_cl.isRecurrent()){
+  
+Layer::Layer(const Layer& _cl) : Machine(_cl.getName()), numUnits(_cl.getNumUnits()),   inputConnection(0), outputConnection(0), outputSignal(FeatureVector(numUnits+1)), deltas(ErrorVector(numUnits+1)), recurrent(_cl.isRecurrent()),inputSignals(std::vector<FeatureVector>()),outputSignals(std::vector<FeatureVector>()), inputSignal(0){
   if(_cl.getInputConnection() !=0){
     inputConnection = _cl.getInputConnection();
   }
@@ -38,29 +38,42 @@ Connection* Layer::getOutputConnection() const{
   return outputConnection;
 }
 
+vector<FeatureVector> Layer::getOutputSignals() const{
+  return outputSignals;
+}
+
+vector<FeatureVector> Layer::getInputSignals() const{
+  return inputSignals;
+}
+
 bool Layer::isRecurrent() const{
   return recurrent;
 }
 
 FeatureVector Layer::getNetworkInputSignal() const{
-  return inputNetworkSignal;
+  return networkInputSignal;
 }
 
-FeatureVector Layer::getInputSignal() const{
+FeatureVector Layer::createInputSignal() const{
   FeatureVector inSig;
   if(isRecurrent()){
     inSig = FeatureVector(inputConnection->getWeights().cols);
-    for(uint i=0;i<inputNetworkSignal.getLength();i++){
-      inSig[i]=inputNetworkSignal[i];
+    for(uint i=0;i<networkInputSignal.getLength();i++){
+      inSig[i] = networkInputSignal[i];
     }
     for(uint i=0;i<outputSignal.getLength()-1;i++){ /* -1 since we do not use the bias of the output only the input*/
-      inSig[inputNetworkSignal.getLength()+i] = getOutputSignal()[i];
+      inSig[networkInputSignal.getLength()+i] = getOutputSignal()[i];
     }
   }
   else{
-    inSig = inputNetworkSignal;
+    inSig = networkInputSignal;
   }
+  this->inputSignal = inSig;
   return inSig;
+}
+
+FeatureVector Layer::getInputSignal() const{
+	return inputSignal;
 }
 
 FeatureVector Layer::getOutputSignal() const{
@@ -84,7 +97,11 @@ void Layer::setInputConnection(Connection* _connection){
 }
 
 void Layer::forwardSequence(std::vector<FeatureVector> _sequence){
-
+  for(uint i=0; i < _sequence.size();i++){
+	  forward(_sequence[i]);
+	  inputSignals.push_back(this->getInputSignal());
+	  outputSignals.push_back(this->getOutputSignal());
+  }
 }
 
 void Layer::setOutputConnection(Connection* _connection){
@@ -115,6 +132,11 @@ realv Layer::errorWeighting(ErrorVector _deltas, Mat _weights){
     sum+=_deltas[i]*_weights.at<realv>(i,0);
   }
   return sum;
+}
+
+void Layer::reset(){
+  outputSignals.clear();
+  inputSignals.clear();
 }
 
 Layer::~Layer(){

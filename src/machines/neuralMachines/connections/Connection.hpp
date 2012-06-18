@@ -137,12 +137,12 @@ class Connection : public Clonable{
    * Backward errors call to previous layer.
    * \param _output The previous layer is an output.
    */
-  void backwardDeltas(bool _output);
+  // void backwardDeltas(bool _output);
 
   /*!
    * Backward errors call to next layer.
    */
-  void backwardWeights(realv _learningRate);
+  //void backwardWeights(realv _learningRate);
 
   /*!
    * Destructor.

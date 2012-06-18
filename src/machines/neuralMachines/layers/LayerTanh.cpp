@@ -43,9 +43,9 @@ void LayerTanh::forward(){
 }
 
 void LayerTanh::forward(FeatureVector _signal){
-  inputNetworkSignal = _signal;
+  networkInputSignal = _signal;
   for(uint i=0;i<numUnits;i++){
-    outputSignal[i]=tanh(signalWeighting(getInputSignal(), getInputConnection()->getWeightsToNeuron(i)));
+    outputSignal[i]=tanh(signalWeighting(createInputSignal(), getInputConnection()->getWeightsToNeuron(i)));
   }
   outputSignal[numUnits]=1.0;
 }
@@ -56,29 +56,6 @@ ValueVector LayerTanh::getDerivatives() const{
     deriv[i] = (1-outputSignal[i]*outputSignal[i]); 
   }
   return deriv;
-}
-
-void LayerTanh::backwardDeltas(bool _output, FeatureVector _target){
-  deltas.reset(0.0);
-  if(_output){
-    for(uint i=0;i<deltas.getLength();i++){
-      deltas[i] = (1-outputSignal[i]*outputSignal[i])*(_target[i]-outputSignal[i]);  // error calculation if output layer
-    }
-  }
-  else {
-    ErrorVector layerOutputError((getOutputConnection()->getOutputLayer())->getErrorVector().getLength()-1);
-    for(uint j=0;j<layerOutputError.getLength() ;j++){
-      layerOutputError[j]=getOutputConnection()->getOutputLayer()->getErrorVector()[j];
-    }
-    for(uint i=0;i<deltas.getLength();i++){
-      deltas[i]=(1-outputSignal[i]*outputSignal[i])*errorWeighting(layerOutputError,getOutputConnection()->getWeightsFromNeuron(i)); // error calculation if non output layer
-    }
-  }
-  getInputConnection()->getInputLayer()->backwardDeltas();
-}
-
-void LayerTanh::backwardWeights(realv _learningRate){
-  getInputConnection()->backwardWeights(_learningRate);
 }
 
 LayerTanh::~LayerTanh(){

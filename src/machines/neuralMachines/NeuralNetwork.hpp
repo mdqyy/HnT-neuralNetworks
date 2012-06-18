@@ -134,7 +134,7 @@ class NeuralNetwork : public NeuralMachine, public Clonable {
    * \param _target Neural network target.
    * \param _learningRate Weight change rate.
    */
-  void backward(FeatureVector _target, realv _learningRate);
+  // void backward(FeatureVector _target, realv _learningRate);
   
   /*!
    * Print data concerning the object.

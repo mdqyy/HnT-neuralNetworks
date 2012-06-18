@@ -55,7 +55,7 @@ Layer* NeuralNetwork::getOutputLayer() const{
 }
 
 FeatureVector NeuralNetwork::getInputSignal() const{
-  return  getInputLayer()->getInputSignal();
+  return  getInputLayer()->createInputSignal();
 }
 
 FeatureVector NeuralNetwork::getOutputSignal() const{
@@ -92,10 +92,10 @@ void NeuralNetwork::forward(FeatureVector _signal){
   getInputLayer()->forward(_signal);
 }
 
-void NeuralNetwork::backward(FeatureVector _target,realv _learningRate){
+/*void NeuralNetwork::backward(FeatureVector _target,realv _learningRate){
   getOutputLayer()->backwardDeltas(true, _target);
   getOutputLayer()->backwardWeights( _learningRate);
-}
+  }*/
 
 void NeuralNetwork::print(ostream& _os) const{
   int numWeights = 0;

@@ -1,39 +1,37 @@
 /*!
- * \file LayerSoftMax.cpp
- * Body of the LayerSoftMax class.
+ * \file LayerCTC.cpp
+ * Body of the LayerCTC class.
  * \author Luc Mioulet
  */
 
-#include "LayerSoftMax.hpp"
+#include "LayerCTC.hpp"
 #include <math.h>
 
 using namespace std;
 using namespace cv;
 
-LayerSoftMax::LayerSoftMax() : Layer(){
+LayerCTC::LayerCTC() : Layer(){
 
 }
 
-LayerSoftMax::LayerSoftMax(uint _numUnits,string _name, bool _recurrent) : Layer(_numUnits,_name, _recurrent){
+LayerCTC::LayerCTC(uint _numUnits,string _name) : Layer(_numUnits,_name, false){
 
 }
 
-LayerSoftMax::LayerSoftMax(const LayerSoftMax& _clsm) : Layer(_clsm){
+LayerCTC::LayerCTC(const LayerCTC& _clsm) : Layer(_clsm){
 
 }
 
-LayerSoftMax* LayerSoftMax::clone() const {
-  return new LayerSoftMax(*this);
+LayerCTC* LayerCTC::clone() const {
+  return new LayerCTC(*this);
 }
 
-int LayerSoftMax::getLayerType() const{
-  return LAYER_SOFTMAX;
+int LayerCTC::getLayerType() const{
+  return LAYER_CTC;
 }
 
-void LayerSoftMax::forward(){
-  if(!isRecurrent()){
-    outputSignal.reset(0.0);
-  }
+void LayerCTC::forward(){
+  outputSignal.reset(0.0);
   /* Accumulate neuron sum */
   FeatureVector layerInputSignal=getInputConnection()->getInputLayer()->getOutputSignal();
   forward(layerInputSignal);
@@ -42,7 +40,7 @@ void LayerSoftMax::forward(){
   }
 }
 
-void LayerSoftMax::forward(FeatureVector _signal){
+void LayerCTC::forward(FeatureVector _signal){
   networkInputSignal = _signal;
   realv sum=0;
   for(uint i=0;i<numUnits;i++){
@@ -55,7 +53,7 @@ void LayerSoftMax::forward(FeatureVector _signal){
   outputSignal[numUnits]=1.0;
 }
 
-ValueVector LayerSoftMax::getDerivatives() const{
+ValueVector LayerCTC::getDerivatives() const{
   ValueVector deriv = ValueVector(numUnits+1);
   for(uint i = 0 ; i < deriv.getLength() ; i++){
     deriv[i] = 1.0;
@@ -63,29 +61,17 @@ ValueVector LayerSoftMax::getDerivatives() const{
   return deriv;
 }
 
-/*void LayerSoftMax::backwardDeltas(bool _output, FeatureVector _target){
-  deltas.reset(0.0);
-  if(_output){
-    for(uint i=0;i<deltas.getLength();i++){
-      deltas[i] =_target[i]-outputSignal[i];  // error calculation if output layer
-    }
-  }
-  else {
-    throw logic_error("LayerSoftMax : This layer should only be an output");
-  }
-  getInputConnection()->getInputLayer()->backwardDeltas();
+vector<ValueVector> LayerCTC::getDerivatives(vector<FeatureVector> _forwardVariables, vector<FeatureVector> _backwardVariables) const{
+	vector<ValueVector> derivatives = vector<ValueVector>();
+	return derivatives;
 }
 
-void LayerSoftMax::backwardWeights(realv _learningRate){
-  getInputConnection()->backwardWeights(_learningRate);
-  }*/
-
-LayerSoftMax::~LayerSoftMax(){
+LayerCTC::~LayerCTC(){
 
 }
 
-void LayerSoftMax::print(ostream& _os) const{
-  _os << "SoftMax neuron layer : " << endl;
+void LayerCTC::print(ostream& _os) const{
+  _os << "CTC neuron layer : " << endl;
   if(isRecurrent()){
     _os << "\t -A recurrent layer." << endl;
   }
@@ -93,7 +79,7 @@ void LayerSoftMax::print(ostream& _os) const{
   _os << "\t -Units : "<< getNumUnits() << endl;
 }
 
-ofstream& operator<<(ofstream& _ofs, const LayerSoftMax& _l){
+ofstream& operator<<(ofstream& _ofs, const LayerCTC& _l){
   _ofs << "< "<< _l.getName()<<" "<< _l.getNumUnits()<<" "<< _l.isRecurrent();
   /*  if(_l.isRecurrent()){
     _ofs << " "<< *_l.getRecurrentConnection();
@@ -102,7 +88,7 @@ ofstream& operator<<(ofstream& _ofs, const LayerSoftMax& _l){
   return _ofs;
 }
 
-ifstream& operator>>(ifstream& _ifs, LayerSoftMax& _l){
+ifstream& operator>>(ifstream& _ifs, LayerCTC& _l){
   int nUnits, intRecurrent;
   bool boolRecurrent;
   ValueVector meanV, stdV;

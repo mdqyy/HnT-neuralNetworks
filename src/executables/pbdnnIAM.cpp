@@ -33,13 +33,13 @@ int main (int argc, char* argv[]){
   int numberOfHiddenUnits =atoi(argv[2]);
   int iterations =atoi(argv[3]);
   string filename(argv[4]);
-  PBDNN pop(populationSize,132,numberOfHiddenUnits,dataset.getMean(), dataset.getStandardDeviation());
+  PBDNN pop(populationSize,dataset.getFeatureVectorLength(),numberOfHiddenUnits,dataset.getMean(), dataset.getStandardDeviation());
   Mask mask;
   PopulationBPParams params;
   params.setMaxIterations(iterations);
   params.setLearningRate(0.001);
-  params.setErrorToFirst(0.7);
-  params.setErrorToFirstIncrease(1.10);
+  params.setErrorToFirst(0.9);
+  params.setErrorToFirstIncrease(1.01);
   params.setMaxTrained(populationSize);
   PopulationBP pbp(pop,dataset,params,mask,mask);
   double t = (double)getTickCount();
@@ -48,7 +48,7 @@ int main (int argc, char* argv[]){
   cout << "Temps :" << t << endl;
   vector<NeuralNetworkPtr> population= pop.getPopulation();
   RegressionDataset dataset2;
-  dataset2.load("../xml/IAM.xml");
+  dataset2.load("../xml/IAM-10.xml");
   cout << "Recording Data" << endl;
   for(int i=0;i<population.size();i++){
     ostringstream name,path;

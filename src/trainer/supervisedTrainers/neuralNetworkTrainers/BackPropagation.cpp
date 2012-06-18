@@ -33,7 +33,6 @@ void BackPropagation::trainOneIteration(){
   cout << indexOrderSelection[0] << endl;
   uint index=0;
   realv error= 0;
-  MSEMeasurer mse;
   FeatureVector dataOutput;
   for(uint i=0; i<data.getNumSequences();i++){
     index=indexOrderSelection[i];
@@ -47,41 +46,26 @@ void BackPropagation::trainOneIteration(){
 	else{
 	  target=data[index][j];
 	}
-	if(bpp.getTask() == BP_CLASSIFICATION){
-	  ClassificationErrorMeasurer ce;
-	  error += ce.totalError(neuralNet.getOutputSignal(),target);
-	}
-	else{
-	  error += mse.totalError(neuralNet.getOutputSignal(),target);
-	}
 	backward(target, bpp.getLearningRate()); 
+	error+=measureSampleError(neuralNet.getOutputSignal(),target);
       }
     }
-    else{
-      /*      for(uint j=data.getNumSequences();j>=0 ; j--){
-	neuralNet.forward(data[index][j]);
-	FeatureVector target;
-	if(bpp.getTask() == BP_CLASSIFICATION){
-	  ClassificationErrorMeasurer ce;
-	  error += ce.totalError(neuralNet.getOutputSignal(),target);
-	}
-	else{
-	      error += mse.totalError(neuralNet.getOutputSignal(),target);
-	}
-	if(bpp.getTask()!=BP_AUTOENCODER){
-	  target=trainData.getTargetSample(index,j);
-	}
-	else{
-	  target=data[index][j];
-	}
-
-	neuralNet.backward(target, bpp.getLearningRate());
-	}*/
-    }
   }
-
   cout << error/data.getNumSequences() << endl;
   errorPerIteration.push_back(error/data.getNumSequences());
+}
+
+realv BackPropagation::measureSampleError(FeatureVector networkOutput, FeatureVector target){
+  realv error = 0;
+  if(bpp.getTask() == BP_CLASSIFICATION){
+    ClassificationErrorMeasurer ce;
+    error += ce.totalError(networkOutput,target);
+  }
+  else{  
+    MSEMeasurer mse;
+    error += mse.totalError(networkOutput,target);
+  }
+  return error;
 }
 
 void BackPropagation::backward(FeatureVector _target, realv _learningRate){

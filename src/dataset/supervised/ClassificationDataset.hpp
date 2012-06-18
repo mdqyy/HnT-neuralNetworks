@@ -24,9 +24,9 @@ class ClassificationDataset : public SupervisedDataset{
  private :
   
  protected:
-  /*! Map containeng correspondance between ints and strings representing classes. */
+  /*! Map containing the correspondence between ints and strings representing classes. */
   std::map<int , std::string> classLabels;
-  /*! Reversed map containing correspondance between ints and strings representing classes. */
+  /*! Reversed map containing correspondence between ints and strings representing classes. */
   std::map<std::string, int> classLabelIndex;
   /*! Vector of vector of classes. Should be associated to the data in these three ways :
    * - one class per sequence,

@@ -103,14 +103,14 @@ class InputLayer : public Layer{
    * \param _output Calculate errors as an output layer.
    * \param _target Target of the output layer.
    */
-  void backwardDeltas(bool _output=true, FeatureVector _target=FeatureVector(0));
+  //void backwardDeltas(bool _output=true, FeatureVector _target=FeatureVector(0));
 
 
   /*!
    * Backward propagation of weight changes.
    * \params _learningRate Weight change rate.
    */
-  void backwardWeights(realv _learningRate);
+  //void backwardWeights(realv _learningRate);
 
   /*!
    * Destructor.

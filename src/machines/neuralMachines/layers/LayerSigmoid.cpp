@@ -43,9 +43,9 @@ void LayerSigmoid::forward(){
 }
 
 void LayerSigmoid::forward(FeatureVector _signal){
-  inputNetworkSignal = _signal;
+  networkInputSignal = _signal;
   for(uint i=0;i<numUnits;i++){
-    outputSignal[i]=1/(1+exp(-signalWeighting(getInputSignal(), getInputConnection()->getWeightsToNeuron(i))/*-recurrentSum*/ ));
+    outputSignal[i]=1/(1+exp(-signalWeighting(createInputSignal(), getInputConnection()->getWeightsToNeuron(i))/*-recurrentSum*/ ));
   }
   outputSignal[numUnits]=1.0;
 }
@@ -58,7 +58,7 @@ ValueVector LayerSigmoid::getDerivatives() const{
   return deriv;
 }
 
-void LayerSigmoid::backwardDeltas(bool _output, FeatureVector _target){
+/*void LayerSigmoid::backwardDeltas(bool _output, FeatureVector _target){
   deltas.reset(0.0);
   if(_output){
     for(uint i=0;i<_target.getLength();i++){
@@ -79,7 +79,7 @@ void LayerSigmoid::backwardDeltas(bool _output, FeatureVector _target){
 
 void LayerSigmoid::backwardWeights(realv _learningRate){
   getInputConnection()->backwardWeights(_learningRate);
-}
+  }*/
 
 LayerSigmoid::~LayerSigmoid(){
 

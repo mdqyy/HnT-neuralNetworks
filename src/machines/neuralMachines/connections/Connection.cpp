@@ -121,13 +121,13 @@ void Connection::forward(){
     to->forward();
 }
 
-void Connection::backwardDeltas(bool _output){
+/*void Connection::backwardDeltas(bool _output){
   if(from!=to){
     from->backwardDeltas(_output);
   }
-}
+  }*/
 
-void Connection::backwardWeights(realv _learningRate){
+/*void Connection::backwardWeights(realv _learningRate){
   ErrorVector ev=to->getErrorVector();
   for(int i=0;i<weights.rows;i++){
     for(int j=0;j<weights.cols;j++){
@@ -137,7 +137,7 @@ void Connection::backwardWeights(realv _learningRate){
   if(from!=to){
     from->backwardWeights(_learningRate);
   }
-}
+  }*/
 
 Connection::~Connection(){
   from = 0;

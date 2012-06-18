@@ -21,6 +21,7 @@
 #define LAYER_SIGMOID 2
 #define LAYER_TANH 3
 #define LAYER_SOFTMAX 4
+#define LAYER_CTC 5
 
 class Connection;
 
@@ -45,11 +46,15 @@ class Layer : public Machine, public Clonable {
   /*! Output error of the layer */
   ErrorVector deltas;
   /*! Input signal from network (not the actual recurrent input signal) */
-  FeatureVector inputNetworkSignal; 
+  FeatureVector networkInputSignal; 
+  /*! Complete input signal (i.e taking into account recurrency) */
+  FeatureVector inputSignal;
   /*! Boolean to indicate use of recurrent connections */
   bool recurrent;
-  /*! Recurrent connections */
-  /*  Connection* recurrentConnection;*/
+  /*! Vector of input vectors */
+  std::vector<FeatureVector> inputSignals;
+  /*! Vector of output vectors */
+  std::vector<FeatureVector> outputSignals;
 
  public:
 
@@ -99,10 +104,16 @@ class Layer : public Machine, public Clonable {
   Connection* getOutputConnection() const;
 
   /*!
-   * Get output connection.
-   * \return Output connection.
+   * Get output signals.
+   * \return Vector of feature vectors.
    */
-  /* Connection* getRecurrentConnection() const;*/
+  std::vector<FeatureVector> getOutputSignals() const;
+
+  /*!
+   * Get input signals
+   * \return Vector of feature vectors.
+   */
+  std::vector<FeatureVector> getInputSignals() const;
 
   /*!
    * Get recurrency information.
@@ -123,8 +134,16 @@ class Layer : public Machine, public Clonable {
   FeatureVector getNetworkInputSignal() const;
 
   /*!
-   * Get the last input signal from the network.
+   * Create the input signal for the layer the network.
+   * If it is a recurrent layer it will concatenate actual input and previous output.
+   * If it is a regular layer it will be the same as the network input signal.
    * \return The input signal from the network.
+   */
+  FeatureVector createInputSignal() const;
+
+  /*!
+   * Get Input signal.
+   * \return Layer input signal.
    */
   FeatureVector getInputSignal() const;
 
@@ -191,18 +210,6 @@ class Layer : public Machine, public Clonable {
   virtual ValueVector getDerivatives() const =0;
 
   /*!
-   * Backward propagation of error.
-   * \param _output Calculate errors as an output layer.
-   * \param _target Target of the output layer.
-   */
-  virtual void backwardDeltas(bool _output=false, FeatureVector _target=FeatureVector(0))=0;
-
-  /*!
-   * Backward propagation of weight changes.
-   */
-  virtual void backwardWeights(realv _learningRate)=0;
-
-  /*!
    * Weight a signal coming in a neuron with respect to the weight matrix of this neuron.
    * \param _signal Input signal.
    * \param _weights Weight matrix.
@@ -217,6 +224,11 @@ class Layer : public Machine, public Clonable {
    * \return Dot product.
    */
   realv errorWeighting(ErrorVector _deltas, cv::Mat _weights);
+
+  /*!
+   * Clear input and output signals from data.
+   */
+  void reset();
 
   /*!
    * Print data concerning the object.

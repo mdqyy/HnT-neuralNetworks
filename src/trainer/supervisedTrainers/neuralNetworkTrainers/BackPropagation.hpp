@@ -27,7 +27,15 @@ class BackPropagation : public NeuralNetworkTrainer {
   
   ErrorVector calculateDeltas(LayerPtr _layer, FeatureVector _target, ValueVector _derivatives, ErrorVector _previousLayerDelta);
   ErrorVector calculateOutputDeltas(LayerPtr _layer, FeatureVector _target, ValueVector _derivatives);
+
+  /*!
+   * Update connection of the CTC input weight matrix.
+   * \param _connection Connection input of the weight matrix.
+   * \param _deltas Derivatives.
+   * \param _learningRate Update connection rate.
+   */
   void updateConnection(ConnectionPtr _connection, ErrorVector _deltas, realv _learningRate);
+  realv measureSampleError(FeatureVector networkOutput, FeatureVector target);
  public:
 
   /*!
