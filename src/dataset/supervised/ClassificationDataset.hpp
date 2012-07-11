@@ -146,14 +146,14 @@ class ClassificationDataset : public SupervisedDataset{
    * \param _sequence Add a complete sequence.
    * \param _classes Classes vector as a vector of ints.
    */
-  void addSequence(std::vector<FeatureVector>& _sequence, std::vector<int>& _classes);
+  void addSequence(std::vector<FeatureVector> _sequence, std::vector<int> _classes);
 
   /*!
    * Add a sequence and its label.
    * \param sequence Add a complete sequence.
    * \param classes Classes vector as a vector of strings.
    */
-  void addSequence(std::vector<FeatureVector>& sequence, std::vector<std::string>& classes);
+  void addSequence(std::vector<FeatureVector> sequence, std::vector<std::string> classes);
 
   /*!
    * Add a sample (and perhaps the label) to the last sequence or to the indicated index.
@@ -161,7 +161,7 @@ class ClassificationDataset : public SupervisedDataset{
    * \param classIndex Class index.
    * \param index Sequence index.
    */
-  void addSample(FeatureVector& sample, int classIndex = -1, uint index = -1);
+  void addSample(FeatureVector sample, int classIndex = -1, uint index = -1);
 
   /*!
    * Add a sample (and perhaps the label) to the last sequence or to the indicated index.
@@ -169,12 +169,12 @@ class ClassificationDataset : public SupervisedDataset{
    * \param className Class.
    * \param index Sequence index.
    */
-  void addSample(FeatureVector& sample, std::string className = "", uint index = -1);
+  void addSample(FeatureVector sample, std::string className = "", uint index = -1);
   
   /*! 
    * Add a class to the class maps.
    * \param _class Name of the class.
-   * \param _index Index of the class. If not defined will be added to the map as the follozing point.
+   * \param _index Index of the class. If not defined will be added to the map as the following point.
    */
   void addClass(std::string _class, int _index=-1);
 

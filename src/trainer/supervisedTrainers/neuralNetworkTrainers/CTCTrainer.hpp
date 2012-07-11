@@ -7,10 +7,11 @@
  * \author Luc Mioulet
  */
 
-#include "SupervisedTrainer.hpp"
-#include "../../machines/neuralMachines/layers/LayerCTC.hpp"
-#include "../../dataset/supervised/ClassificationDataset.hpp"
+#include "../SupervisedTrainer.hpp"
+#include "../../../machines/neuralMachines/layers/LayerCTC.hpp"
+#include "../../../dataset/supervised/ClassificationDataset.hpp"
 #include <vector>
+#include <opencv/cv.h>
 
 class CTCTrainer: public SupervisedTrainer {
 private:
@@ -28,7 +29,7 @@ private:
 	 * \param _targetSequence Target sequence.
 	 * \return The forward variables.
 	 */
-	std::vector<ValueVector> processForwardVariables(std::vector<FeatureVector> _outputSignals,std::vector<int> _targetSequence);
+	std::vector<ValueVector> processForwardVariables(std::vector<FeatureVector> _outputSignals, std::vector<int> _targetSequence);
 
 	/*!
 	 * Process backward variables.
@@ -44,7 +45,7 @@ private:
 	 * \param _targetSequenceSize Target sequence size.
 	 * \return Maximum label reached.
 	 */
-	uint CTCTrainer::determineMaxLabel(uint _t, uint _targetSequenceSize);
+	uint determineMaxLabel(uint _t, uint _targetSequenceSize);
 
 	/*!
 	 * Determine minimum start label at time t given a target sequence.
@@ -54,7 +55,7 @@ private:
 	 * \param _targetSequenceSize Target sequence size.
 	 * \return Minimum starting label.
 	 */
-	uint CTCTrainer::determineMinLabel(uint _t, uint _outputSignalsSize, uint _requiredSegments, uint _targetSequenceSize);
+	uint determineMinLabel(uint _t, uint _outputSignalsSize, uint _requiredSegments, uint _targetSequenceSize);
 
 	/*!
 	 * Process the forgery target of the CTC layer.
@@ -64,7 +65,8 @@ private:
 	 * \param _backwardVariables Backward variables.
 	 * \return Derivatives for CTC weight correction.
 	 */
-	std::vector<ErrorVector> processDerivatives(std::vector<int> _targetSignal,std::vector<FeatureVector> _outputSignals,std::vector<ValueVector> _forwardVariables,std::vector<ValueVector> _backwardVariables);
+	std::vector<ErrorVector> processDerivatives(std::vector<int> _targetSignal, std::vector<FeatureVector> _outputSignals,
+			std::vector<ValueVector> _forwardVariables, std::vector<ValueVector> _backwardVariables);
 
 	/*!
 	 * Process the Q value linked to the normalized C and D values.
@@ -77,7 +79,7 @@ private:
 	 * \param Target signal.
 	 * \return Vector of unique signals.
 	 */
-	std::vector<int> CTCTrainer::findUniqueElements(std::vector<int> _targetSignal);
+	std::vector<int> findUniqueElements(std::vector<int> _targetSignal);
 
 protected:
 	/*! The CTC layer */
@@ -115,7 +117,7 @@ public:
 	/*!
 	 * Train the layer on one sample.
 	 */
-	void CTCTrainer::trainOneSample(std::vector<FeatureVector> _inputSignal, std::vector<int> _targetSignal);
+	void trainOneSample(std::vector<FeatureVector> _inputSignal, std::vector<int> _targetSignal);
 
 	/*!
 	 * Backward sequence.
@@ -128,12 +130,12 @@ public:
 	 * \param _connection Connection input of the weight matrix.
 	 * \param _deltas Derivatives.
 	 */
-	 void updateConnection(Connection* _connection, ErrorVector _deltas){
+	void updateConnection(Connection* _connection, ErrorVector _deltas);
 
 	/*!
 	 * Destructor.
 	 */
-	virtual ~CTCTrainer();
+	~CTCTrainer();
 };
 
 #endif /* CTCTRAINER_H_ */

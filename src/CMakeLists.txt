@@ -28,6 +28,7 @@ add_library(Machines dataset/Dataset.cpp
   machines/neuralMachines/layers/LayerSigmoid.cpp
   machines/neuralMachines/layers/LayerSoftMax.cpp
   machines/neuralMachines/layers/InputLayer.cpp
+  machines/neuralMachines/layers/LayerCTC.cpp
   machines/neuralMachines/connections/Connection.cpp
   machines/neuralMachines/connections/FullConnection.cpp
   machines/neuralMachines/connections/RecurrentConnection.cpp
@@ -42,9 +43,12 @@ add_library(Machines dataset/Dataset.cpp
   performanceMeasurers/CrossValidationParams.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/NeuralNetworkTrainer.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/BackPropagation.cpp
+  trainer/supervisedTrainers/neuralNetworkTrainers/CTCTrainer.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/BackPropParams.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBP.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBPParams.cpp
+  utilities/ImageProcessing.cpp
+  utilities/TextUtilities.cpp
 )
 
 add_library(TinyXML   

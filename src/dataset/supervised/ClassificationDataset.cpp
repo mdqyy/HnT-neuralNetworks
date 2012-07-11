@@ -99,7 +99,7 @@ void ClassificationDataset::addSequence(FeatureVector _sequence, int _class ){
   addSequence(tempSeq, tempClasses);
 }
 
-void ClassificationDataset::addSequence(vector<FeatureVector>& _sequence, vector<string>& _classes ){
+void ClassificationDataset::addSequence(vector<FeatureVector> _sequence, vector<string> _classes ){
   if(_sequence.size()<_classes.size()){
     throw length_error("ClassificationDataset : Sequence size should be greater or equal to classes size");
   }
@@ -113,7 +113,7 @@ void ClassificationDataset::addSequence(vector<FeatureVector>& _sequence, vector
   addSequence(_sequence,indexClasses);
 }
 
-void ClassificationDataset::addSequence(vector<FeatureVector>& _sequence, vector<int>& _classes ){
+void ClassificationDataset::addSequence(vector<FeatureVector> _sequence, vector<int> _classes ){
   if(_sequence.size()<_classes.size()){
     throw length_error("ClassificationDataset : Sequence size should be greater or equal to classes size");
   }
@@ -128,7 +128,7 @@ void ClassificationDataset::addSequence(vector<FeatureVector>& _sequence, vector
   updateStatistics(_sequence);
 }
 
-void ClassificationDataset::addSample(FeatureVector& sample, string className, uint index){
+void ClassificationDataset::addSample(FeatureVector sample, string className, uint index){
   if(className.compare("")!=0){
     if(classLabelIndex.find(className)==classLabelIndex.end()){
       throw invalid_argument("ClassificationDataset : Class non existent");
@@ -137,7 +137,7 @@ void ClassificationDataset::addSample(FeatureVector& sample, string className, u
   addSample(sample,getIndexLabel(className),index);
 }
 
-void ClassificationDataset::addSample(FeatureVector& sample, int classIndex, uint index){
+void ClassificationDataset::addSample(FeatureVector sample, int classIndex, uint index){
   if(classLabels.find(classIndex)==classLabels.end()){
     throw invalid_argument("ClassificationDataset : Class number not existent");
   }

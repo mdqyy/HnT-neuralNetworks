@@ -20,30 +20,30 @@ void CTCTrainer::train(){
 void CTCTrainer::trainOneIteration(){
 	vector<uint> indexOrderSelection=defineIndexOrderSelection(data.getNumSequences());
 	uint index=0;
-	for(uint i=0;i<classifactionData.numSequences();i++){
+	for(uint i=0;i<classifactionData.getNumSequences();i++){
 		index = indexOrderSelection[i];
 		vector<FeatureVector> inputSignal = classifactionData[index];
 		vector<int> targetSignal = classifactionData.getSequenceClassesIndex(index);
-		this->trainOneSample(inputSignal,targetSignal);
+		trainOneSample(inputSignal,targetSignal);
 	}
 }
 
 void CTCTrainer::trainOneSample(vector<FeatureVector> _inputSignal, vector<int> _targetSignal){
-	uint requiredTime = this->calculateRequiredTime(_targetSignal);
+	uint requiredTime = calculateRequiredTime(_targetSignal);
 	if(requiredTime > _inputSignal.size()){
 		throw length_error("CTCTrainer : Required time is superior to input signal size. Learning from this sample is impossible.");
 	}
 	ctcLayer.forwardSequence(_inputSignal);
 	vector<FeatureVector> outputSignals = ctcLayer.getOutputSignals();
-	vector<ValueVector> forwardVariables = this->processForwardVariables(outputSignals,_targetSignal);
-	vector<ValueVector> backwardVariables = this->processBackwardVariables(outputSignals,_targetSignal);
-	vector<ErrorVector> derivatives = this->processDerivatives(_targetSignal, outputSignals,forwardVariables,backwardVariables);
-	this->backwardSequence(derivatives);
+	vector<ValueVector> forwardVariables = processForwardVariables(outputSignals,_targetSignal);
+	vector<ValueVector> backwardVariables = processBackwardVariables(outputSignals,_targetSignal);
+	vector<ErrorVector> derivatives = processDerivatives(_targetSignal, outputSignals,forwardVariables,backwardVariables);
+	backwardSequence(derivatives);
 }
 
 void CTCTrainer::backwardSequence(std::vector<ErrorVector> _derivatives){
 	for(uint t=0;t<_derivatives.size(); t++){
-		this->updateConnection(this->ctcLayer.inputConnection,_derivatives[t]);
+		updateConnection(ctcLayer.getInputConnection(),_derivatives[t]);
 	}
 }
 
@@ -73,29 +73,29 @@ vector<ValueVector> CTCTrainer::processForwardVariables(vector<FeatureVector> _o
 	uint blankIndex = _outputSignals[0].getLength()-1;
 	uint requiredSegments = 2*_targetSequence.size()+1;
 	int previousLabel = -1;
-	vector<ValueVector> forwardVariables = vector<ValueVector>(ValueVector(requiredSegments),_outputSignals.size());
-	normalizeC = vector<realv>(_outputSignals,0.0);
+	vector<ValueVector> forwardVariables = vector<ValueVector>(_outputSignals.size(),ValueVector(requiredSegments));
+	normalizeC = vector<realv>(_outputSignals.size(),0.0);
 	forwardVariables[0][0] = _outputSignals[0][blankIndex];
 	forwardVariables[0][1] = _outputSignals[0][_targetSequence[0]];
 	for(uint t=1;t<_outputSignals.size();t++){
-		uint minLabels = this->determineMinLabel(t,_outputSignals.size(),requiredSegments,_targetSequence.size());
-		uint maxLabels = this->determineMaxLabel(t,_targetSequence.size());
+		uint minLabels = determineMinLabel(t,_outputSignals.size(),requiredSegments,_targetSequence.size());
+		uint maxLabels = determineMaxLabel(t,_targetSequence.size());
 		for(uint s=minLabels;s<maxLabels;s++){
 			if(s%2){ /* is even : blank*/
 				if(s>0){
-					forwardVariables[t][s]= _outputSignals[blankIndex]*(forwardVariables[t-1][s-1]+forwardVariables[t-1][s]);
+					forwardVariables[t][s]= _outputSignals[t][blankIndex]*(forwardVariables[t-1][s-1]+forwardVariables[t-1][s]);
 				}
 				else{
-					forwardVariables[t][s]= _outputSignals[blankIndex]*(forwardVariables[t-1][s]);
+					forwardVariables[t][s]= _outputSignals[t][blankIndex]*(forwardVariables[t-1][s]);
 				}
 			}
 			else{ /*is odd : label */
-				int label = _targetSequence[s/2 -1];
+				int label = _targetSequence[s/2];
 				if(s>=2 && label!=previousLabel){
-					forwardVariables[t][s]= _outputSignals[blankIndex]*(forwardVariables[t-1][s-2]+forwardVariables[t-1][s-1]+forwardVariables[t-1][s]);
+					forwardVariables[t][s]= _outputSignals[t][label]*(forwardVariables[t-1][s-2]+forwardVariables[t-1][s-1]+forwardVariables[t-1][s]);
 				}
 				else{
-					forwardVariables[t][s]= _outputSignals[blankIndex]*(forwardVariables[t-1][s-1]+forwardVariables[t-1][s]);
+					forwardVariables[t][s]= _outputSignals[t][label]*(forwardVariables[t-1][s-1]+forwardVariables[t-1][s]);
 				}
 				previousLabel = label;
 			}
@@ -112,29 +112,29 @@ vector<ValueVector> CTCTrainer::processBackwardVariables(vector<FeatureVector> _
 	uint blankIndex = _outputSignals[0].getLength()-1;
 	uint requiredSegments = 2*_targetSequence.size()+1;
 	int previousLabel = -1;
-	vector<ValueVector> backwardVariables = vector(ValueVector(requiredSegments),_outputSignals.size());
-	normalizeD = vector<realv>(_outputSignals,0.0);
+	vector<ValueVector> backwardVariables = vector<ValueVector>(_outputSignals.size(),ValueVector(requiredSegments));
+	normalizeD = vector<realv>(_outputSignals.size(),0.0);
 	backwardVariables[_outputSignals.size()-1][requiredSegments-1] = 1;
 	backwardVariables[_outputSignals.size()-1][requiredSegments-1] = 1;
 	for(uint t=_outputSignals.size()-2;t<0;t--){
-		uint minLabels = this->determineMinLabel(t,_outputSignals.size(),requiredSegments,_targetSequence.size());
-		uint maxLabels = this->determineMaxLabel(t,_targetSequence.size());
+		uint minLabels = determineMinLabel(t,_outputSignals.size(),requiredSegments,_targetSequence.size());
+		uint maxLabels = determineMaxLabel(t,_targetSequence.size());
 		for(uint s=minLabels;s<maxLabels;s++){
 			if(s%2){ /* is even : blank*/
 				if(s>0){
-					backwardVariables[t][s]= _outputSignals[blankIndex]*(backwardVariables[t+1][s+1]+backwardVariables[t+1][s]);
+					backwardVariables[t][s]= _outputSignals[t][blankIndex]*(backwardVariables[t+1][s+1]+backwardVariables[t+1][s]);
 				}
 				else{
-					backwardVariables[t][s]= _outputSignals[blankIndex]*(backwardVariables[t+1][s]);
+					backwardVariables[t][s]= _outputSignals[t][blankIndex]*(backwardVariables[t+1][s]);
 				}
 			}
 			else{ /*is odd : label */
-				int label = _targetSequence[s/2 -1];
-				if(s>=2){
-					backwardVariables[t][s]= _outputSignals[blankIndex]*(backwardVariables[t+1][s+2]+backwardVariables[t+1][s+1]+backwardVariables[t+1][s]);
+				int label = _targetSequence[s/2];
+				if(s>=2 && label!=previousLabel){
+					backwardVariables[t][s]= _outputSignals[t][label]*(backwardVariables[t+1][s+2]+backwardVariables[t+1][s+1]+backwardVariables[t+1][s]);
 				}
 				else{
-					backwardVariables[t][s]= _outputSignals[blankIndex]*(backwardVariables[t+1][s+2]+backwardVariables[t+1][s+1]+backwardVariables[t+1][s]);
+					backwardVariables[t][s]= _outputSignals[t][label]*(backwardVariables[t+1][s+2]+backwardVariables[t+1][s+1]+backwardVariables[t+1][s]);
 				}
 				previousLabel=label;
 			}
@@ -148,22 +148,25 @@ vector<ValueVector> CTCTrainer::processBackwardVariables(vector<FeatureVector> _
 }
 
 vector<ErrorVector> CTCTrainer::processDerivatives(vector<int> _targetSignal,vector<FeatureVector> _outputSignals,vector<ValueVector> _forwardVariables,vector<ValueVector> _backwardVariables){
-	vector<ErrorVector> derivatives = vector<ErrorVector>(ErrorVector(_outputSignals[0].getLength()),_outputSignals.size());
-	vector<FeatureVector> normalizeQ = this->processQ();
+	uint blankIndex = _outputSignals[0].getLength()-1;
+	vector<ErrorVector> derivatives = vector<ErrorVector>(_outputSignals.size(),ErrorVector(_outputSignals[0].getLength()));
+	vector<realv> normalizeQ = processQ();
 	vector<int> uniqueTargetLabels = findUniqueElements(_targetSignal);
 	for(uint t=0; t<_outputSignals.size();t++){
 		for(uint l=0;l<_targetSignal.size();l++){
-			derivatives[t][_targetSignal[l]] += _forwardVariables[t][2*l+1]*_forwardVariables[t][2*l+1];
+			derivatives[t][blankIndex] += _forwardVariables[t][2*l]*_backwardVariables[t][2*l];
+			derivatives[t][_targetSignal[l]] += _forwardVariables[t][2*l+1]*_backwardVariables[t][2*l+1];
 		}
 		for(uint l=0;l<uniqueTargetLabels.size();l++){
-			derivatives[t][uniqueTargetLabels[l]] = _outputSignals[t][l] - normalizeQ[t]/_outputSignals[t][l]*derivatives[t][uniqueTargetLabels[l]]; /*! \todo perhaps change this calculation */
+			derivatives[t][uniqueTargetLabels[l]] = _outputSignals[t][uniqueTargetLabels[l]] - (normalizeQ[t])/(_outputSignals[t][uniqueTargetLabels[l]])*derivatives[t][uniqueTargetLabels[l]]; /*! \todo perhaps change this calculation */
 		}
+		derivatives[t][blankIndex] = _outputSignals[t][blankIndex] - (normalizeQ[t])/(_outputSignals[t][blankIndex])*derivatives[t][blankIndex]; /*! \todo perhaps change this calculation */
 	}
 	return derivatives;
 }
 
 std::vector<realv> CTCTrainer::processQ() const{
-	vector<realv> normalizeQ;
+	vector<realv> normalizeQ = vector<realv>(normalizeC.size(),0.0);
 	realv piDivisionDC=1;
 	for(uint t=0;t<normalizeC.size();t++){
 		piDivisionDC=1;

@@ -139,7 +139,7 @@ class Layer : public Machine, public Clonable {
    * If it is a regular layer it will be the same as the network input signal.
    * \return The input signal from the network.
    */
-  FeatureVector createInputSignal() const;
+  FeatureVector createInputSignal();
 
   /*!
    * Get Input signal.

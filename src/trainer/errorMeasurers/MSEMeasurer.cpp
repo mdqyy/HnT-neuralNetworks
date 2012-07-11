@@ -50,4 +50,5 @@ MSEMeasurer::~MSEMeasurer(){
 
 ostream& operator<< (ostream& os, MSEMeasurer& mse){
   os << mse.getError();
+  return os;
 }
