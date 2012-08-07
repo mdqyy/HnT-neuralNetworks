@@ -20,50 +20,6 @@
 using namespace std;
 using namespace cv;
 
-/*void fillImageVector(char* _directoryName,int _mode, RegressionDataset& _dataset, int _sectionLength){
-  DIR *dp;
-  struct dirent *ep;
-  dp = opendir (_directoryName);
-  if (dp != NULL){
-    while (ep = readdir (dp)){
-      //append an image to the vector only if it has a .png extension
-      if(strstr(ep->d_name,".png")!=NULL){
-	char str[200]="";
-	strcat(str,_directoryName);
-	strcat(str,"/");
-	strcat(str,ep->d_name);
-	Mat image = imread(str,_mode);
-	int subparts=floor(((float)image.cols)/((float)_sectionLength));
-	vector<FeatureVector> features;
-	for(int i=0;i<subparts;i++){
-	  FeatureVector fv(_sectionLength*image.rows);
-	  for(int j=0;j<_sectionLength;j++){
-	    for(int k=0;k<image.rows;k++){
-	      if((int)image.at<uchar>(k,i*_sectionLength+j)==255){
-		fv[j*image.rows+k]=1.0;
-	      }
-	      else{
-		fv[j*image.rows+k]=0.0;
-	      }
-	    }
-	  }
-	  features.push_back(fv);
-	}
-	_dataset.addSequence(features,features);
-      }
-    }
-    (void) closedir (dp);
-  }
-  else{
-    cerr << "ERROR in CreateImageVector : Couldn't open the directory";
-    exit(1);
-  }
-}*/
-/*
-void load(std::string fileName, ClassificationDataset& dataset,){
-	TiXmlDocument doc( fileName );
-}*/
-
 void addDictionaryClasses(ClassificationDataset* dataset){
 	dataset->addClass("a");
 	dataset->addClass("â");
@@ -125,6 +81,8 @@ void addDictionaryClasses(ClassificationDataset* dataset){
 	dataset->addClass("Y");
 	dataset->addClass("Z");
 	dataset->addClass("'");
+	dataset->addClass("°");
+	dataset->addClass("%");
 	dataset->addClass("-");
 	dataset->addClass("/");
 	dataset->addClass("0");
@@ -144,14 +102,15 @@ void rimesLoader(string groundTruthFile, string groundTruthFolder,int frameSize,
 	size_t position;
 	ifstream gtFile (groundTruthFile.c_str());
 	Mat image;
+
 	if (gtFile.is_open()){
-		while (/*gtFile.good()*/ dataset->getNumSequences()<1){
+		while (gtFile.good()){
 			getline (gtFile,line);
 			position = line.find(" ");
 			label = line.substr(position+1);
 			imageFile = groundTruthFolder + line.substr(0,position);
 			image = imread(imageFile,0);
-			if(!image.empty()){
+			if(!image.empty() && image.rows==60){
 				vector<FeatureVector> frames = extractFrames(image,frameSize);
 				vector<string> labelSequence = extractLabelSequence(label);
 				dataset->addSequence(frames,labelSequence);
@@ -171,6 +130,5 @@ int main (int argc, char* argv[]){
   string saveLocation = argv[5];
   rimesLoader(groundTruthFile, groundTruthFolder, frameSize, &dataset);
   dataset.save(saveLocation);
-  namedWindow("Deslanted image", CV_WINDOW_NORMAL);
   return EXIT_SUCCESS;
 }

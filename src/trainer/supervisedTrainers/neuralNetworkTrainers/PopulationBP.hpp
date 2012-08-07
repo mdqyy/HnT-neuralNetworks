@@ -27,10 +27,6 @@ class PopulationBP : public SupervisedTrainer{
   PBDNN& population;
   /*! Learning parameters */
   PopulationBPParams params;
-
-  ErrorVector calculateDeltas(LayerPtr _layer, FeatureVector _target, ValueVector _derivatives, ErrorVector _previousLayerDelta);
-  ErrorVector calculateOutputDeltas(LayerPtr _layer, FeatureVector _target, ValueVector _derivatives);
-  void updateConnection(ConnectionPtr _connection, ErrorVector _deltas, realv _learningRate);
  public:
 
   /*!
@@ -46,7 +42,7 @@ class PopulationBP : public SupervisedTrainer{
   /*!
    * Train the neural networks.
    */
-  virtual void train();
+  void train();
 
   /*! 
    * Pretrain a population
@@ -57,15 +53,6 @@ class PopulationBP : public SupervisedTrainer{
    * Train the neural networks on one iteration.
    */
   void trainOneIteration();
-
- /*! 
-   * Backward errors from one target.
-   * \param _neuralNet Network being backpropagated.
-   * \param _target Target feature vector.
-   * \param _learningRate Learning rate for weight changes.
-   */
-  void backward(NeuralNetworkPtr _neuralNet,FeatureVector _target, realv _learningRate);
-
 
   /*!
    * Destructor.

@@ -20,7 +20,7 @@ using namespace std;
 using namespace cv;
 
 int main (int argc, char* argv[]){
-  RegressionDataset dataset;
+  UnsupervisedDataset dataset;
   dataset.load(argv[1]);
   uint rowsPerVector = atoi(argv[3]);
   vector<int> params=vector<int>();
