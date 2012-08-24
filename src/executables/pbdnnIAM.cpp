@@ -39,7 +39,7 @@ int main (int argc, char* argv[]){
 	PopulationBPParams params;
 	params.setMaxIterations(iterations);
 	params.setLearningRate(0.001);
-	params.setErrorToFirst(0.9);
+	params.setErrorToFirst(0.95);
 	params.setErrorToFirstIncrease(1.01);
 	params.setMaxTrained(populationSize);
 	PopulationBP pbp(pop,dataset,params,mask,mask);
@@ -47,19 +47,24 @@ int main (int argc, char* argv[]){
 	pbp.train();
 	t = ((double)getTickCount() - t)/getTickFrequency();
 	cout << "Temps :" << t << endl;
+
+	cout << endl <<"Saving network" << endl;
+	ofstream outStream("IAMpop.txt");
+	outStream << pop;
+
 	vector<NeuralNetworkPtr> population= pop.getPopulation();
-/*	RegressionDataset dataset2;
-	dataset2.load("../xml/IAM-10.xml");*/
+	ClassificationDataset dataset2;
+	dataset2.load(argv[6]);
 	cout << "Recording Data" << endl;
 	for(int i=0;i<population.size();i++){
 		ostringstream name,path;
 		name << "neuralNet" << i;
 		UnsupervisedDataset nnData;
 		nnData.setName(name.str());
-		for(int j=0;j<dataset.getNumSequences()/100;j++){
+		for(int j=0;j<dataset2.getNumSequences();j++){
 			vector<FeatureVector> features;
-			for(uint k=0;k<dataset[j].size() ; k++){
-				population[i]->forward(dataset[j][k]);
+			for(uint k=0;k<dataset2[j].size() ; k++){
+				population[i]->forward(dataset2[j][k]);
 				features.push_back(population[i]->getOutputSignal());
 			}
 			nnData.addSequence(features);
@@ -67,9 +72,6 @@ int main (int argc, char* argv[]){
 		path<<filename<<name.str()<<".xml";
 		nnData.save(path.str());
 	}
-	cout << endl <<"Saving network" << endl;
-	ofstream outStream("IAMpop.txt");
-	outStream << pop;
 
 	return EXIT_SUCCESS;
 }

@@ -5,6 +5,7 @@
  */
 
 #include "PopulationBP.hpp"
+#include "../../errorMeasurers/MAEMeasurer.hpp"
 
 using namespace cv;
 using namespace std;
@@ -69,12 +70,12 @@ void backward(NeuralNetworkPtr _neuralNet,FeatureVector _target, realv _learning
 		updateConnection(connections[i], deltas[connections.size()-i-1],_learningRate);
 	}
 }
-void forwardNetworksThread(vector<NeuralNetworkPtr> _neuralNets, uint _k, vector<MSEMeasurer>* _mses, FeatureVector _fv){
+void forwardNetworksThread(vector<NeuralNetworkPtr> _neuralNets, uint _k, vector<MAEMeasurer>* _mses, FeatureVector _fv){
 	_neuralNets[_k]->forward(_fv);
 	(*_mses)[_k].totalError(_neuralNets[_k]->getOutputSignal(),_fv);
 }
 
-void backwardNetworksThread(vector<NeuralNetworkPtr> _neuralNets, uint _k, FeatureVector _target, realv _learningRate, realv _minError, vector<MSEMeasurer>* _mses, realv _similarity,vector<bool>* _trained){
+void backwardNetworksThread(vector<NeuralNetworkPtr> _neuralNets, uint _k, FeatureVector _target, realv _learningRate, realv _minError, vector<MAEMeasurer>* _mses, realv _similarity,vector<bool>* _trained){
 	if(_minError/ (*_mses)[_k].getError()>= _similarity){
 		(*_trained)[_k]=true;
 		backward(_neuralNets[_k], _target, _learningRate);
@@ -84,12 +85,11 @@ void backwardNetworksThread(vector<NeuralNetworkPtr> _neuralNets, uint _k, Featu
 	}
 }
 
-void forwardBackwardNetworksThread(vector<NeuralNetworkPtr> _neuralNets, uint _k, vector<MSEMeasurer>* _mses, FeatureVector _fv, realv _lr, realv* _error,uint _numSamples){
-	RNG random;
-	random.next();
+void forwardBackwardNetworksThread(vector<NeuralNetworkPtr> _neuralNets, uint _k, vector<MAEMeasurer>* _mses, FeatureVector _fv, realv _lr, realv* _error,uint _numSamples){
+
 	_neuralNets[_k]->forward(_fv);
 	(*_mses)[_k].totalError(_neuralNets[_k]->getOutputSignal(),_fv);
-	backward(_neuralNets[_k],_fv, _lr*random.gaussian(5.0));
+	backward(_neuralNets[_k],_fv, _lr);
 	*_error += ((*_mses)[_k].getError())/((realv)_neuralNets.size());
 }
 
@@ -99,7 +99,7 @@ void PopulationBP::preTrain(){
 
 	vector<FeatureVector> errors;
 	vector<NeuralNetworkPtr> neuralNets=population.getPopulation();
-	vector<MSEMeasurer> mses(neuralNets.size());
+	vector<MAEMeasurer> mses(neuralNets.size());
 	realv iterationError=0;
 	for(uint i=0; i<data.getNumSequences();i++){
 		index=indexOrderSelection[i];
@@ -129,11 +129,11 @@ void PopulationBP::trainOneIteration(){
 	uint index=0;
 	vector<FeatureVector> errors;
 	vector<NeuralNetworkPtr> neuralNets=population.getPopulation();
-	vector<MSEMeasurer> mses(neuralNets.size());
+	vector<MAEMeasurer> mses(neuralNets.size());
 	vector<uint> histogramOfTrainees(neuralNets.size());
 	vector< vector<uint> > correlatedTraining;
 	for(uint k=0; k<neuralNets.size();k++){
-		mses[k] = MSEMeasurer();
+		mses[k] = MAEMeasurer();
 		histogramOfTrainees[k] = 0;
 		correlatedTraining.push_back(vector<uint>(neuralNets.size()));
 		for(uint l=0; l<neuralNets.size();l++){
@@ -150,14 +150,14 @@ void PopulationBP::trainOneIteration(){
 			realv minError=10e+9;
 			list<realv> scoreList;
 			list<int> indexList;
-			vector<boost::thread *> threads;
+			vector<boost::thread *> threadsForward;
 			FeatureVector fv= data[index][j];
 			for(uint k=0;k<neuralNets.size();k++){
-				threads.push_back(new boost::thread(forwardNetworksThread,neuralNets,k,&mses,fv));
+				threadsForward.push_back(new boost::thread(forwardNetworksThread, neuralNets, k, &mses, fv));
 			}
 			for(uint k=0; k<neuralNets.size();k++){
-				threads[k]->join();
-				delete threads[k];
+				threadsForward[k]->join();
+				delete threadsForward[k];
 			}
 			for(uint k=0;k<neuralNets.size();k++){
 				if(mses[k].getError()<minError){
@@ -169,7 +169,7 @@ void PopulationBP::trainOneIteration(){
 			vector<bool> trained(neuralNets.size(),false);
 			vector<boost::thread *> threadsBackward;
 			for(uint k=0;k<neuralNets.size();k++){
-				threadsBackward.push_back(new boost::thread(backwardNetworksThread,neuralNets,k,fv,params.getLearningRate(), minError, &mses,similarity,&trained));
+				threadsBackward.push_back(new boost::thread(backwardNetworksThread, neuralNets, k, fv, params.getLearningRate(), minError, &mses, similarity, &trained));
 			}
 			for(uint k=0; k<neuralNets.size();k++){
 				threadsBackward[k]->join();
@@ -189,23 +189,6 @@ void PopulationBP::trainOneIteration(){
 					averageNumberTrained +=1.0;
 				}
 			}
-			/*if(minError/mses[k].getError()>=similarity){
-				trained[k]=true;
-				backward(neuralNets[k], data[index][j], params.getLearningRate());
-				sampleError+= mses[k].getError();
-				histogramOfTrainees[k] = histogramOfTrainees[k]+1;
-				for(uint l=0;l<neuralNets.size();l++){
-					if(l!=k && trained[l]){
-						correlatedTraining[l][k] +=1;
-						correlatedTraining[k][l] +=1;
-					}
-				}
-				numberTrained++;
-				averageNumberTrained +=1.0;
-			}
-			else{
-				backward(neuralNets[k],FeatureVector(data[index][j].getLength()), params.getLearningRate());
-			}*/
 			seqError += sampleError/((realv)numberTrained);
 		}
 		iterationError+=seqError/((realv)data[index].size());

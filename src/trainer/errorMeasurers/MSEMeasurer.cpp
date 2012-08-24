@@ -26,7 +26,7 @@ ErrorVector MSEMeasurer::errorPerUnit(FeatureVector _output, FeatureVector _targ
   }
   ErrorVector result(_output.getLength());
   for(uint i=0; i<_output.getLength();i++){
-    result[i]=sqrt((_output[i] - _target[i])*(_output[i] - _target[i]));
+    result[i]=sqrt((_output[i] - _target[i])*(_output[i] - _target[i]))/_output.getLength();
   }
   errPerUnit=result;
   return result;
@@ -40,15 +40,15 @@ realv MSEMeasurer::totalError(FeatureVector _output, FeatureVector _target){
   for(uint i=0; i<_output.getLength();i++){
     result+=(_output[i] - _target[i])*(_output[i] - _target[i]);
   }
-  error=sqrt(result);
-  return sqrt(result);
+  error=sqrt(result)/_output.getLength();
+  return error;
 }
 
 MSEMeasurer::~MSEMeasurer(){
   
 }
 
-ostream& operator<< (ostream& os, MSEMeasurer& mse){
-  os << mse.getError();
-  return os;
+ostream& operator<< (ostream& _os, MSEMeasurer& _mse){
+  _os << _mse.getError();
+  return _os;
 }

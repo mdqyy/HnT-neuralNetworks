@@ -35,6 +35,7 @@ add_library(Machines dataset/Dataset.cpp
   trainer/Trainer.cpp
   trainer/errorMeasurers/ErrorMeasurer.cpp
   trainer/errorMeasurers/MSEMeasurer.cpp
+  trainer/errorMeasurers/MAEMeasurer.cpp
   trainer/errorMeasurers/ClassificationErrorMeasurer.cpp
   trainer/criteria/Criteria.cpp
   trainer/criteria/Criterion.cpp

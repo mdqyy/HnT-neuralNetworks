@@ -86,7 +86,7 @@ void Connection::setWeights(Mat _weights){
 }
 
 void Connection::setInputLayer(Layer* _input){
-  if(_input->getNumUnits()+1>=((uint)weights.cols)){ /*! Should changethis shitty condition */
+  if(_input->getNumUnits()+1>=((uint)weights.cols)){ /*! Should change this shitty condition */
     from=_input;
   }
   else{
