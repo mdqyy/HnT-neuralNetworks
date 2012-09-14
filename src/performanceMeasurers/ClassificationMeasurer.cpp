@@ -10,7 +10,7 @@ ClassificationMeasurer::ClassificationMeasurer(){
 
 }
 
-ClassificationMeasurer::measure(Machine& _machine, Dataset& _dataset){
+ClassificationMeasurer::measure(Machine& _machine, ClassificationDataset& _dataset){
   
 }
 

@@ -22,12 +22,15 @@ class PerformanceMeasurer {
    */
   PerformanceMeasurer();
 
-  /* Todo : Methods*/
+  /*!
+   * Measure performance of a Machine on a dataset.
+   */
+  virtual void measurePerformance()=0;
 
   /*!
    * Destructor.
    */
-  ~PerformanceMeasurer();
+  virtual ~PerformanceMeasurer();
 
 };
 

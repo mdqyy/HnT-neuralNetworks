@@ -44,11 +44,6 @@ class PopulationBP : public SupervisedTrainer{
    */
   void train();
 
-  /*! 
-   * Pretrain a population
-   */
-  void preTrain();
-
   /*!
    * Train the neural networks on one iteration.
    */

@@ -76,7 +76,6 @@ FeatureVector Layer::createInputSignal() {
 	} else {
 		inSig = networkInputSignal;
 	}
-	inSig;
 	return inSig;
 }
 

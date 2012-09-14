@@ -61,3 +61,12 @@ target_link_libraries(executables/createImagesFromDB Machines TinyXML ${OpenCV_L
 
 add_executable(executables/createPixelRimes src/executables/createPixelRimes.cpp)
 target_link_libraries(executables/createPixelRimes Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
+add_executable(executables/createRegressionPixelRimes src/executables/createRegressionPixelRimes.cpp)
+target_link_libraries(executables/createRegressionPixelRimes Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
+add_executable(executables/testRNN src/executables/recurrentLearning.cpp)
+target_link_libraries(executables/testRNN Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
+add_executable(executables/diversityMeasurement src/executables/diversityMeasurement.cpp)
+target_link_libraries(executables/diversityMeasurement Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})

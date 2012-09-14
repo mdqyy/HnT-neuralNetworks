@@ -92,11 +92,6 @@ void NeuralNetwork::forward(FeatureVector _signal){
   getInputLayer()->forward(_signal);
 }
 
-/*void NeuralNetwork::backward(FeatureVector _target,realv _learningRate){
-  getOutputLayer()->backwardDeltas(true, _target);
-  getOutputLayer()->backwardWeights( _learningRate);
-  }*/
-
 void NeuralNetwork::print(ostream& _os) const{
   int numWeights = 0;
   for(uint i=0;i<connections.size();i++){

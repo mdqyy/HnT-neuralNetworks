@@ -54,11 +54,11 @@ void PopulationBPParams::setMaxTrained(uint _maxTrained){
 }
 
 void PopulationBPParams::setErrorToFirst(realv _errorToFirst){
-  if(_errorToFirst<1){
+  if(_errorToFirst<1.0){
     errorToFirst = _errorToFirst;
   }
   else{
-    errorToFirst = 0.9999999;
+    errorToFirst = 1.0;
   }
 }
 

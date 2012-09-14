@@ -42,6 +42,8 @@ add_library(Machines dataset/Dataset.cpp
   trainer/criteria/IterationCount.cpp
   trainer/supervisedTrainers/SupervisedTrainer.cpp
   performanceMeasurers/CrossValidationParams.cpp
+  performanceMeasurers/PerformanceMeasurer.cpp
+  performanceMeasurers/DiversityMeasurer.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/NeuralNetworkTrainer.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/BackPropagation.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/CTCTrainer.cpp

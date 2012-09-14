@@ -39,8 +39,8 @@ int main (int argc, char* argv[]){
 	PopulationBPParams params;
 	params.setMaxIterations(iterations);
 	params.setLearningRate(0.001);
-	params.setErrorToFirst(0.95);
-	params.setErrorToFirstIncrease(1.01);
+	params.setErrorToFirst(0.97);
+	params.setErrorToFirstIncrease(1.0001);
 	params.setMaxTrained(populationSize);
 	PopulationBP pbp(pop,dataset,params,mask,mask);
 	double t = (double)getTickCount();

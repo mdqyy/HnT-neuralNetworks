@@ -44,8 +44,9 @@ void LayerSigmoid::forward(){
 
 void LayerSigmoid::forward(FeatureVector _signal){
   networkInputSignal = _signal;
+  FeatureVector inSig = createInputSignal();
   for(uint i=0;i<numUnits;i++){
-    outputSignal[i]=1/(1+exp(-signalWeighting(createInputSignal(), getInputConnection()->getWeightsToNeuron(i))/*-recurrentSum*/ ));
+    outputSignal[i]=1/(1+exp(-signalWeighting(inSig, getInputConnection()->getWeightsToNeuron(i))/*-recurrentSum*/ ));
   }
   outputSignal[numUnits]=1.0;
 }

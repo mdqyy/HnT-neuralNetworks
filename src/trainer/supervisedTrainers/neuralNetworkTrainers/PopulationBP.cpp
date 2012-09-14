@@ -18,11 +18,14 @@ void PopulationBP::train(){
 	uint i=0;
 	do{
 		i++;
+		cout << "Iteration" << i <<endl;
 		trainOneIteration();
 		params.setLearningRate(params.getLearningRate()*params.getLearningRateDecrease());
 		params.setErrorToFirst(params.getErrorToFirst()*params.getErrorToFirstIncrease());
 	}while(i<params.getMaxIterations());
 }
+
+
 
 /*!
  * Thread function forwarding data and extracting error.
@@ -75,53 +78,18 @@ void forwardNetworksThread(vector<NeuralNetworkPtr> _neuralNets, uint _k, vector
 	(*_mses)[_k].totalError(_neuralNets[_k]->getOutputSignal(),_fv);
 }
 
-void backwardNetworksThread(vector<NeuralNetworkPtr> _neuralNets, uint _k, FeatureVector _target, realv _learningRate, realv _minError, vector<MAEMeasurer>* _mses, realv _similarity,vector<bool>* _trained){
+void backwardNetworksThread(vector<NeuralNetworkPtr> _neuralNets, uint _k, FeatureVector _target,realv _learningRate, realv _minError, vector<MAEMeasurer>* _mses, realv _similarity,vector<bool>* _trained){
 	if(_minError/ (*_mses)[_k].getError()>= _similarity){
 		(*_trained)[_k]=true;
 		backward(_neuralNets[_k], _target, _learningRate);
 	}
-	else{
-		backward(_neuralNets[_k],FeatureVector(_target.getLength()), _learningRate);
-	}
 }
 
 void forwardBackwardNetworksThread(vector<NeuralNetworkPtr> _neuralNets, uint _k, vector<MAEMeasurer>* _mses, FeatureVector _fv, realv _lr, realv* _error,uint _numSamples){
-
 	_neuralNets[_k]->forward(_fv);
 	(*_mses)[_k].totalError(_neuralNets[_k]->getOutputSignal(),_fv);
 	backward(_neuralNets[_k],_fv, _lr);
 	*_error += ((*_mses)[_k].getError())/((realv)_neuralNets.size());
-}
-
-void PopulationBP::preTrain(){
-	vector<uint> indexOrderSelection=defineIndexOrderSelection(data.getNumSequences());
-	uint index=0;
-
-	vector<FeatureVector> errors;
-	vector<NeuralNetworkPtr> neuralNets=population.getPopulation();
-	vector<MAEMeasurer> mses(neuralNets.size());
-	realv iterationError=0;
-	for(uint i=0; i<data.getNumSequences();i++){
-		index=indexOrderSelection[i];
-		realv seqError=0;
-		for(uint j=0;j<data[index].size();j++){
-			list<realv> scoreList;
-			list<int> indexList;
-			vector<boost::thread *> threads;
-			realv netError = 0;
-			for(uint k=0;k<neuralNets.size();k++){
-				FeatureVector fv= data[index][j];
-				threads.push_back(new boost::thread(forwardBackwardNetworksThread,neuralNets,k,&mses,fv,params.getLearningRate(),&netError, data.getNumSamples()));
-			}
-			for(uint k=0; k<neuralNets.size();k++){
-				threads[k]->join();
-				delete threads[k];
-			}
-			seqError+=netError/((realv)data[index].size());
-		}
-		iterationError += seqError/((realv)data.getNumSequences());
-	}
-	cout << "Pretrain error " << iterationError << endl;
 }
 
 void PopulationBP::trainOneIteration(){

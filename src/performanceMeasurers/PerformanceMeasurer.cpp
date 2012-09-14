@@ -10,6 +10,10 @@ PerformanceMeasurer::PerformanceMeasurer(){
 
 }
 
+void MeasurePerformance(){
+
+}
+
 PerformanceMeasurer::~PerformanceMeasurer(){
 
 }

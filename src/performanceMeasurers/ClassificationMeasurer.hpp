@@ -28,7 +28,7 @@ class ClassificationMeasurer {
    * \param _machine Machine.
    * \param _dataset Dataset.
    */
-  measure(Machine& _machine, Dataset& _dataset);
+  measure(Machine& _machine, ClassificationDataset& _dataset);
 
   /*!
    * Destructor.
