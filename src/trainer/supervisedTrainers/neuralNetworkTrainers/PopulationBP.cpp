@@ -30,7 +30,7 @@ void PopulationBP::train(){
 /*!
  * Thread function forwarding data and extracting error.
  */
-ErrorVector calculateDeltas(LayerPtr _layer, FeatureVector _target, ValueVector _derivatives, ErrorVector _previousLayerDelta){
+ErrorVector calculateDeltas2(LayerPtr _layer, FeatureVector _target, ValueVector _derivatives, ErrorVector _previousLayerDelta){
 	ErrorVector delta = ErrorVector(_layer->getNumUnits());
 	for(uint i=0;i<delta.getLength();i++){
 		delta[i]=_derivatives[i]*_layer->errorWeighting(_previousLayerDelta,_layer->getOutputConnection()->getWeightsFromNeuron(i));
@@ -38,7 +38,7 @@ ErrorVector calculateDeltas(LayerPtr _layer, FeatureVector _target, ValueVector 
 	return delta;
 }
 
-ErrorVector calculateOutputDeltas(LayerPtr _layer, FeatureVector _target, ValueVector _derivatives){
+ErrorVector calculateOutputDeltas2(LayerPtr _layer, FeatureVector _target, ValueVector _derivatives){
 	ErrorVector delta = ErrorVector(_layer->getNumUnits());
 	for(uint i=0;i<_target.getLength();i++){
 		delta[i] = _derivatives[i]*(_target[i]-_layer->getOutputSignal()[i]);  // error calculation if output layer
@@ -46,7 +46,7 @@ ErrorVector calculateOutputDeltas(LayerPtr _layer, FeatureVector _target, ValueV
 	return delta;
 }
 
-void updateConnection(ConnectionPtr _connection, ErrorVector _deltas, realv _learningRate){
+void updateConnection2(ConnectionPtr _connection, ErrorVector _deltas, realv _learningRate){
 	Mat weights = _connection->getWeights();
 	for(int i=0;i<weights.rows;i++){
 		for(int j=0;j<weights.cols;j++){
@@ -56,24 +56,24 @@ void updateConnection(ConnectionPtr _connection, ErrorVector _deltas, realv _lea
 	_connection->setWeights(weights);
 }
 
-void backward(NeuralNetworkPtr _neuralNet,FeatureVector _target, realv _learningRate){
+void backward2(NeuralNetworkPtr _neuralNet,FeatureVector _target, realv _learningRate){
 	vector<ConnectionPtr> connections = _neuralNet->getConnections();
 	vector<LayerPtr> layers = _neuralNet->getHiddenLayers();
 	vector<ErrorVector> deltas = vector<ErrorVector>();/* pushed in inversed order so be careful */
 	for(uint i = layers.size() -1 ; i > 0; i--){
 		ValueVector derivatives = layers[i]->getDerivatives();
 		if(i == layers.size()-1){
-			deltas.push_back(calculateOutputDeltas(layers[i], _target, derivatives));
+			deltas.push_back(calculateOutputDeltas2(layers[i], _target, derivatives));
 		}
 		else{
-			deltas.push_back(calculateDeltas(layers[i], _target, derivatives, deltas[deltas.size()-1]));
+			deltas.push_back(calculateDeltas2(layers[i], _target, derivatives, deltas[deltas.size()-1]));
 		}
 	}
 	for(uint i = 0; i < connections.size(); i++){
-		updateConnection(connections[i], deltas[connections.size()-i-1],_learningRate);
+		updateConnection2(connections[i], deltas[connections.size()-i-1],_learningRate);
 	}
 }
-void forwardNetworksThread(vector<NeuralNetworkPtr> _neuralNets, uint _k, vector<MAEMeasurer>* _mses, FeatureVector _fv){
+void forwardNetworksThread2(vector<NeuralNetworkPtr> _neuralNets, uint _k, vector<MAEMeasurer>* _mses, FeatureVector _fv){
 	_neuralNets[_k]->forward(_fv);
 	(*_mses)[_k].totalError(_neuralNets[_k]->getOutputSignal(),_fv);
 }
@@ -81,14 +81,14 @@ void forwardNetworksThread(vector<NeuralNetworkPtr> _neuralNets, uint _k, vector
 void backwardNetworksThread(vector<NeuralNetworkPtr> _neuralNets, uint _k, FeatureVector _target,realv _learningRate, realv _minError, vector<MAEMeasurer>* _mses, realv _similarity,vector<bool>* _trained){
 	if(_minError/ (*_mses)[_k].getError()>= _similarity){
 		(*_trained)[_k]=true;
-		backward(_neuralNets[_k], _target, _learningRate);
+		backward2(_neuralNets[_k], _target, _learningRate);
 	}
 }
 
 void forwardBackwardNetworksThread(vector<NeuralNetworkPtr> _neuralNets, uint _k, vector<MAEMeasurer>* _mses, FeatureVector _fv, realv _lr, realv* _error,uint _numSamples){
 	_neuralNets[_k]->forward(_fv);
 	(*_mses)[_k].totalError(_neuralNets[_k]->getOutputSignal(),_fv);
-	backward(_neuralNets[_k],_fv, _lr);
+	backward2(_neuralNets[_k],_fv, _lr);
 	*_error += ((*_mses)[_k].getError())/((realv)_neuralNets.size());
 }
 
@@ -121,7 +121,7 @@ void PopulationBP::trainOneIteration(){
 			vector<boost::thread *> threadsForward;
 			FeatureVector fv= data[index][j];
 			for(uint k=0;k<neuralNets.size();k++){
-				threadsForward.push_back(new boost::thread(forwardNetworksThread, neuralNets, k, &mses, fv));
+				threadsForward.push_back(new boost::thread(forwardNetworksThread2, neuralNets, k, &mses, fv));
 			}
 			for(uint k=0; k<neuralNets.size();k++){
 				threadsForward[k]->join();

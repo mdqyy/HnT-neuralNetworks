@@ -44,11 +44,13 @@ add_library(Machines dataset/Dataset.cpp
   performanceMeasurers/CrossValidationParams.cpp
   performanceMeasurers/PerformanceMeasurer.cpp
   performanceMeasurers/DiversityMeasurer.cpp
+  performanceMeasurers/Regression.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/NeuralNetworkTrainer.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/BackPropagation.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/CTCTrainer.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/BackPropParams.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBP.cpp
+  trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBPBatch.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBPParams.cpp
   utilities/ImageProcessing.cpp
   utilities/TextUtilities.cpp

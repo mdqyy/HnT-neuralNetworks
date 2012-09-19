@@ -49,6 +49,15 @@ void PBDNN::forwardSequence(std::vector<FeatureVector> _sequence){
   }
 }
 
+void PBDNN::forward(FeatureVector _sample){
+	MSEMeasurer mse;
+	errors = vector<FeatureVector>(1,FeatureVector(forwardPopulation.size()));
+	for(uint j=0;j<forwardPopulation.size();j++){
+		forwardPopulation[j]->forward(_sample);
+		errors[0][j]=mse.totalError(_sample,forwardPopulation[j]->getOutputSignal());
+	}
+}
+
 vector<NeuralNetworkPtr> PBDNN::getPopulation() const{
   return forwardPopulation;
 }

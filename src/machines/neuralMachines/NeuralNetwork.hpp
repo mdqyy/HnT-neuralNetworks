@@ -20,148 +20,145 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 
-
 /*!
  * \class NeuralNetwork
  * Description
  */
-class NeuralNetwork : public NeuralMachine, public Clonable {
- private :
+class NeuralNetwork: public NeuralMachine, public Clonable {
+private:
 
- protected:
-  /*! Hidden layer */
-  std::vector<LayerPtr> hiddenLayers; 
-  /*! Connections between layers */
-  std::vector<ConnectionPtr> connections;
-  /*! Input signal */
-  FeatureVector inputSignal;
-  /*! Output signal */
-  FeatureVector outputSignal;
-  /*! Forward or backward sequence processing. */
-  bool readForward;
-    
- public:
+protected:
+	/*! Hidden layer */
+	std::vector<LayerPtr> hiddenLayers;
+	/*! Connections between layers */
+	std::vector<ConnectionPtr> connections;
+	/*! Input signal */
+	FeatureVector inputSignal;
+	/*! Output signal */
+	FeatureVector outputSignal;
+	/*! Forward or backward sequence processing. */
+	bool readForward;
 
-  /*!
-   * Default constructor.
-   */
-  NeuralNetwork();
+public:
 
-  /*! 
-   * Parameter constructor. 
-   * \param _hidden Hidden layers.
-   * \param _connections Connections between layers.
-   * \param _forward Controlling the sequence processing of the machine.
-   * \param _name Machine name.
-   */
-  NeuralNetwork(std::vector<LayerPtr> _hidden, std::vector<ConnectionPtr> _connections, bool _forward=true,std::string _name="neural_network");
+	/*!
+	 * Default constructor.
+	 */
+	NeuralNetwork();
 
-  /*!
-   * Copy constructor.
-   * \param _cnn Neural network to copy.
-   */
-  NeuralNetwork(const NeuralNetwork& _cnn);
+	/*!
+	 * Parameter constructor.
+	 * \param _hidden Hidden layers.
+	 * \param _connections Connections between layers.
+	 * \param _forward Controlling the sequence processing of the machine.
+	 * \param _name Machine name.
+	 */
+	NeuralNetwork(std::vector<LayerPtr> _hidden, std::vector<ConnectionPtr> _connections, bool _forward = true, std::string _name = "neural_network");
 
-  /*!
-   * Clone an instance of a neural network.
-   * \return A pointer to the clone.
-   */
-  NeuralNetwork* clone() const;
-  
+	/*!
+	 * Copy constructor.
+	 * \param _cnn Neural network to copy.
+	 */
+	NeuralNetwork(const NeuralNetwork& _cnn);
 
-  /*!
-   * Get input layer.
-   * \return Input layer.
-   */
-  Layer* getInputLayer() const;
+	/*!
+	 * Clone an instance of a neural network.
+	 * \return A pointer to the clone.
+	 */
+	NeuralNetwork* clone() const;
 
-  /*!
-   * Get hidden layers.
-   * \return Hidden layers.
-   */ 
-  std::vector<LayerPtr> getHiddenLayers() const;
+	/*!
+	 * Get input layer.
+	 * \return Input layer.
+	 */
+	Layer* getInputLayer() const;
 
-  /*!
-   * Get output layer.
-   * \return Output layer.
-   */
-  Layer* getOutputLayer() const;
+	/*!
+	 * Get hidden layers.
+	 * \return Hidden layers.
+	 */
+	std::vector<LayerPtr> getHiddenLayers() const;
 
-  /*!
-   * Get input signal.
-   * \return Input signal.
-   */
-  FeatureVector getInputSignal() const;
+	/*!
+	 * Get output layer.
+	 * \return Output layer.
+	 */
+	Layer* getOutputLayer() const;
 
-  /*!
-   * Get output signal.
-   * \return Output signal.
-   */
-  FeatureVector getOutputSignal() const;
+	/*!
+	 * Get input signal.
+	 * \return Input signal.
+	 */
+	FeatureVector getInputSignal() const;
 
-  /*!
-   * Get Connections in the neural network.
-   * \return Connections.
-   */
-  std::vector<ConnectionPtr> getConnections() const;
+	/*!
+	 * Get output signal.
+	 * \return Output signal.
+	 */
+	FeatureVector getOutputSignal() const;
 
-  /*!
-   * Get the forward 
-   * \return True if the network reads the sequence in a forward manner. False if it reads it backwards.
-   */
-  bool isForward() const;
+	/*!
+	 * Get Connections in the neural network.
+	 * \return Connections.
+	 */
+	std::vector<ConnectionPtr> getConnections() const;
 
-  /*!
-   * Set hidden layers.
-   * \param _hidden Hidden layers.
-   */
-  void setHiddenLayers(std::vector<LayerPtr> _hidden);
+	/*!
+	 * Get the forward
+	 * \return True if the network reads the sequence in a forward manner. False if it reads it backwards.
+	 */
+	bool isForward() const;
 
-  /*!
-   * Forward a sequence.
-   * \param _sequence Sequence of feature vectors.
-   */
-  virtual void forwardSequence(std::vector<FeatureVector> _sequence);
+	/*!
+	 * Set hidden layers.
+	 * \param _hidden Hidden layers.
+	 */
+	void setHiddenLayers(std::vector<LayerPtr> _hidden);
 
-  /*!
-   * Forward a feature vector.
-   * \param signal Input feature vector.
-   */
-  void forward(FeatureVector _signal);
+	/*!
+	 * Forward a sequence.
+	 * \param _sequence Sequence of feature vectors.
+	 */
+	void forwardSequence(std::vector<FeatureVector> _sequence);
 
-  /*!
-   * Backward an error vector.
-   * \param _target Neural network target.
-   * \param _learningRate Weight change rate.
-   */
-  // void backward(FeatureVector _target, realv _learningRate);
-  
-  /*!
-   * Print data concerning the object.
-   * \param _os Output file stream.
-   */
-  void print(std::ostream& _os) const;
+	/*!
+	 * Forward a feature vector.
+	 * \param signal Input feature vector.
+	 */
+	void forward(FeatureVector _signal);
 
-  /*!
-   * Destructor.
-   */
-  ~NeuralNetwork();
+	/*!
+	 * Backward an error vector.
+	 * \param _target Neural network target.
+	 * \param _learningRate Weight change rate.
+	 */
+	// void backward(FeatureVector _target, realv _learningRate);
+	/*!
+	 * Print data concerning the object.
+	 * \param _os Output file stream.
+	 */
+	void print(std::ostream& _os) const;
 
-  /*!
-   * Output file stream.
-   * \param ofs Output file stream.
-   * \param c Connection.
-   * \return Output file stream.
-   */
-  friend std::ofstream& operator<<(std::ofstream& ofs, const NeuralNetwork& c);
+	/*!
+	 * Destructor.
+	 */
+	~NeuralNetwork();
 
-  /*!
-   * Input file stream.
-   * \param ifs Input file stream.
-   * \param c Connection.
-   * \return Input file stream.
-   */
-  friend std::ifstream& operator>>(std::ifstream& ifs, NeuralNetwork& c);
+	/*!
+	 * Output file stream.
+	 * \param ofs Output file stream.
+	 * \param c Connection.
+	 * \return Output file stream.
+	 */
+	friend std::ofstream& operator<<(std::ofstream& ofs, const NeuralNetwork& c);
+
+	/*!
+	 * Input file stream.
+	 * \param ifs Input file stream.
+	 * \param c Connection.
+	 * \return Input file stream.
+	 */
+	friend std::ifstream& operator>>(std::ifstream& ifs, NeuralNetwork& c);
 
 };
 

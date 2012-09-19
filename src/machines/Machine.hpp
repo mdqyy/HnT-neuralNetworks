@@ -15,62 +15,67 @@
  * Description
  */
 class Machine {
- private :
+private:
 
- protected:
-  /*! Machine name */
-  std::string name;
+protected:
+	/*! Machine name */
+	std::string name;
 
- public:
+public:
 
-  /*!
-   * Default constructor.
-   */
-  Machine();
+	/*!
+	 * Default constructor.
+	 */
+	Machine();
 
-  /*!
-   * Constructor.
-   * \param _name Machine name. 
-   */
-  Machine(std::string _name);
+	/*!
+	 * Constructor.
+	 * \param _name Machine name.
+	 */
+	Machine(std::string _name);
 
-  /*!
-   * Get name.
-   * \return Machine name.
-   */
-  std::string getName() const;
+	/*!
+	 * Get name.
+	 * \return Machine name.
+	 */
+	std::string getName() const;
 
-  /*!
-   * Set name
-   * \param _name New name.
-   */
-  void setName(std::string _name);
+	/*!
+	 * Set name
+	 * \param _name New name.
+	 */
+	void setName(std::string _name);
 
-  /*!
-   * Forward a sequence.
-   * \param _sequence Sequence to pass forward.
-   */
-  virtual void forwardSequence(std::vector<FeatureVector> _sequence)=0;
+	/*!
+	 * Forward a sequence.
+	 * \param _sequence Sequence to pass forward.
+	 */
+	virtual void forwardSequence(std::vector<FeatureVector> _sequence)=0;
 
-  /*!
-   * Print data concerning the object.
-   * \param _os Output file stream.
-   */
-  virtual void print(std::ostream& _os) const =0;
+	/*!
+	 * Forward a sample of a sequence.
+	 * \param _sample Feature vector to pass forward.
+	 */
+	virtual void forward(FeatureVector _sample)=0;
 
-  /*!
-   * Destructor.
-   */
-  ~Machine();
+	/*!
+	 * Print data concerning the object.
+	 * \param _os Output file stream.
+	 */
+	virtual void print(std::ostream& _os) const =0;
 
-  /*!
-   * Print some machine information.
-   * \param _os Output stream.
-   * \param _m Machine.
-   * \remark Uses the overloaded function print.
-   */
-  friend std::ostream& operator<<(std::ostream& _os, const Machine& _m);
+	/*!
+	 * Destructor.
+	 */
+	~Machine();
+
+	/*!
+	 * Print some machine information.
+	 * \param _os Output stream.
+	 * \param _m Machine.
+	 * \remark Uses the overloaded function print.
+	 */
+	friend std::ostream& operator<<(std::ostream& _os, const Machine& _m);
 };
-
 
 #endif

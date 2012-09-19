@@ -18,7 +18,7 @@
 #include "PerformanceMeasurer.hpp"
 
 class DiversityMeasurer: public PerformanceMeasurer {
-private :
+private:
 protected:
 	/*! Network population */
 	PBDNN& networkPopulation;
@@ -44,8 +44,9 @@ protected:
 	/*! Disagreement matrix between networks. */
 	cv::Mat disagreementMatrix;
 public:
+
 	DiversityMeasurer(PBDNN& _population, RegressionDataset& _data);
-	
+
 	void measurePerformance();
 
 	void processNetworkOutputMeanAndStdDevMatrix();
@@ -55,7 +56,7 @@ public:
 	void processCovarianceMatrix();
 
 	void processChiSquareMatrix();
-	
+
 	void processDisagreementMatrix();
 
 	void initMatrices();

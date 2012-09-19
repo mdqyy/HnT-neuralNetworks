@@ -148,13 +148,13 @@ void DiversityMeasurer::processDisagreementMatrix(){
 					outputB = population[k]->getOutputSignal();
 					target = data.getTargetSample(l,m);
 					for (uint n = 0; n < outputA.getLength(); n++) {
-						if(outputA[n] > target[n] - networkOutputStdDevMatrix.at<double>(j,n) && outputA[n] < target[n] + networkOutputStdDevMatrix.at<double>(j,n) ){
+						if(outputA[n] > target[n] - sqrt(networkOutputStdDevMatrix.at<double>(j,n)) && outputA[n] < target[n] + sqrt(networkOutputStdDevMatrix.at<double>(j,n)) ){
 							AGood = true;
 						}
 						else {
 							AGood = false;
 						}
-						if(outputB[n] > target[n] - networkOutputStdDevMatrix.at<double>(k,n) && outputB[n] < target[n] + networkOutputStdDevMatrix.at<double>(k,n) ){
+						if(outputB[n] > target[n] - sqrt(networkOutputStdDevMatrix.at<double>(k,n)) && outputB[n] < target[n] + sqrt(networkOutputStdDevMatrix.at<double>(k,n)) ){
 							BGood = true;
 						}
 						else {

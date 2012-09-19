@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(PhD)
 #make flags
-set(CMAKE_CXX_FLAGS "-Wall -pedantic -o2 -pg")
+set(CMAKE_CXX_FLAGS "-Wall -pedantic -o2")
 
 find_package(OpenCV REQUIRED)
 
@@ -55,6 +55,9 @@ target_link_libraries(executables/createPixelDB Machines TinyXML ${OpenCV_LIBS} 
 
 add_executable(executables/pbdnnIAM src/executables/pbdnnIAM.cpp)
 target_link_libraries(executables/pbdnnIAM Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
+add_executable(executables/pbdnnBatch src/executables/pbdnnBatch.cpp)
+target_link_libraries(executables/pbdnnBatch Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
 add_executable(executables/createImagesFromDB src/executables/createImagesFromDB.cpp)
 target_link_libraries(executables/createImagesFromDB Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})

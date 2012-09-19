@@ -18,7 +18,7 @@
 #include "../machines/neuralMachines/layers/LayerTanh.hpp"
 #include "../machines/neuralMachines/connections/Connection.hpp"
 #include "../machines/neuralMachines/PBDNN.hpp"
-#include "../trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBP.hpp"
+#include "../trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBPBatch.hpp"
 #include "../trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBPParams.hpp"
 #include <sstream>
 
@@ -26,8 +26,7 @@ using namespace std;
 using namespace cv;
 
 int main (int argc, char* argv[]){
-
-	ClassificationDataset dataset;
+	RegressionDataset dataset;
 	dataset.load(argv[4]);
 	cout << "dataset loaded, total elements : "<< dataset.getNumSamples()<< endl ;
 	int populationSize = atoi(argv[1]);
@@ -38,22 +37,21 @@ int main (int argc, char* argv[]){
 	Mask mask;
 	PopulationBPParams params;
 	params.setMaxIterations(iterations);
-	params.setLearningRate(0.01);
-	params.setErrorToFirst(1.0);
-	params.setErrorToFirstIncrease(1.0);
-	params.setMaxTrained(populationSize);
-	PopulationBP pbp(pop,dataset,params,mask,mask);
+	params.setLearningRate(0.1);
+	PopulationBPBatch pbp(pop,dataset,params,mask,mask);
+	DiversityMeasurer diversity(pop,dataset);
+	diversity.measurePerformance();
+	cout << "Starting diversity" << endl << diversity.getDisagreementMatrix() << endl;
 	double t = (double)getTickCount();
 	pbp.train();
 	t = ((double)getTickCount() - t)/getTickFrequency();
 	cout << "Temps :" << t << endl;
-
 	cout << endl <<"Saving network" << endl;
 	ofstream outStream("IAMpop.txt");
 	outStream << pop;
 
 	vector<NeuralNetworkPtr> population= pop.getPopulation();
-	ClassificationDataset dataset2;
+	RegressionDataset dataset2;
 	dataset2.load(argv[6]);
 	cout << "Recording Data" << endl;
 	for(int i=0;i<population.size();i++){
