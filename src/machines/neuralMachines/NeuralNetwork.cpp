@@ -155,7 +155,7 @@ ifstream& operator>>(ifstream& ifs, NeuralNetwork& nn){
   ifs >> temp ;
   ifs >> name;
   ifs >> forwardInt;
-  forwardBool = forwardBool==1;
+  forwardBool = (forwardInt==1);
   ifs >> numLayers;
   ifs >> numConnections;
   for(int i=0;i<numConnections;i++){

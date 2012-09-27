@@ -38,7 +38,7 @@ PBDNN::PBDNN(uint _numNetworks, uint _numEntries, uint _hiddenLayerSize, ValueVe
 }
 
 void PBDNN::forwardSequence(std::vector<FeatureVector> _sequence){
-  MSEMeasurer mse;
+  SEMeasurer mse;
   uint seqSize=_sequence.size();
   errors = vector<FeatureVector>(seqSize,FeatureVector(forwardPopulation.size()));
   for(uint i=0;i<seqSize;i++){
@@ -50,7 +50,7 @@ void PBDNN::forwardSequence(std::vector<FeatureVector> _sequence){
 }
 
 void PBDNN::forward(FeatureVector _sample){
-	MSEMeasurer mse;
+	SEMeasurer mse;
 	errors = vector<FeatureVector>(1,FeatureVector(forwardPopulation.size()));
 	for(uint j=0;j<forwardPopulation.size();j++){
 		forwardPopulation[j]->forward(_sample);

@@ -111,7 +111,7 @@ class Connection : public Clonable{
    * \param _mean Normal distribution mean
    * \param _stdev Normal distribution standard deviation.
    */
-  void initializeWeights(uint _seed,realv _mean=0, realv _stdev=5.0);
+  void initializeWeights(uint _seed,realv _mean=0, realv _stdev=1.0);
 
   /*!
    * Get the weights concerning the input neuron i

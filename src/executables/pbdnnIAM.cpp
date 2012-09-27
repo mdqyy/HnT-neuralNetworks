@@ -38,7 +38,7 @@ int main (int argc, char* argv[]){
 	Mask mask;
 	PopulationBPParams params;
 	params.setMaxIterations(iterations);
-	params.setLearningRate(0.01);
+	params.setLearningRate(0.0001);
 	params.setErrorToFirst(1.0);
 	params.setErrorToFirstIncrease(1.0);
 	params.setMaxTrained(populationSize);
@@ -56,12 +56,12 @@ int main (int argc, char* argv[]){
 	ClassificationDataset dataset2;
 	dataset2.load(argv[6]);
 	cout << "Recording Data" << endl;
-	for(int i=0;i<population.size();i++){
+	for(uint i=0;i<population.size();i++){
 		ostringstream name,path;
 		name << "neuralNet" << i;
 		UnsupervisedDataset nnData;
 		nnData.setName(name.str());
-		for(int j=0;j<dataset2.getNumSequences();j++){
+		for(uint j=0;j<dataset2.getNumSequences();j++){
 			vector<FeatureVector> features;
 			for(uint k=0;k<dataset2[j].size() ; k++){
 				population[i]->forward(dataset2[j][k]);

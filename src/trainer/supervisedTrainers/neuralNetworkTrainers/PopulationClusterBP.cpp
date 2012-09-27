@@ -1,20 +1,20 @@
 /*!
- * \file PopulationBP.cpp
- * Body of the PopulationBP class.
+ * \file PopulationClusterBP.cpp
+ * Body of the PopulationClusterBP class.
  * \author Luc Mioulet
  */
 
-#include "PopulationBP.hpp"
+#include "PopulationClusterBP.hpp"
 #include "../../errorMeasurers/AEMeasurer.hpp"
 
 using namespace cv;
 using namespace std;
 
-PopulationBP::PopulationBP(PBDNN& _population, SupervisedDataset& _data, PopulationBPParams& _params, Mask& _featureMask, Mask& _indexMask) : SupervisedTrainer(_population, _data, _featureMask, _indexMask), population(_population), params(_params){
+PopulationClusterBP::PopulationClusterBP(PBDNN& _population, RegressionDataset& _data, PopulationBPParams& _params, Mask& _featureMask, Mask& _indexMask) : SupervisedTrainer(_population, _data, _featureMask, _indexMask), population(_population), params(_params), regData(_data){
 
 }
 
-void PopulationBP::train(){
+void PopulationClusterBP::train(){
 	uint i=0;
 	do{
 		i++;
@@ -92,89 +92,84 @@ void forwardBackwardNetworksThread(vector<NeuralNetworkPtr> _neuralNets, uint _k
 	*_error += ((*_mses)[_k].getError())/((realv)_neuralNets.size());
 }
 
-void PopulationBP::trainOneIteration(){
+void PopulationClusterBP::trainOneIteration(){
 	vector<uint> indexOrderSelection=defineIndexOrderSelection(data.getNumSequences());
 	uint index=0;
+	uint bestNetwork=0;
+	DiversityMeasurer diversity(population,regData);
 	vector<FeatureVector> errors;
 	vector<NeuralNetworkPtr> neuralNets=population.getPopulation();
-	vector<AEMeasurer> mses(neuralNets.size());
+	vector<vector<Mat> > tempWeights;
+	AEMeasurer mae;
 	vector<uint> histogramOfTrainees(neuralNets.size());
 	vector< vector<uint> > correlatedTraining;
+	vector <vector< pair<int,int> > > learningAffectations = vector <vector< pair<int,int> > >();
 	for(uint k=0; k<neuralNets.size();k++){
-		mses[k] = AEMeasurer();
 		histogramOfTrainees[k] = 0;
 		correlatedTraining.push_back(vector<uint>(neuralNets.size()));
+		learningAffectations.push_back(vector<pair<int,int> >());
+		tempWeights.push_back(vector<Mat>());
+		vector<ConnectionPtr> connections =neuralNets[k]->getConnections();
+		for(uint i = 0; i < connections.size(); i++){
+			tempWeights[k].push_back(connections[i]->getWeights().clone());
+		}
 		for(uint l=0; l<neuralNets.size();l++){
 			correlatedTraining[k][l]=0;
 		}
 	}
-	realv iterationError=0;
-	realv averageNumberTrained=0;
 	for(uint i=0; i<data.getNumSequences();i++){
-		realv seqError = 0;
 		index=indexOrderSelection[i];
 		for(uint j=0;j<data[index].size();j++){
-			realv sampleError = 0;
 			realv minError=10e+9;
-			list<realv> scoreList;
-			list<int> indexList;
-			vector<boost::thread *> threadsForward;
 			FeatureVector fv= data[index][j];
+			bestNetwork = 0;
 			for(uint k=0;k<neuralNets.size();k++){
-				threadsForward.push_back(new boost::thread(forwardNetworksThread2, neuralNets, k, &mses, fv));
-			}
-			for(uint k=0; k<neuralNets.size();k++){
-				threadsForward[k]->join();
-				delete threadsForward[k];
-			}
-			for(uint k=0;k<neuralNets.size();k++){
-				if(mses[k].getError()<minError){
-					minError=mses[k].getError();
+				neuralNets[k]->forward(fv);
+				mae.processErrors(neuralNets[k]->getOutputSignal(),regData.getTargetSample(index,j));
+				if(mae.getError()<minError){
+					minError=mae.getError();
+					bestNetwork = k;
 				}
 			}
-			realv similarity=params.getErrorToFirst();
-			uint numberTrained=0;
-			vector<bool> trained(neuralNets.size(),false);
-			vector<boost::thread *> threadsBackward;
-			for(uint k=0;k<neuralNets.size();k++){
-				threadsBackward.push_back(new boost::thread(backwardNetworksThread, neuralNets, k, fv, params.getLearningRate(), minError, &mses, similarity, &trained));
-			}
-			for(uint k=0; k<neuralNets.size();k++){
-				threadsBackward[k]->join();
-				delete threadsBackward[k];
-			}
-			for(uint k=0; k<neuralNets.size();k++){
-				if(trained[k]==true){
-					sampleError+= mses[k].getError();
-					histogramOfTrainees[k] = histogramOfTrainees[k]+1;
-					for(uint l=0;l<neuralNets.size();l++){
-						if(l!=k && trained[l]){
-							correlatedTraining[l][k] +=1;
-							correlatedTraining[k][l] +=1;
-						}
-					}
-					numberTrained++;
-					averageNumberTrained +=1.0;
-				}
-			}
-			seqError += sampleError/((realv)numberTrained);
+			learningAffectations[bestNetwork].push_back(pair<int,int>(index,j));
 		}
-		iterationError+=seqError/((realv)data[index].size());
 	}
+	uint timesTrained = data.getNumSamples();
 	for(uint k=0; k<neuralNets.size();k++){
-		cout << k << "\t "<< histogramOfTrainees[k] << endl;
-	}
-	cout << "Correlated trainings" << endl;
-	for(uint k=0; k<neuralNets.size();k++){
-		for(uint l=0; l<neuralNets.size();l++){
-			cout << correlatedTraining[k][l]/((realv)data.getNumSamples())<<" ";
+		if(learningAffectations[k].size()<timesTrained){
+			timesTrained = learningAffectations[k].size();
 		}
-		cout << endl;
 	}
-	averageNumberTrained/=((realv)data.getNumSamples());
-	cout << "Iteration error " << (iterationError/((realv)data.getNumSequences())) <<", average number of networks trained "<< averageNumberTrained << endl;
+	FeatureVector blackTarget = FeatureVector(regData.getTargetSample(0, 0));
+	for(uint k=0;k<neuralNets.size();k++){
+		for(uint i=0;i<timesTrained;i++){
+			/* forward backward good sample */
+			pair<int, int> index = learningAffectations[k][i];
+			neuralNets[k]->forward(regData[index.first][index.second]);
+			backward2(neuralNets[k], regData.getTargetSample(index.first, index.second), params.getLearningRate());
+			/* forward backward bad random sample */
+			RNG randomK;
+			randomK.next();
+			uint randK=0;
+			do{
+				randK = randomK.uniform(0,neuralNets.size());
+			}while(randK==k);
+			index = learningAffectations[randK][i];
+			neuralNets[k]->forward(regData[index.first][index.second]);
+			backward2(neuralNets[k], blackTarget, params.getLearningRate());
+		}
+	}
+	cout << "network  | \t Global error \t | \t timesSelected" << endl;
+	for(uint i=0;i<neuralNets.size();i++){
+		RegressionMeasurer regMeasurer = RegressionMeasurer(*(neuralNets[i].get()),regData,mae);
+		regMeasurer.measurePerformance();
+		cout << i << " \t | \t " << regMeasurer.getTotalError() <<"\t | \t" << learningAffectations[i].size() <<endl;
+	}
+	diversity.measurePerformance();
+	cout << "Diversity : " << endl << diversity.getDisagreementMatrix() << endl;
+	cout << "Diversity scalar: " << endl << diversity.getDisagreementScalar() << endl;
 }
 
-PopulationBP::~PopulationBP(){
+PopulationClusterBP::~PopulationClusterBP(){
 
 }

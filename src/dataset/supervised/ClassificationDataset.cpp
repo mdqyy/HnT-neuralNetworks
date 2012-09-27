@@ -128,37 +128,37 @@ void ClassificationDataset::addSequence(vector<FeatureVector> _sequence, vector<
   updateStatistics(_sequence);
 }
 
-void ClassificationDataset::addSample(FeatureVector sample, string className, uint index){
-  if(className.compare("")!=0){
-    if(classLabelIndex.find(className)==classLabelIndex.end()){
+void ClassificationDataset::addSample(FeatureVector _sample, string _className, uint _index){
+  if(_className.compare("")!=0){
+    if(classLabelIndex.find(_className)==classLabelIndex.end()){
       throw invalid_argument("ClassificationDataset : Class non existent");
     }
   }
-  addSample(sample,getIndexLabel(className),index);
+  addSample(_sample,getIndexLabel(_className),_index);
 }
 
-void ClassificationDataset::addSample(FeatureVector sample, int classIndex, uint index){
-  if(classLabels.find(classIndex)==classLabels.end()){
+void ClassificationDataset::addSample(FeatureVector _sample, int _classIndex, uint _index){
+  if(classLabels.find(_classIndex)==classLabels.end()){
     throw invalid_argument("ClassificationDataset : Class number not existent");
   }
-  if(index>data.size()-1){
+  if(_index>data.size()-1){
     throw out_of_range("ClassificationDataset : Index out of range");
   }
-  int insertIndex=index;
+  int insertIndex=_index;
   if(insertIndex<0){ // if we are not adding data to an existing index
-    data.push_back(vector<FeatureVector>(1,sample));
-    classes.push_back(vector<int>(1,classIndex));
+    data.push_back(vector<FeatureVector>(1,_sample));
+    classes.push_back(vector<int>(1,_classIndex));
   }
   else{ // else we are adding to existing data
-    data[insertIndex].push_back(sample);
+    data[insertIndex].push_back(_sample);
     if(data[insertIndex].size() > maxSequenceLength){ //check if we de not go over the actual maximum 
       maxSequenceLength = data[insertIndex].size(); 
     }
-    if(classIndex>=0){
-      classes[insertIndex].push_back(classIndex);
+    if(_classIndex>=0){
+      classes[insertIndex].push_back(_classIndex);
     }
   }
-  updateStatistics(sample);
+  updateStatistics(_sample);
 }
 
 void ClassificationDataset::addClass(string _class, int _index){
@@ -170,9 +170,9 @@ void ClassificationDataset::addClass(string _class, int _index){
   classLabelIndex.insert(pair<string,int>(_class,newIndex));
 }
 
-void ClassificationDataset::load(std::string fileName){
+void ClassificationDataset::load(std::string _fileName){
   /* Open file */
-  TiXmlDocument doc( fileName );
+  TiXmlDocument doc( _fileName );
   if ( !doc.LoadFile() ){
     throw invalid_argument("ClassificationDataset : Uncorrect filename");
   }
@@ -224,7 +224,7 @@ void ClassificationDataset::load(std::string fileName){
   }
 }
 
-void ClassificationDataset::save(std::string fileName){
+void ClassificationDataset::save(std::string _fileName){
   TiXmlDocument doc;
   TiXmlDeclaration * decl = new TiXmlDeclaration( "1.0", "", "no" );
   doc.LinkEndChild( decl );
@@ -274,34 +274,34 @@ void ClassificationDataset::save(std::string fileName){
   }
   classificationDataset->LinkEndChild(ddata);
   doc.LinkEndChild( classificationDataset );
-  doc.SaveFile( fileName );
+  doc.SaveFile( _fileName );
 }
 
 ClassificationDataset::~ClassificationDataset(){
 
 }
 
-ostream& operator<<(ostream& os, ClassificationDataset& cd){
-  os << "Classification dataset '" << cd.getName() << "' : " << endl;
-  os << "\t - Class mapping  :" ;
+ostream& operator<<(ostream& _os, ClassificationDataset& _cd){
+  _os << "Classification dataset '" << _cd.getName() << "' : " << endl;
+  _os << "\t - Class mapping  :" ;
   map<int,string>::iterator pos;
-  for (pos = cd.getClassLabelMap().begin(); pos != cd.getClassLabelMap().end(); pos++) {
-    os << "(" << pos->first << ", " << pos->second<<") ;" ;
+  for (pos = _cd.getClassLabelMap().begin(); pos != _cd.getClassLabelMap().end(); pos++) {
+    _os << "(" << pos->first << ", " << pos->second<<") ;" ;
   }
-  os << endl;
-  os << "\t - Sequences : " << cd.getNumSequences() << endl;
-  os << "\t - Samples : " << cd.getNumSamples() << endl;
-  for(uint i=0;i<cd.getNumSequences();i++){
-    os << "Sequence "<< i <<"[ "<<endl;
-    for(uint j=0;j<cd[i].size();j++){
-      os << cd[i][j] ;
+  _os << endl;
+  _os << "\t - Sequences : " << _cd.getNumSequences() << endl;
+  _os << "\t - Samples : " << _cd.getNumSamples() << endl;
+  for(uint i=0;i<_cd.getNumSequences();i++){
+    _os << "Sequence "<< i <<"[ "<<endl;
+    for(uint j=0;j<_cd[i].size();j++){
+      _os << _cd[i][j] ;
     }
-    vector<int> classes = cd.getSequenceClassesIndex(i);
+    vector<int> classes = _cd.getSequenceClassesIndex(i);
     for(uint j=0;j<classes.size();j++){
-      os << "\t \t With classes " << classes[j] << " ";
+      _os << "\t \t With classes " << classes[j] << " ";
     }
-    os <<" ]"<<endl;
+    _os <<" ]"<<endl;
   }
-  return os;
+  return _os;
 
 }

@@ -18,7 +18,7 @@
 #include "../machines/neuralMachines/layers/LayerTanh.hpp"
 #include "../machines/neuralMachines/connections/Connection.hpp"
 #include "../machines/neuralMachines/PBDNN.hpp"
-#include "../trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBPBatch.hpp"
+#include "../trainer/supervisedTrainers/neuralNetworkTrainers/PopulationClusterBP.hpp"
 #include "../trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBPParams.hpp"
 #include <sstream>
 
@@ -38,7 +38,7 @@ int main (int argc, char* argv[]){
 	PopulationBPParams params;
 	params.setMaxIterations(iterations);
 	params.setLearningRate(0.1);
-	PopulationBPBatch pbp(pop,dataset,params,mask,mask);
+	PopulationClusterBP pbp(pop,dataset,params,mask,mask);
 	DiversityMeasurer diversity(pop,dataset);
 	diversity.measurePerformance();
 	cout << "Starting diversity" << endl << diversity.getDisagreementMatrix() << endl;

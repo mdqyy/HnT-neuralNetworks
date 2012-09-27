@@ -38,34 +38,35 @@ class RegressionDataset : public SupervisedDataset{
   /*! 
    * Get the target feature vector for a sequence.
    * \param _i Sequence index.
-   * \return The target sequence targets.
+   * \return The target sequence.
    */
-  virtual std::vector<FeatureVector> getTargetSequence(uint _i) const;
+  std::vector<FeatureVector> getTargetSequence(uint _i) const;
 
   /*! 
    * Get the target feature vector for a sequence.
-   * \param _index Sequence index.
-   * \return The target sequence targets.
+   * \param _i Sequence index.
+   * \param _j Sample in sequence index.
+   * \return The target sample.
    */
-  virtual FeatureVector getTargetSample(uint _i, uint _j) const;
+  FeatureVector getTargetSample(uint _i, uint _j) const;
 
   /*!
    * Get dataset type.
    * \return Dataset type.
    */
-  virtual int getDatasetType() const;
+  int getDatasetType() const;
 
   /*!
    * Load a database from a file.
    * \param fileName
    */ 
-  virtual void load(std::string fileName);
+  void load(std::string _fileName);
 
   /*!
    * Save a database to a file.
    * \param fileName
    */ 
-  virtual void save(std::string fileName);
+  void save(std::string _fileName);
 
   /*!
    * Destructor.

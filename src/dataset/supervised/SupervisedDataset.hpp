@@ -33,8 +33,9 @@ class SupervisedDataset : public Dataset{
   virtual std::vector<FeatureVector> getTargetSequence(uint _i) const = 0;
 
   /*! 
-   * Get the target feature vector for a sequence.
-   * \param _index Sequence index.
+   * Get the target feature vector for a sample.
+   * \param _i Sequence index.
+   * \param _j Sample index.
    * \return The target sequence targets.
    */
   virtual FeatureVector getTargetSample(uint _i, uint _j) const = 0;

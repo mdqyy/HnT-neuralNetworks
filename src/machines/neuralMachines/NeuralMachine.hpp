@@ -50,7 +50,7 @@ public:
 	/*!
 	 * Destructor.
 	 */
-	~NeuralMachine();
+	virtual ~NeuralMachine();
 
 };
 

@@ -8,11 +8,15 @@
 
 using namespace std;
 
-vector<string> extractLabelSequence(string label){
+/*!
+ * Extract a sequence label from a string.
+ * Basically cuts the string into characters.
+ */
+vector<string> extractLabelSequence(string _label){
 	vector<string> labels = vector<string>();
-	for(int i=0;i<label.size();i++){
+	for(int i=0;i<_label.size();i++){
 		stringstream ss;
-		ss << label[i];
+		ss << _label[i];
 		labels.push_back(ss.str());
 	}
 	return labels;

@@ -59,6 +59,9 @@ target_link_libraries(executables/pbdnnIAM Machines TinyXML ${OpenCV_LIBS} ${Boo
 add_executable(executables/pbdnnBatch src/executables/pbdnnBatch.cpp)
 target_link_libraries(executables/pbdnnBatch Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
+add_executable(executables/pbdnnCluster src/executables/pbdnnCluster.cpp)
+target_link_libraries(executables/pbdnnCluster Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
 add_executable(executables/createImagesFromDB src/executables/createImagesFromDB.cpp)
 target_link_libraries(executables/createImagesFromDB Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 

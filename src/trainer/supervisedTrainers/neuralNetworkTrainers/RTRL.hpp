@@ -1,30 +1,35 @@
-#ifndef __BACKPROPAGATION_HPP__
-#define __BACKPROPAGATION_HPP__
+#ifndef __RTRL_HPP__
+#define __RTRL_HPP__
 /*!
- * \file BackPropagation.hpp
- * Header of the BackPropagation class.
+ * \file RTRL.hpp
+ * Header of the RTRL (Real-Time Recurrent Learning) class.
  * \author Luc Mioulet
  */
 
 #include <opencv/cv.h>
-#include "../../errorMeasurers/SEMeasurer.hpp"
+#include "../../errorMeasurers/MSEMeasurer.hpp"
 #include "../../errorMeasurers/ClassificationErrorMeasurer.hpp"
 #include "NeuralNetworkTrainer.hpp"
-#include "BackPropParams.hpp"
+#include "RTRL.hpp"
 #include <math.h>
 
 /*!
- * \class BackPropagation
+ * \class RTRL
  * Description
  */
-class BackPropagation : public NeuralNetworkTrainer {
+class RTRL : public NeuralNetworkTrainer {
  private :
 
 
  protected:
-  BackPropParams bpp;
+  RTRLParams bpp;
   std::vector<realv> errorPerIteration;
   
+  /*!
+   * p matrix linked to weights
+   */
+  vector< vector<Mat> > sensitivity;
+
   ErrorVector calculateDeltas(LayerPtr _layer, FeatureVector _target, ValueVector _derivatives, ErrorVector _previousLayerDelta);
   ErrorVector calculateOutputDeltas(LayerPtr _layer, FeatureVector _target, ValueVector _derivatives);
 
@@ -44,9 +49,9 @@ class BackPropagation : public NeuralNetworkTrainer {
    * \param _data Supervised dataset to use for learning.
    * \param _featureMask Feature mask.
    * \param _indexMask Sample index mask.
-   * \param _bpparams Backpropagation parameters.
+   * \param _bpparams RTRL parameters.
    */
-  BackPropagation(NeuralNetwork& _neuralNet, SupervisedDataset& _data, BackPropParams& _bpparams, Mask& _featureMask, Mask& _indexMask);
+  RTRL(NeuralNetwork& _neuralNet, SupervisedDataset& _data, BackPropParams& _bpparams, Mask& _featureMask, Mask& _indexMask);
 
   /*!
    * Train the neural network.
@@ -65,10 +70,15 @@ class BackPropagation : public NeuralNetworkTrainer {
    */
   void backward(FeatureVector _target, realv _learningRate);
 
+  /*
+   * Reset pWeights during learning.
+   */
+  void resetSensitivity();
+
   /*!
    * Destructor.
    */
-  ~BackPropagation();
+  ~RTRL();
 
 };
 

@@ -98,28 +98,28 @@ class ValueVector {
 
   /*!
    * Output value vector data.
-   * \param os Output stream.
-   * \param fv Value vector.
+   * \param _os Output stream.
+   * \param _vv Value vector.
    * \return Output stream.
    */
-  friend std::ostream& operator<<(std::ostream& os, const ValueVector& v);
+  friend std::ostream& operator<<(std::ostream& _os, const ValueVector& _vv);
 
 
   /*!
    * File output stream.
-   * \param ofs Output file stream.
-   * \param v Value layer.
+   * \param _ofs Output file stream.
+   * \param _vv Value vector.
    * \return File Output stream.
    */
-  friend std::ofstream& operator<<(std::ofstream& ofs, const ValueVector& v);
+  friend std::ofstream& operator<<(std::ofstream& _ofs, const ValueVector& _vv);
 
   /*!
    * File input stream.
-   * \param ifs Input file stream.
-   * \param v Value vector.
+   * \param _ifs Input file stream.
+   * \param _vv Value vector.
    * \return File Input stream.
    */
-  friend std::ifstream& operator>>(std::ifstream& ifs, ValueVector& v);
+  friend std::ifstream& operator>>(std::ifstream& _ifs, ValueVector& _vv);
 
 };
 

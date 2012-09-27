@@ -31,39 +31,45 @@ class UnsupervisedDataset : public Dataset {
    * Get dataset type.
    * \return Dataset type.
    */
-  virtual int getDatasetType() const;
+   int getDatasetType() const;
  
  /*!
    * Add a sequence.
-   * \param sequence Add a complete sequence.
+   * \param _sequence Add a complete sequence.
    */
-  void addSequence(std::vector<FeatureVector> sequence);
+  void addSequence(std::vector<FeatureVector> _sequence);
 
   /*!
    * Add a sample to the last sequence or to the indicated index.
-   * \param sample A feature vector.
-   * \param index Sequence index.
+   * \param _sample A feature vector.
+   * \param _index Sequence index.
    */
-  void addSample(FeatureVector sample, int index=-1);
+  void addSample(FeatureVector _sample, int _index=-1);
 
  /*!
    * Load a database from a file.
-   * \param fileName
+   * \param _fileName
    */ 
-  virtual void load(std::string fileName);
+  void load(std::string _fileName);
 
   /*!
    * Save a database to a file.
-   * \param fileName
+   * \param _fileName
    */ 
-  virtual void save(std::string fileName);
+  void save(std::string _fileName);
 
   /*!
    * Destructor.
    */
   ~UnsupervisedDataset();
 
-  friend  std::ostream& operator<<(std::ostream& os, UnsupervisedDataset& cd);
+  /*!
+   * Output stream for unsupervised dataset.
+   * \param _os Output stream.
+   * \param _ud Unsupervised dataset.
+   * \return The output stream.
+   */
+  friend  std::ostream& operator<<(std::ostream& _os, UnsupervisedDataset& _ud);
 };
 
 

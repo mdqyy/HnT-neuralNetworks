@@ -21,7 +21,7 @@ class ErrorMeasurer {
 
  protected:
   /*! Total error */
-  realv error;
+  realv err;
 
   /*! Error per unit */
   ErrorVector errPerUnit;
@@ -35,7 +35,7 @@ class ErrorMeasurer {
 
   /*!
    * Get total error.
-   * \return Previously calculatev total error.
+   * \return Previously calculate total error.
    */
   realv getError();
 
@@ -57,10 +57,18 @@ class ErrorMeasurer {
    */
   void setErrorPerUnit(ErrorVector _errPerUnit);
   
+
+  /*!
+   * Process all errors.
+   * \param _ouput Machine output feature Vector.
+   * \param _target Dataset result to match.
+   */
+  virtual void processErrors(FeatureVector _output, FeatureVector _target)=0;
+
   /*!
    * Measure error per unit.
-   * \param ouput Machine output feature Vector.
-   * \param target Dataset result to match.
+   * \param _ouput Machine output feature Vector.
+   * \param _target Dataset result to match.
    * \return The error vector. Has the same length as the output/target.
    */
   virtual ErrorVector errorPerUnit(FeatureVector _output, FeatureVector _target) = 0;

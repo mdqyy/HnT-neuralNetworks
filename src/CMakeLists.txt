@@ -34,8 +34,8 @@ add_library(Machines dataset/Dataset.cpp
   machines/neuralMachines/connections/RecurrentConnection.cpp
   trainer/Trainer.cpp
   trainer/errorMeasurers/ErrorMeasurer.cpp
-  trainer/errorMeasurers/MSEMeasurer.cpp
-  trainer/errorMeasurers/MAEMeasurer.cpp
+  trainer/errorMeasurers/SEMeasurer.cpp
+  trainer/errorMeasurers/AEMeasurer.cpp
   trainer/errorMeasurers/ClassificationErrorMeasurer.cpp
   trainer/criteria/Criteria.cpp
   trainer/criteria/Criterion.cpp
@@ -44,13 +44,14 @@ add_library(Machines dataset/Dataset.cpp
   performanceMeasurers/CrossValidationParams.cpp
   performanceMeasurers/PerformanceMeasurer.cpp
   performanceMeasurers/DiversityMeasurer.cpp
-  performanceMeasurers/Regression.cpp
+  performanceMeasurers/RegressionMeasurer.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/NeuralNetworkTrainer.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/BackPropagation.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/CTCTrainer.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/BackPropParams.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBP.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBPBatch.cpp
+  trainer/supervisedTrainers/neuralNetworkTrainers/PopulationClusterBP.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBPParams.cpp
   utilities/ImageProcessing.cpp
   utilities/TextUtilities.cpp

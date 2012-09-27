@@ -11,7 +11,7 @@
 #include "layers/Layer.hpp"
 #include "layers/InputLayer.hpp"
 #include "layers/LayerSigmoid.hpp"
-#include "../../trainer/errorMeasurers/MSEMeasurer.hpp"
+#include "../../trainer/errorMeasurers/SEMeasurer.hpp"
 
 /*!
  * \class PBDNN

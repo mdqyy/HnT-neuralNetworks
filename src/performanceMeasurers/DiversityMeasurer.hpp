@@ -43,47 +43,121 @@ protected:
 
 	/*! Disagreement matrix between networks. */
 	cv::Mat disagreementMatrix;
-public:
 
+	/*! Disagreement scalar. */
+	realv disagreementScalar;
+public:
+	/*!
+	 * Parameter constructor.
+	 * \param _population Population.
+	 * \param _data Dataset To test diversity.
+	 */
 	DiversityMeasurer(PBDNN& _population, RegressionDataset& _data);
 
+	/*!
+	 * Measure performances.
+	 */
 	void measurePerformance();
 
+	/*!
+	 * Process network output mean and standard deviation matrix.
+	 * This process accelerates calculation.
+	 */
 	void processNetworkOutputMeanAndStdDevMatrix();
 
+	/*!
+	 * Process correlation matrix.
+	 */
 	void processCorrelationMatrix();
 
+	/*!
+	 * Process covariance matrix.
+	 */
 	void processCovarianceMatrix();
 
+	/*!
+	 * Process chi square matrix.
+	 */
 	void processChiSquareMatrix();
 
+	/*!
+	 * Process disagreement measure.
+	 */
 	void processDisagreementMatrix();
 
+	/*!
+	 * Process disagreement scalar.
+	 */
+	void processDisagreementScalar();
+
+	/*!
+	 * Initialize matrices
+	 */
 	void initMatrices();
 
+	/*!
+	 * Get chi square matrix.
+	 * \return Chi square matrix.
+	 */
 	std::vector<cv::Mat> getChiSquareMatrix() const;
 
-	void setChiSquareMatrix(std::vector<cv::Mat> chiSquareMatrix);
+	/*!
+	 * Set chi square matrix.
+	 * \param _chiSquareMatrix Chi square matrix.
+	 */
+	void setChiSquareMatrix(std::vector<cv::Mat> _chiSquareMatrix);
 
+	/*!
+	 * Get correlation matrix.
+	 * \return Correlation matrix.
+	 */
 	std::vector<cv::Mat> getCorrelationMatrix() const;
 
-	void setCorrelationMatrix(std::vector<cv::Mat> correlationMatrix);
+	/*!
+	 * Set the corellation matrix.
+	 * \param _correlationMatrix Corellation matrix.
+	 */
+	void setCorrelationMatrix(std::vector<cv::Mat> _correlationMatrix);
 
+	/*!
+	 * Get the covariance matrix.
+	 * \return Covariance matrix.
+	 */
 	std::vector<cv::Mat> getCovarianceMatrix() const;
 
-	void setCovarianceMatrix(std::vector<cv::Mat> covarianceMatrix);
+	/*!
+	 * Set the covariance matrix.
+	 * \param _covarianceMatrix.
+	 */
+	void setCovarianceMatrix(std::vector<cv::Mat> _covarianceMatrix);
 
+	/*!
+	 * Get the disagreement matrix.
+	 * \return Disagreement matrix.
+	 */
 	cv::Mat getDisagreementMatrix() const;
 
-	void setDisagreementMatrix(cv::Mat disagreementMatrix);
+	/*!
+	 * Set the disagreement matrix
+	 * \param _disagreementMatrix The disagreement matrix.
+	 */
+	void setDisagreementMatrix(cv::Mat _disagreementMatrix);
 
+	/*!
+	 * Get the dataset.
+	 * \return The dataset.
+	 */
 	RegressionDataset& getData() const;
 
-	void setData(RegressionDataset& data);
+	/*!
+	 * Set the dataset.
+	 * \param _data The dataset.
+	 */
+	void setData(RegressionDataset& _data);
 
 	cv::Mat getNetworkOutputMeanMatrix() const;
 
-	void setNetworkOutputMeanMatrix(cv::Mat networkOutputMeanMatrix);
+	void setNetworkOutputMeanMatrix(cv::Mat _networkOutputMeanMatrix);
 
 	PBDNN& getNetworkPopulation() const;
 
@@ -92,6 +166,10 @@ public:
 	cv::Mat getNetworkOutputStdDevMatrix() const;
 
 	void setNetworkOutputStdDevMatrix(cv::Mat stdDevMatrix);
+
+	realv getDisagreementScalar() const;
+
+	void setDisagreementScalar(realv disagreementScalar);
 
 	~DiversityMeasurer();
 };

@@ -9,7 +9,7 @@
 using namespace cv;
 using namespace std;
 
-DiversityMeasurer::DiversityMeasurer(PBDNN& _population, RegressionDataset& _data) : networkPopulation(_population), data(_data)/*, networkOutputMeanMatrix(Mat()), networkOutputStdDevMatrix(Mat()), correlationMatrix(vector<Mat>()), covarianceMatrix(vector<Mat>()), chiSquareMatrix(vector<Mat>()), disagreementMatrix(vector<Mat>())*/ {
+DiversityMeasurer::DiversityMeasurer(PBDNN& _population, RegressionDataset& _data) : networkPopulation(_population), data(_data), disagreementScalar(0.0) {
 	initMatrices();
 }
 
@@ -19,6 +19,7 @@ void DiversityMeasurer::measurePerformance() {
 	processCovarianceMatrix();
 	processChiSquareMatrix();*/
 	processDisagreementMatrix();
+	processDisagreementScalar();
 }
 
 void DiversityMeasurer::initMatrices() {
@@ -172,10 +173,24 @@ void DiversityMeasurer::processDisagreementMatrix(){
 					}
 				}
 			}
-			disagreementMatrix.at<double>(j, k) = (disagreementB + disagreementA)/(agreement);
-			disagreementMatrix.at<double>(k, j) = (disagreementB + disagreementA)/(agreement);
+			disagreementMatrix.at<double>(j, k) = (disagreementB + disagreementA)/(agreement + disagreementB + disagreementA);
+			disagreementMatrix.at<double>(k, j) = (disagreementB + disagreementA)/(agreement + disagreementB + disagreementA);
 		}
 	}
+}
+
+void DiversityMeasurer::processDisagreementScalar(){
+	disagreementScalar=0.0;
+	realv combinations = 1.0;
+	for(int i = 0; i<disagreementMatrix.rows;i++){
+		for(int j = 0; j<disagreementMatrix.cols;j++){
+			if(j>i){
+				disagreementScalar += disagreementMatrix.at<double>(i,j);
+				combinations += 1.0;
+			}
+		}
+	}
+	disagreementScalar /= combinations;
 }
 
 vector<Mat> DiversityMeasurer::getChiSquareMatrix() const {
@@ -241,6 +256,14 @@ void DiversityMeasurer::setNetworkOutputStdDevMatrix(cv::Mat stdDevMatrix) {
 
 void DiversityMeasurer::setDisagreementMatrix(Mat disagreementMatrix) {
 	this->disagreementMatrix = disagreementMatrix;
+}
+
+realv DiversityMeasurer::getDisagreementScalar() const {
+	return disagreementScalar;
+}
+
+void DiversityMeasurer::setDisagreementScalar(realv disagreementScalar) {
+	this->disagreementScalar = disagreementScalar;
 }
 
 DiversityMeasurer::~DiversityMeasurer() {

@@ -35,6 +35,9 @@ protected:
 
 	/*! Standard deviation of output error per unit*/
 	FeatureVector stdDevOutputError;
+
+	/*! Global error */
+	realv totalError;
 public:
 
 	/*!
@@ -48,7 +51,12 @@ public:
 	/*!
 	 * Process global mean output error.
 	 */
-	realv processGlobalMeanOutputError();
+	void processGlobalMeanOutputError();
+
+	/*!
+	 * Process mean and standard deviation of output error.
+	 */
+	void processMeanOutputAndStdDevOutputError();
 
 	/*!
 	 * Measure performance of a machine.
@@ -69,9 +77,60 @@ public:
 	 * Destructor.
 	 */
 	~RegressionMeasurer();
+
+	/*!
+	 * Get dataset.
+	 * \return Regression dataset.
+	 */
 	RegressionDataset& getData() const;
+
+	/*!
+	 * Get error measurer.
+	 * \return Error measurer.
+	 */
 	ErrorMeasurer& getErrorMeasurer() const;
+
+	/*!
+	 * Get machine measured.
+	 * \return Machine.
+	 */
 	Machine& getMachine() const;
+
+	/*!
+	 * Mean output error.
+	 * \return Feature vector.
+	 */
+	FeatureVector getMeanOutputError() const;
+
+	/*!
+	 * Set mean output error.
+	 * \param _meanOutputError Mean output error.
+	 */
+	void setMeanOutputError(FeatureVector _meanOutputError);
+
+	/*!
+	 * Get standard deviation output error.
+	 * \return Feature vector.
+	 */
+	FeatureVector getStdDevOutputError() const;
+
+	/*!
+	 * Set standard deviation output error.
+	 * \param _stdDevOutputError Standard deviation output error.
+	 */
+	void setStdDevOutputError(FeatureVector _stdDevOutputError);
+
+	/*!
+	 * Get total error.
+	 * \return Total error.
+	 */
+	realv getTotalError() const;
+
+	/*!
+	 * Set the total error.
+	 * \param _totalError The total error.
+	 */
+	void setTotalError(realv _totalError);
 
 };
 

@@ -48,8 +48,7 @@ class ClassificationDataset : public SupervisedDataset{
    * \return The number of classes.
    */
   int getNumberOfClasses();
-  
-  
+
   /*!
    * Get class label mapping.
    * \return Int to label map.
@@ -95,7 +94,7 @@ class ClassificationDataset : public SupervisedDataset{
    * \param _i Sequence index.
    * \return The target sequence targets.
    */
-  virtual std::vector<FeatureVector> getTargetSequence(uint _i) const;
+  std::vector<FeatureVector> getTargetSequence(uint _i) const;
 
   /*! 
    * Get the target feature vector for a sequence.
@@ -103,7 +102,7 @@ class ClassificationDataset : public SupervisedDataset{
    * \param _j Sample index in sequence.
    * \return The target sequence targets.
    */
-  virtual FeatureVector getTargetSample(uint _i, uint _j) const;
+  FeatureVector getTargetSample(uint _i, uint _j) const;
   
   /*!
    * Get sample class index.
@@ -125,19 +124,19 @@ class ClassificationDataset : public SupervisedDataset{
    * Get dataset type.
    * \return Dataset type.
    */
-  virtual int getDatasetType() const;
+   int getDatasetType() const;
 
   /*!
    * Add a sequence and its label.
    * \param _sequence Add a feature vector as a complete sequence.
-   * \param _classes Classes as an int.
+   * \param _class Class as an int.
    */
   void addSequence(FeatureVector _sequence,int _class);
 
   /*!
    * Add a sequence and its label.
    * \param _sequence Add a feature vector as a complete sequence.
-   * \param _classes Classes as a string.
+   * \param _class Class as a string.
    */
   void addSequence(FeatureVector _sequence,std::string _class);
  
@@ -150,26 +149,26 @@ class ClassificationDataset : public SupervisedDataset{
 
   /*!
    * Add a sequence and its label.
-   * \param sequence Add a complete sequence.
-   * \param classes Classes vector as a vector of strings.
+   * \param _sequence Add a complete sequence.
+   * \param _classes Classes vector as a vector of strings.
    */
-  void addSequence(std::vector<FeatureVector> sequence, std::vector<std::string> classes);
+  void addSequence(std::vector<FeatureVector> _sequence, std::vector<std::string> _classes);
 
   /*!
    * Add a sample (and perhaps the label) to the last sequence or to the indicated index.
-   * \param sample A feature vector.
-   * \param classIndex Class index.
-   * \param index Sequence index.
+   * \param _sample A feature vector.
+   * \param _classIndex Class index.
+   * \param _index Sequence index.
    */
-  void addSample(FeatureVector sample, int classIndex = -1, uint index = -1);
+  void addSample(FeatureVector _sample, int _classIndex = -1, uint _index = -1);
 
   /*!
    * Add a sample (and perhaps the label) to the last sequence or to the indicated index.
-   * \param sample A feature vector.
-   * \param className Class.
-   * \param index Sequence index.
+   * \param _sample A feature vector.
+   * \param _className Class.
+   * \param _index Sequence index.
    */
-  void addSample(FeatureVector sample, std::string className = "", uint index = -1);
+  void addSample(FeatureVector _sample, std::string _className = "", uint _index = -1);
   
   /*! 
    * Add a class to the class maps.
@@ -182,13 +181,13 @@ class ClassificationDataset : public SupervisedDataset{
    * Load a database from a file.
    * \param fileName
    */ 
-  virtual void load(std::string fileName);
+  void load(std::string _fileName);
 
   /*!
    * Save a database to a file.
    * \param fileName
    */ 
-  virtual void save(std::string fileName);
+  void save(std::string _fileName);
 
   /*!
    * Destructor.

@@ -98,35 +98,35 @@ ValueVector::~ValueVector(){
 
 }
 
-ostream& operator<<(ostream& os, const ValueVector& v){
-  os << "Value vector : " << endl;
-  os << "\t -length :" << v.getLength() << endl;
-  os << "\t -containing : ";
-  for (int i = 0; i < v.getLength(); i++){
-    os << v[i] <<" ; " ;
+ostream& operator<<(ostream& _os, const ValueVector& _vv){
+  _os << "Value vector : " << endl;
+  _os << "\t -length :" << _vv.getLength() << endl;
+  _os << "\t -containing : ";
+  for (uint i = 0; i < _vv.getLength(); i++){
+    _os << _vv[i] <<" ; " ;
     }
-  os << endl;
-  return os;
+  _os << endl;
+  return _os;
 }
 
-ofstream& operator<<(ofstream& ofs, const ValueVector& v){
-  ofs << "< L " << v.getLength() << " [";
-  for (int i = 0; i < v.getLength(); i++){
-    ofs << " "<< v[i];
+ofstream& operator<<(ofstream& _ofs, const ValueVector& _vv){
+  _ofs << "< L " << _vv.getLength() << " [";
+  for (uint i = 0; i < _vv.getLength(); i++){
+    _ofs << " "<< _vv[i];
     }
-  ofs << "] > "<< endl;
-  return ofs;
+  _ofs << "] > "<< endl;
+  return _ofs;
 }
 
-ifstream& operator>>(ifstream& ifs, ValueVector& v){
+ifstream& operator>>(ifstream& ifs, ValueVector& _vv){
   uint vLength;
   realv value;
   string temp;
   ifs >> temp >> temp >> vLength >> temp;
-  v= ValueVector(vLength);
-  for (int i = 0; i < v.getLength(); i++){
+  _vv= ValueVector(vLength);
+  for (uint i = 0; i < _vv.getLength(); i++){
     ifs >> value ;
-    v[i]= value;
+    _vv[i]= value;
   }
   ifs >> temp >> temp;
   return ifs;

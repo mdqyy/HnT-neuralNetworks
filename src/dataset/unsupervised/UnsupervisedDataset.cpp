@@ -17,31 +17,31 @@ int UnsupervisedDataset::getDatasetType() const{
   return DS_UNSUPERVISED;
 }
 
-void UnsupervisedDataset::addSequence(vector<FeatureVector> sequence){
-  data.push_back(sequence);
-  if( sequence.size() > maxSequenceLength){
-    maxSequenceLength = sequence.size();
+void UnsupervisedDataset::addSequence(vector<FeatureVector> _sequence){
+  data.push_back(_sequence);
+  if( _sequence.size() > maxSequenceLength){
+    maxSequenceLength = _sequence.size();
   }
-  updateStatistics(sequence);
+  updateStatistics(_sequence);
 }
 
-void UnsupervisedDataset::addSample(FeatureVector sample, int index){
-  int insertIndex=index;
+void UnsupervisedDataset::addSample(FeatureVector _sample, int _index){
+  int insertIndex=_index;
   if(insertIndex<0){
-    data.push_back(vector<FeatureVector>(1,sample));
+    data.push_back(vector<FeatureVector>(1,_sample));
   }
   else{
-    data[index].push_back(sample);
-    if( data[index].size() > maxSequenceLength){ //check if we de not go over the actual maximum 
-      maxSequenceLength = data[index].size(); 
+    data[_index].push_back(_sample);
+    if( data[_index].size() > maxSequenceLength){ //check if we de not go over the actual maximum 
+      maxSequenceLength = data[_index].size(); 
     }
   }
-  updateStatistics(sample);
+  updateStatistics(_sample);
 }
 
-void UnsupervisedDataset::load(std::string fileName){
+void UnsupervisedDataset::load(std::string _fileName){
   /* Open file */
-  TiXmlDocument doc( fileName );
+  TiXmlDocument doc( _fileName );
   if ( !doc.LoadFile() ){
     throw invalid_argument("UnsupervisedDataset : Uncorrect filename");
   }
@@ -72,7 +72,7 @@ void UnsupervisedDataset::load(std::string fileName){
   }
 }
   
-void UnsupervisedDataset::save(std::string fileName){
+void UnsupervisedDataset::save(std::string _fileName){
   TiXmlDocument doc;
   TiXmlDeclaration * decl = new TiXmlDeclaration( "1.0", "", "no" );
   doc.LinkEndChild( decl );
@@ -102,23 +102,23 @@ void UnsupervisedDataset::save(std::string fileName){
   }
   classificationDataset->LinkEndChild(ddata);
   doc.LinkEndChild( classificationDataset );
-  doc.SaveFile( fileName );
+  doc.SaveFile( _fileName );
 }
 
 UnsupervisedDataset::~UnsupervisedDataset(){
 
 }
 
-ostream& operator<<(ostream& os, UnsupervisedDataset& rd){
-  os << "Unsupervised dataset '" << rd.getName() << "' : " << endl;
-  os << "\t - Sequences : " << rd.getNumSequences() << endl;
-  os << "\t - Samples : " << rd.getNumSamples() << endl;
-  for(uint i=0;i<rd.getNumSequences();i++){
-    os << "Sequence "<< i <<"[ "<<endl;
-    os << "Features (" << endl;
-    for(uint j=0;j<rd[i].size();j++){
-      os << rd[i][j] ;
+ostream& operator<<(ostream& _os, UnsupervisedDataset& _ud){
+  _os << "Unsupervised dataset '" << _ud.getName() << "' : " << endl;
+  _os << "\t - Sequences : " << _ud.getNumSequences() << endl;
+  _os << "\t - Samples : " << _ud.getNumSamples() << endl;
+  for(uint i=0;i<_ud.getNumSequences();i++){
+    _os << "Sequence "<< i <<"[ "<<endl;
+    _os << "Features (" << endl;
+    for(uint j=0;j<_ud[i].size();j++){
+      _os << _ud[i][j] ;
     }
   }
-  return os;
+  return _os;
 }

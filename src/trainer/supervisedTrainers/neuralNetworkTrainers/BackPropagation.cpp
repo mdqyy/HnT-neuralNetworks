@@ -58,11 +58,11 @@ void BackPropagation::trainOneIteration(){
 realv BackPropagation::measureSampleError(FeatureVector networkOutput, FeatureVector target){
   realv error = 0;
   if(bpp.getTask() == BP_CLASSIFICATION){
-    ClassificationErrorMeasurer ce;
+    ClassificationErrorMeasurer ce = ClassificationErrorMeasurer();
     error += ce.totalError(networkOutput,target);
   }
   else{  
-    MSEMeasurer mse;
+    SEMeasurer mse;
     error += mse.totalError(networkOutput,target);
   }
   return error;

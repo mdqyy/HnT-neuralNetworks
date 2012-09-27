@@ -1,7 +1,7 @@
 #ifndef __TEXTUTILITIES_HPP__
 #define __TEXTUTILITIES_HPP__
 /*!
- * \file Xxx.hpp
+ * \file TextUtilities.hpp
  * Header of the text utilities.
  * \author Luc Mioulet
  */
@@ -11,6 +11,6 @@
 #include <iostream>
 #include <sstream>
 
-std::vector<std::string> extractLabelSequence(std::string label);
+std::vector<std::string> extractLabelSequence(std::string _label);
 
 #endif

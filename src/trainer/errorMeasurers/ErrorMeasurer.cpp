@@ -6,12 +6,12 @@
 
 #include "ErrorMeasurer.hpp"
 
-ErrorMeasurer::ErrorMeasurer() : error(0.0), errPerUnit(ErrorVector(0)){
+ErrorMeasurer::ErrorMeasurer() : err(0.0), errPerUnit(ErrorVector(0)){
 
 }
 
 realv ErrorMeasurer::getError(){
-  return error;
+  return err;
 }
 
 ErrorVector ErrorMeasurer::getErrorPerUnit(){
@@ -19,7 +19,7 @@ ErrorVector ErrorMeasurer::getErrorPerUnit(){
 }
 
 void ErrorMeasurer::setError(realv _error){
-  error=_error;
+  err=_error;
 }
 
 void ErrorMeasurer::setErrorPerUnit(ErrorVector _errPerUnit){

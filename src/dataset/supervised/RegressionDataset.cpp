@@ -23,9 +23,9 @@ void RegressionDataset::addSequence(vector<FeatureVector> _sequence, vector<Feat
   updateStatistics(_sequence);
 }
 
-void RegressionDataset::load(std::string fileName){
+void RegressionDataset::load(std::string _fileName){
   /* Open file */
-  TiXmlDocument doc( fileName );
+  TiXmlDocument doc( _fileName );
   if ( !doc.LoadFile() ){
     throw invalid_argument("RegressionDataset : Uncorrect filename");
   }
@@ -70,7 +70,7 @@ void RegressionDataset::load(std::string fileName){
   }
 }
   
-void RegressionDataset::save(std::string fileName){
+void RegressionDataset::save(std::string _fileName){
   TiXmlDocument doc;
   TiXmlDeclaration * decl = new TiXmlDeclaration( "1.0", "", "no" );
   doc.LinkEndChild( decl );
@@ -111,7 +111,7 @@ void RegressionDataset::save(std::string fileName){
   }
   classificationDataset->LinkEndChild(ddata);
   doc.LinkEndChild( classificationDataset );
-  doc.SaveFile( fileName );
+  doc.SaveFile( _fileName );
 }
 
 vector<FeatureVector> RegressionDataset::getTargetSequence(uint _i) const{
@@ -126,22 +126,22 @@ RegressionDataset::~RegressionDataset(){
 
 }
 
-ostream& operator<<(ostream& os, RegressionDataset& rd){
-  os << "Regression dataset '" << rd.getName() << "' : " << endl;
-  os << "\t - Sequences : " << rd.getNumSequences() << endl;
-  os << "\t - Samples : " << rd.getNumSamples() << endl;
-  for(uint i=0;i<rd.getNumSequences();i++){
-    os << "Sequence "<< i <<"[ "<<endl;
-    os << "Features (" << endl;
-    for(uint j=0;j<rd[i].size();j++){
-      os << rd[i][j] ;
+ostream& operator<<(ostream& _os, RegressionDataset& _rd){
+  _os << "Regression dataset '" << _rd.getName() << "' : " << endl;
+  _os << "\t - Sequences : " << _rd.getNumSequences() << endl;
+  _os << "\t - Samples : " << _rd.getNumSamples() << endl;
+  for(uint i=0;i<_rd.getNumSequences();i++){
+    _os << "Sequence "<< i <<"[ "<<endl;
+    _os << "Features (" << endl;
+    for(uint j=0;j<_rd[i].size();j++){
+      _os << _rd[i][j] ;
     }
-    os << " ) " << endl << "Values (" << endl;
-    vector<FeatureVector> target = rd.getTargetSequence(i);
+    _os << " ) " << endl << "Values (" << endl;
+    vector<FeatureVector> target = _rd.getTargetSequence(i);
     for(uint j=0;j<target.size();j++){
-      os << target[j] ;
+      _os << target[j] ;
     }
-    os << " )] ";
+    _os << " )] ";
   }
-  return os;
+  return _os;
 }
