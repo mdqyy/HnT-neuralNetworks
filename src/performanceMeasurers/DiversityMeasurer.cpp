@@ -197,24 +197,24 @@ vector<Mat> DiversityMeasurer::getChiSquareMatrix() const {
 	return chiSquareMatrix;
 }
 
-void DiversityMeasurer::setChiSquareMatrix(vector<Mat> chiSquareMatrix) {
-	this->chiSquareMatrix = chiSquareMatrix;
+void DiversityMeasurer::setChiSquareMatrix(vector<Mat> _chiSquareMatrix) {
+	this->chiSquareMatrix = _chiSquareMatrix;
 }
 
 vector<Mat> DiversityMeasurer::getCorrelationMatrix() const {
 	return correlationMatrix;
 }
 
-void DiversityMeasurer::setCorrelationMatrix(vector<Mat> correlationMatrix) {
-	this->correlationMatrix = correlationMatrix;
+void DiversityMeasurer::setCorrelationMatrix(vector<Mat> _correlationMatrix) {
+	this->correlationMatrix = _correlationMatrix;
 }
 
 vector<Mat> DiversityMeasurer::getCovarianceMatrix() const {
 	return covarianceMatrix;
 }
 
-void DiversityMeasurer::setCovarianceMatrix(vector<Mat> covarianceMatrix) {
-	this->covarianceMatrix = covarianceMatrix;
+void DiversityMeasurer::setCovarianceMatrix(vector<Mat> _covarianceMatrix) {
+	this->covarianceMatrix = _covarianceMatrix;
 }
 
 Mat DiversityMeasurer::getDisagreementMatrix() const {
@@ -225,24 +225,24 @@ RegressionDataset& DiversityMeasurer::getData() const {
 	return data;
 }
 
-void DiversityMeasurer::setData(RegressionDataset& data) {
-	this->data = data;
+void DiversityMeasurer::setData(RegressionDataset& _data) {
+	this->data = _data;
 }
 
 Mat DiversityMeasurer::getNetworkOutputMeanMatrix() const {
 	return networkOutputMeanMatrix;
 }
 
-void DiversityMeasurer::setNetworkOutputMeanMatrix(Mat networkOutputMeanMatrix) {
-	this->networkOutputMeanMatrix = networkOutputMeanMatrix;
+void DiversityMeasurer::setNetworkOutputMeanMatrix(Mat _networkOutputMeanMatrix) {
+	this->networkOutputMeanMatrix = _networkOutputMeanMatrix;
 }
 
 PBDNN& DiversityMeasurer::getNetworkPopulation() const {
 	return networkPopulation;
 }
 
-void DiversityMeasurer::setNetworkPopulation(PBDNN& networkPopulation) {
-	this->networkPopulation = networkPopulation;
+void DiversityMeasurer::setNetworkPopulation(PBDNN& _networkPopulation) {
+	this->networkPopulation = _networkPopulation;
 }
 
 Mat DiversityMeasurer::getNetworkOutputStdDevMatrix() const {
@@ -250,20 +250,20 @@ Mat DiversityMeasurer::getNetworkOutputStdDevMatrix() const {
 }
 
 
-void DiversityMeasurer::setNetworkOutputStdDevMatrix(cv::Mat stdDevMatrix) {
-	this->networkOutputStdDevMatrix = stdDevMatrix;
+void DiversityMeasurer::setNetworkOutputStdDevMatrix(cv::Mat _stdDevMatrix) {
+	this->networkOutputStdDevMatrix = _stdDevMatrix;
 }
 
-void DiversityMeasurer::setDisagreementMatrix(Mat disagreementMatrix) {
-	this->disagreementMatrix = disagreementMatrix;
+void DiversityMeasurer::setDisagreementMatrix(Mat _disagreementMatrix) {
+	this->disagreementMatrix = _disagreementMatrix;
 }
 
 realv DiversityMeasurer::getDisagreementScalar() const {
 	return disagreementScalar;
 }
 
-void DiversityMeasurer::setDisagreementScalar(realv disagreementScalar) {
-	this->disagreementScalar = disagreementScalar;
+void DiversityMeasurer::setDisagreementScalar(realv _disagreementScalar) {
+	this->disagreementScalar = _disagreementScalar;
 }
 
 DiversityMeasurer::~DiversityMeasurer() {

@@ -9,7 +9,10 @@
 
 /*!
  * \class DiversityMeasurer
- * Measures diversity among a population of
+ * Measures diversity among a population of networks.
+ * Measures used are correlation, covariance, chi-square, disagreement.
+ * The first three are 3 dimensional matrices (vector<cv::Mat>) and values should be as small as possible for a big diversity.
+ * The last one is a 2 dimensional matrix (cv::Mat) and values close to 1 mean high diversity.
  */
 #include <opencv/cv.h>
 #include <vector>
@@ -155,22 +158,57 @@ public:
 	 */
 	void setData(RegressionDataset& _data);
 
+	/*!
+	 * Get the network output mean matrix.
+	 * \return Network output mean matrix.
+	 */
 	cv::Mat getNetworkOutputMeanMatrix() const;
 
+	/*!
+	 * Set the network output mean matrix.
+	 * \param _networkOutputMeanMatrix Network output mean matrix.
+	 */
 	void setNetworkOutputMeanMatrix(cv::Mat _networkOutputMeanMatrix);
 
+	/*!
+	 * Get the network population.
+	 * \return The network population.
+	 */
 	PBDNN& getNetworkPopulation() const;
 
-	void setNetworkPopulation(PBDNN& networkPopulation);
+	/*!
+	 * Set the network population.
+	 * \param _networkPopulation The network population.
+	 */
+	void setNetworkPopulation(PBDNN& _networkPopulation);
 
+	/*!
+	 * Get the output standard deviation matrix.
+	 * \return The network output standard deviation matrix.
+	 */
 	cv::Mat getNetworkOutputStdDevMatrix() const;
 
-	void setNetworkOutputStdDevMatrix(cv::Mat stdDevMatrix);
+	/*!
+	 * Set the output standard deviation matrix.
+	 * \param The network output standard deviation matrix.
+	 */
+	void setNetworkOutputStdDevMatrix(cv::Mat _stdDevMatrix);
 
+	/*!
+	 * Get the disagreement scalar.
+	 * \return The disagreement scalar.
+	 */
 	realv getDisagreementScalar() const;
 
-	void setDisagreementScalar(realv disagreementScalar);
+	/*!
+	 * Set the disagreement scalar.
+	 * \param The disagreement scalar.
+	 */
+	void setDisagreementScalar(realv _disagreementScalar);
 
+	/*!
+	 * Destructor.
+	 */
 	~DiversityMeasurer();
 };
 
