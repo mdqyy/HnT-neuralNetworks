@@ -18,6 +18,7 @@
 #include <vector>
 #include "../machines/neuralMachines/PBDNN.hpp"
 #include "../dataset/supervised/RegressionDataset.hpp"
+#include "../trainer/errorMeasurers/ErrorMeasurer.hpp"
 #include "PerformanceMeasurer.hpp"
 
 class DiversityMeasurer: public PerformanceMeasurer {
@@ -49,13 +50,16 @@ protected:
 
 	/*! Disagreement scalar. */
 	realv disagreementScalar;
+
+	/*! Error measurer. */
+	ErrorMeasurer& errorMeasurer;
 public:
 	/*!
 	 * Parameter constructor.
 	 * \param _population Population.
 	 * \param _data Dataset To test diversity.
 	 */
-	DiversityMeasurer(PBDNN& _population, RegressionDataset& _data);
+	DiversityMeasurer(PBDNN& _population, RegressionDataset& _data, ErrorMeasurer& _em);
 
 	/*!
 	 * Measure performances.
@@ -92,6 +96,29 @@ public:
 	 * Process disagreement scalar.
 	 */
 	void processDisagreementScalar();
+
+	/*!
+	 * Find the best network for every sample in the database.
+	 * \return The vector of assignments. Should be bijective to the dataset given.
+	 */
+	std::vector<std::vector<int> > findBestNetwork();
+
+	/*!
+	 * Find the best network error for every sample.
+	 * \return The error vector of the networks on olnly their best samples.
+	 */
+	std::vector<realv> errorsOnBestSample();
+
+	/*!
+	 * Build a composite answer only taking the best network output for every sample in the database.
+	 * \return The vector of assignments. Should be bijective to the dataset given.
+	 */
+	std::vector<std::vector<FeatureVector> > buildBestOutput();
+
+	/*!
+	 * \todo document
+	 */
+	std::vector<FeatureVector> getMeanGoodOutput();
 
 	/*!
 	 * Initialize matrices
@@ -207,9 +234,16 @@ public:
 	void setDisagreementScalar(realv _disagreementScalar);
 
 	/*!
+	 * Get the error measurer.
+	 * \return The error measurer.
+	 */
+	ErrorMeasurer& getErrorMeasurer() const;
+
+	/*!
 	 * Destructor.
 	 */
 	~DiversityMeasurer();
+
 };
 
 #endif /* DIVERSITYMEASURER_HPP_ */

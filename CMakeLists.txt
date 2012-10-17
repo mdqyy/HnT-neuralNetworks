@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(PhD)
 #make flags
-set(CMAKE_CXX_FLAGS "-Wall -pedantic -o2")
+set(CMAKE_CXX_FLAGS "-Wall -pedantic -g")
 
 find_package(OpenCV REQUIRED)
 
@@ -62,6 +62,9 @@ target_link_libraries(executables/pbdnnBatch Machines TinyXML ${OpenCV_LIBS} ${B
 add_executable(executables/pbdnnCluster src/executables/pbdnnCluster.cpp)
 target_link_libraries(executables/pbdnnCluster Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
+add_executable(executables/pbdnnClusterReload src/executables/pbdnnClusterReload.cpp)
+target_link_libraries(executables/pbdnnClusterReload Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
 add_executable(executables/createImagesFromDB src/executables/createImagesFromDB.cpp)
 target_link_libraries(executables/createImagesFromDB Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
@@ -76,3 +79,6 @@ target_link_libraries(executables/testRNN Machines TinyXML ${OpenCV_LIBS} ${Boos
 
 add_executable(executables/diversityMeasurement src/executables/diversityMeasurement.cpp)
 target_link_libraries(executables/diversityMeasurement Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
+add_executable(executables/CTCTesting src/executables/CTCTesting.cpp)
+target_link_libraries(executables/CTCTesting Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})

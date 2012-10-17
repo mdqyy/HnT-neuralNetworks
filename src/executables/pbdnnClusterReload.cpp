@@ -32,30 +32,26 @@ using namespace cv;
 
 int main(int argc, char* argv[]) {
 	RegressionDataset dataset;
-	dataset.load(argv[4]);
-	cout << "dataset loaded, total elements : " << dataset.getNumSamples() << endl;
-	int populationSize = atoi(argv[1]);
-	int numberOfHiddenUnits = atoi(argv[2]);
-	int iterations = atoi(argv[3]);
-	vector<Vec3b> colors = createColorRepartition(populationSize);
-	string filename(argv[5]);
-	AEMeasurer mae;
-	PBDNN pop = PBDNN(populationSize, dataset.getFeatureVectorLength(), numberOfHiddenUnits, dataset.getMean(), dataset.getStandardDeviation());
-	DiversityMeasurer diversity(pop, dataset, mae);
-	do{
-		pop = PBDNN(populationSize, dataset.getFeatureVectorLength(), numberOfHiddenUnits, dataset.getMean(), dataset.getStandardDeviation());
-		diversity.measurePerformance();
-		cout << "Disagreement scalar : " << endl << diversity.getDisagreementScalar() << endl;
-	}while(diversity.getDisagreementScalar() < 0.17);
+	dataset.load(argv[2]);
+
+	RegressionDataset dataset2;
+	dataset2.load(argv[3]);
+
+
+	cout << "Dataset loaded, total elements : " << dataset.getNumSamples() << endl;
 	Mask mask;
 	PopulationBPParams params;
-	params.setMaxIterations(iterations);
-	params.setLearningRate(0.001);
-	params.setMaxTrainedPercentage(0.05);
-	params.setSavedDuringProcess(true);
+	PBDNN pop;
+	ifstream inStream(argv[1]);
+	inStream >> pop;
+	inStream >> params;
+
+	vector<Vec3b> colors = createColorRepartition(pop.getPopulation().size());
+
 	PopulationClusterBP pbp(pop, dataset, params, mask, mask);
-
-
+	AEMeasurer mae;
+	DiversityMeasurer diversity(pop, dataset, mae);
+	diversity.measurePerformance();
 	cout << "Starting diversity" << endl << diversity.getDisagreementMatrix() << endl;
 	cout << "Starting overall diversity" << endl << diversity.getDisagreementScalar() << endl;
 	double t = (double) getTickCount();
@@ -65,11 +61,9 @@ int main(int argc, char* argv[]) {
 	cout << endl << "Saving network" << endl;
 	ofstream outStream("IAMpop.txt");
 	outStream << pop;
-
-	vector<NeuralNetworkPtr> population = pop.getPopulation();
-	RegressionDataset dataset2;
-	dataset2.load(argv[6]);
 	DiversityMeasurer diversity2(pop, dataset2, mae);
+	vector<NeuralNetworkPtr> population = pop.getPopulation();
+
 	vector<vector<int> > assignedTo = diversity2.findBestNetwork();
 	vector<vector<FeatureVector> > recomposed = diversity2.buildBestOutput();
 	vector<int> pngParams = vector<int>();

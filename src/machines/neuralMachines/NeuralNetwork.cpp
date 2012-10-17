@@ -105,7 +105,7 @@ NeuralNetwork::~NeuralNetwork(){
 }
 
 ofstream& operator<<(ofstream& ofs, const NeuralNetwork& nn){
-  ofs << "< ";
+  ofs << " < ";
   ofs << nn.getName()<< " ";
   ofs << nn.isForward()<< " ";
   vector<ConnectionPtr> connections = nn.getConnections();
@@ -142,7 +142,7 @@ ofstream& operator<<(ofstream& ofs, const NeuralNetwork& nn){
     }
     ofs << endl;
     }
-  ofs << " >"<< endl;
+  ofs << " > "<< endl;
   return ofs;
 }
 

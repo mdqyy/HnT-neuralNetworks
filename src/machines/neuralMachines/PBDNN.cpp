@@ -78,13 +78,13 @@ PBDNN::~PBDNN(){
 }
 
 ofstream& operator<<(ofstream& _ofs, const PBDNN& _pop){
-  _ofs << "< ";
+  _ofs << " < ";
   vector<NeuralNetworkPtr> population= _pop.getPopulation();
   _ofs << population.size() << endl;
   for(uint i = 0; i<population.size();i++){
     _ofs << *(population[i].get()) << endl;
   }
-  _ofs << " >";
+  _ofs << " > ";
   return _ofs;
 }
 

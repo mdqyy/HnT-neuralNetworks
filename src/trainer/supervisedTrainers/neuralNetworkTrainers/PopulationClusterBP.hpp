@@ -16,6 +16,10 @@
 #include "../../../performanceMeasurers/RegressionMeasurer.hpp"
 #include "PopulationBPParams.hpp"
 #include <boost/thread/thread.hpp>
+#include <iostream>
+#include <sstream>
+#include <ostream>
+#include <stdio.h>
 
 /*!
  * \class PopulationClusterBP
@@ -57,6 +61,8 @@ class PopulationClusterBP : public SupervisedTrainer{
    * Destructor.
    */
   ~PopulationClusterBP();
+
+
 
 };
 

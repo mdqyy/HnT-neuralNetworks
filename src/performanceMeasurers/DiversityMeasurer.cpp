@@ -9,15 +9,16 @@
 using namespace cv;
 using namespace std;
 
-DiversityMeasurer::DiversityMeasurer(PBDNN& _population, RegressionDataset& _data) : networkPopulation(_population), data(_data), disagreementScalar(0.0) {
+DiversityMeasurer::DiversityMeasurer(PBDNN& _population, RegressionDataset& _data, ErrorMeasurer& _em) :
+		networkPopulation(_population), data(_data), disagreementScalar(0.0), errorMeasurer(_em) {
 	initMatrices();
 }
 
 void DiversityMeasurer::measurePerformance() {
 	processNetworkOutputMeanAndStdDevMatrix();
 	/*processCorrelationMatrix();
-	processCovarianceMatrix();
-	processChiSquareMatrix();*/
+	 processCovarianceMatrix();
+	 processChiSquareMatrix();*/
 	processDisagreementMatrix();
 	processDisagreementScalar();
 }
@@ -26,18 +27,17 @@ void DiversityMeasurer::initMatrices() {
 	vector<NeuralNetworkPtr> population = networkPopulation.getPopulation();
 	FeatureVector output = population[0]->getOutputSignal();
 	networkOutputMeanMatrix = Mat::zeros(output.getLength(), population.size(), CV_64FC1);
-	networkOutputStdDevMatrix = Mat::zeros(output.getLength(),	population.size(),CV_64FC1);
+	networkOutputStdDevMatrix = Mat::zeros(output.getLength(), population.size(), CV_64FC1);
 	correlationMatrix = vector<Mat>(networkOutputMeanMatrix.rows, Mat::zeros(population.size(), population.size(), CV_64FC1));
 	covarianceMatrix = vector<Mat>(networkOutputMeanMatrix.rows, Mat::zeros(population.size(), population.size(), CV_64FC1));
 	chiSquareMatrix = vector<Mat>(networkOutputMeanMatrix.rows, Mat::zeros(population.size(), population.size(), CV_64FC1));
 	disagreementMatrix = Mat::zeros(population.size(), population.size(), CV_64FC1);
 }
 
-
-void DiversityMeasurer::processNetworkOutputMeanAndStdDevMatrix(){
+void DiversityMeasurer::processNetworkOutputMeanAndStdDevMatrix() {
 	FeatureVector networkOutput;
 	vector<NeuralNetworkPtr> population = networkPopulation.getPopulation();
-	Mat test = Mat::zeros(1,1,CV_64FC1);
+	Mat test = Mat::zeros(1, 1, CV_64FC1);
 	double numSamples = 1.0;
 	double oldMean = 0.0;
 	for (uint i = 0; i < population.size(); i++) {
@@ -47,8 +47,10 @@ void DiversityMeasurer::processNetworkOutputMeanAndStdDevMatrix(){
 				networkOutput = population[i]->getOutputSignal();
 				for (uint l = 0; l < networkOutput.getLength(); l++) {
 					oldMean = networkOutputMeanMatrix.at<double>(l, i);
-					networkOutputMeanMatrix.at<double>(l, i) = networkOutputMeanMatrix.at<double>(l, i) + (networkOutput[l] -networkOutputMeanMatrix.at<double>(l, i)) / numSamples;
-					networkOutputStdDevMatrix.at<double>(l, i) = ((numSamples - 1) * networkOutputStdDevMatrix.at<double>(l, i)	+ (networkOutput[l] - networkOutputMeanMatrix.at<double>(l, i)) * (networkOutput[l] - oldMean)) / numSamples;
+					networkOutputMeanMatrix.at<double>(l, i) = networkOutputMeanMatrix.at<double>(l, i)
+							+ (networkOutput[l] - networkOutputMeanMatrix.at<double>(l, i)) / numSamples;
+					networkOutputStdDevMatrix.at<double>(l, i) = ((numSamples - 1) * networkOutputStdDevMatrix.at<double>(l, i)
+							+ (networkOutput[l] - networkOutputMeanMatrix.at<double>(l, i)) * (networkOutput[l] - oldMean)) / numSamples;
 					numSamples = numSamples + 1.0;
 				}
 			}
@@ -56,7 +58,7 @@ void DiversityMeasurer::processNetworkOutputMeanAndStdDevMatrix(){
 	}
 }
 
-void DiversityMeasurer::processCorrelationMatrix(){
+void DiversityMeasurer::processCorrelationMatrix() {
 	vector<NeuralNetworkPtr> population = networkPopulation.getPopulation();
 	FeatureVector outputA, outputB;
 	for (uint j = 0; j < population.size(); j++) {
@@ -70,7 +72,8 @@ void DiversityMeasurer::processCorrelationMatrix(){
 					outputA = population[j]->getOutputSignal();
 					outputB = population[k]->getOutputSignal();
 					for (uint n = 0; n < outputA.getLength(); n++) {
-						correlationMatrix[n].at<double>(j, k) = correlationMatrix[n].at<double>(j, k) + (outputA[n] - networkOutputMeanMatrix.at<double>(n, j)) * (outputB[n] - networkOutputMeanMatrix.at<double>(n, k));
+						correlationMatrix[n].at<double>(j, k) = correlationMatrix[n].at<double>(j, k)
+								+ (outputA[n] - networkOutputMeanMatrix.at<double>(n, j)) * (outputB[n] - networkOutputMeanMatrix.at<double>(n, k));
 						jSum[n] = kSum[n] + (outputA[n] - networkOutputMeanMatrix.at<double>(n, j)) * (outputA[n] - networkOutputMeanMatrix.at<double>(n, j));
 						kSum[n] = jSum[n] + (outputB[n] - networkOutputMeanMatrix.at<double>(n, k)) * (outputB[n] - networkOutputMeanMatrix.at<double>(n, k));
 					}
@@ -84,7 +87,7 @@ void DiversityMeasurer::processCorrelationMatrix(){
 	}
 }
 
-void DiversityMeasurer::processCovarianceMatrix(){
+void DiversityMeasurer::processCovarianceMatrix() {
 	vector<NeuralNetworkPtr> population = networkPopulation.getPopulation();
 	FeatureVector outputA, outputB;
 	for (uint j = 0; j < population.size(); j++) {
@@ -96,19 +99,20 @@ void DiversityMeasurer::processCovarianceMatrix(){
 					outputA = population[j]->getOutputSignal();
 					outputB = population[k]->getOutputSignal();
 					for (uint n = 0; n < outputA.getLength(); n++) {
-						covarianceMatrix[n].at<double>(j, k) = covarianceMatrix[n].at<double>(j, k) + (outputA[n] - networkOutputMeanMatrix.at<double>(n, j)) * (outputB[n] - networkOutputMeanMatrix.at<double>(n, k));
+						covarianceMatrix[n].at<double>(j, k) = covarianceMatrix[n].at<double>(j, k)
+								+ (outputA[n] - networkOutputMeanMatrix.at<double>(n, j)) * (outputB[n] - networkOutputMeanMatrix.at<double>(n, k));
 					}
 				}
 			}
 			for (uint n = 0; n < outputA.getLength(); n++) {
-				covarianceMatrix[n].at<double>(j, k) = covarianceMatrix[n].at<double>(j, k) / ((double)data.getNumSamples());
+				covarianceMatrix[n].at<double>(j, k) = covarianceMatrix[n].at<double>(j, k) / ((double) data.getNumSamples());
 				covarianceMatrix[n].at<double>(k, j) = covarianceMatrix[n].at<double>(j, k);
 			}
 		}
 	}
 }
 
-void DiversityMeasurer::processChiSquareMatrix(){
+void DiversityMeasurer::processChiSquareMatrix() {
 	vector<NeuralNetworkPtr> population = networkPopulation.getPopulation();
 	FeatureVector outputA, outputB;
 	for (uint j = 0; j < population.size(); j++) {
@@ -120,8 +124,10 @@ void DiversityMeasurer::processChiSquareMatrix(){
 					outputA = population[j]->getOutputSignal();
 					outputB = population[k]->getOutputSignal();
 					for (uint n = 0; n < outputA.getLength(); n++) {
-						chiSquareMatrix[n].at<double>(j, k) = chiSquareMatrix[n].at<double>(j, k) + (outputA[n] - outputB[n]) * (outputA[n] - outputB[n])/outputB[n];
-						chiSquareMatrix[n].at<double>(k, j) = chiSquareMatrix[n].at<double>(j, k) + (outputA[n] - outputB[n]) * (outputA[n] - outputB[n])/outputA[n];
+						chiSquareMatrix[n].at<double>(j, k) = chiSquareMatrix[n].at<double>(j, k)
+								+ (outputA[n] - outputB[n]) * (outputA[n] - outputB[n]) / outputB[n];
+						chiSquareMatrix[n].at<double>(k, j) = chiSquareMatrix[n].at<double>(j, k)
+								+ (outputA[n] - outputB[n]) * (outputA[n] - outputB[n]) / outputA[n];
 					}
 				}
 			}
@@ -129,10 +135,10 @@ void DiversityMeasurer::processChiSquareMatrix(){
 	}
 }
 
-void DiversityMeasurer::processDisagreementMatrix(){
+void DiversityMeasurer::processDisagreementMatrix() {
 	vector<NeuralNetworkPtr> population = networkPopulation.getPopulation();
 	FeatureVector outputA, outputB, target;
-	double agreement,disagreementA, disagreementB;
+	double agreement, disagreementA, disagreementB;
 	bool AGood, BGood;
 	for (uint j = 0; j < population.size(); j++) {
 		for (uint k = j + 1; k < population.size(); k++) {
@@ -147,50 +153,162 @@ void DiversityMeasurer::processDisagreementMatrix(){
 					population[k]->forward(data[l][m]);
 					outputA = population[j]->getOutputSignal();
 					outputB = population[k]->getOutputSignal();
-					target = data.getTargetSample(l,m);
+					target = data.getTargetSample(l, m);
 					for (uint n = 0; n < outputA.getLength(); n++) {
-						if(outputA[n] > target[n] - sqrt(networkOutputStdDevMatrix.at<double>(j,n)) && outputA[n] < target[n] + sqrt(networkOutputStdDevMatrix.at<double>(j,n)) ){
+						if (outputA[n] > target[n] - sqrt(networkOutputStdDevMatrix.at<double>(j, n))
+								&& outputA[n] < target[n] + sqrt(networkOutputStdDevMatrix.at<double>(j, n))) {
 							AGood = true;
-						}
-						else {
+						} else {
 							AGood = false;
 						}
-						if(outputB[n] > target[n] - sqrt(networkOutputStdDevMatrix.at<double>(k,n)) && outputB[n] < target[n] + sqrt(networkOutputStdDevMatrix.at<double>(k,n)) ){
+						if (outputB[n] > target[n] - sqrt(networkOutputStdDevMatrix.at<double>(k, n))
+								&& outputB[n] < target[n] + sqrt(networkOutputStdDevMatrix.at<double>(k, n))) {
 							BGood = true;
-						}
-						else {
+						} else {
 							BGood = false;
 						}
-						if(AGood && !BGood){
-							disagreementA+=1.0;
-						}
-						else if(BGood && !AGood){
-							disagreementB+=1.0;
-						}
-						else{
-							agreement+=1.0;
+						if (AGood && !BGood) {
+							disagreementA += 1.0;
+						} else if (BGood && !AGood) {
+							disagreementB += 1.0;
+						} else {
+							agreement += 1.0;
 						}
 					}
 				}
 			}
-			disagreementMatrix.at<double>(j, k) = (disagreementB + disagreementA)/(agreement + disagreementB + disagreementA);
-			disagreementMatrix.at<double>(k, j) = (disagreementB + disagreementA)/(agreement + disagreementB + disagreementA);
+			disagreementMatrix.at<double>(j, k) = (disagreementB + disagreementA) / (agreement + disagreementB + disagreementA);
+			disagreementMatrix.at<double>(k, j) = (disagreementB + disagreementA) / (agreement + disagreementB + disagreementA);
 		}
 	}
 }
 
-void DiversityMeasurer::processDisagreementScalar(){
-	disagreementScalar=0.0;
-	realv combinations = 1.0;
-	for(int i = 0; i<disagreementMatrix.rows;i++){
-		for(int j = 0; j<disagreementMatrix.cols;j++){
-			if(j>i){
-				disagreementScalar += disagreementMatrix.at<double>(i,j);
+void DiversityMeasurer::processDisagreementScalar() {
+	disagreementScalar = 0.0;
+	realv combinations = 0.0;
+	for (int i = 0; i < disagreementMatrix.rows; i++) {
+		for (int j = i+1; j < disagreementMatrix.cols; j++) {
+				disagreementScalar += disagreementMatrix.at<double>(i, j);
 				combinations += 1.0;
+		}
+	}
+	if(combinations > 0.0){
+		disagreementScalar /= combinations;
+	}
+	else{
+		disagreementScalar = 0.0;
+	}
+}
+
+vector<vector<int> > DiversityMeasurer::findBestNetwork() {
+	vector<NeuralNetworkPtr> neuralNets = networkPopulation.getPopulation();
+	vector<vector<int> > assignedTo = vector<vector<int> >();
+	FeatureVector fv;
+	realv minError = 10e+9;
+	uint bestNetwork = 0;
+	for (uint i = 0; i < data.getNumSequences(); i++) {
+		vector<int> sequenceAssignement = vector<int>();
+		for (uint j = 0; j < data[i].size(); j++) {
+			bestNetwork = 0;
+			minError = 10e+9;
+			fv = data[i][j];
+			for (uint k = 0; k < neuralNets.size(); k++) {
+				neuralNets[k]->forward(fv);
+				errorMeasurer.processErrors(neuralNets[k]->getOutputSignal(), data.getTargetSample(i, j));
+				if (errorMeasurer.getError() < minError) {
+					minError = errorMeasurer.getError();
+					bestNetwork = k;
+				}
+			}
+			sequenceAssignement.push_back(bestNetwork);
+		}
+		assignedTo.push_back(sequenceAssignement);
+	}
+	return assignedTo;
+}
+
+vector<realv> DiversityMeasurer::errorsOnBestSample() {
+	vector<NeuralNetworkPtr> neuralNets = networkPopulation.getPopulation();
+	vector<realv > errors = vector<realv>(neuralNets.size(),0.0);
+	FeatureVector fv;
+	realv minError = 10e+9;
+	uint bestNetwork = 0;
+	for (uint i = 0; i < data.getNumSequences(); i++) {
+		vector<int> sequenceAssignement = vector<int>();
+		for (uint j = 0; j < data[i].size(); j++) {
+			bestNetwork = 0;
+			minError = 10e+9;
+			fv = data[i][j];
+			for (uint k = 0; k < neuralNets.size(); k++) {
+				neuralNets[k]->forward(fv);
+				errorMeasurer.processErrors(neuralNets[k]->getOutputSignal(), data.getTargetSample(i, j));
+				if (errorMeasurer.getError() < minError) {
+					minError = errorMeasurer.getError();
+					bestNetwork = k;
+				}
+			}
+			errors[bestNetwork]+=minError;
+		}
+	}
+	return errors;
+}
+
+vector<FeatureVector> DiversityMeasurer::getMeanGoodOutput(){
+	vector<NeuralNetworkPtr> neuralNets = networkPopulation.getPopulation();
+	vector<FeatureVector> meanOutput = vector<FeatureVector>(neuralNets.size(),FeatureVector(data.getTargetSample(0, 0).getLength()));
+	FeatureVector fv;
+	realv minError = 10e+9;
+	uint bestNetwork = 0;
+	for (uint i = 0; i < data.getNumSequences(); i++) {
+		vector<int> sequenceAssignement = vector<int>();
+		for (uint j = 0; j < data[i].size(); j++) {
+			bestNetwork = 0;
+			minError = 10e+9;
+			fv = data[i][j];
+			for (uint k = 0; k < neuralNets.size(); k++) {
+				neuralNets[k]->forward(fv);
+				errorMeasurer.processErrors(neuralNets[k]->getOutputSignal(), data.getTargetSample(i, j));
+				if (errorMeasurer.getError() < minError) {
+					minError = errorMeasurer.getError();
+					bestNetwork = k;
+				}
+			}
+			fv = neuralNets[bestNetwork]->getOutputSignal();
+			realv q = 0.0 ;
+			for(int t=0; t < fv.getLength();t++){
+				meanOutput[bestNetwork][t] = (q*meanOutput[bestNetwork][t] +fv[t])/(q+1.0);
+				q += 1.0;
 			}
 		}
 	}
-	disagreementScalar /= combinations;
+	return meanOutput;
+}
+
+vector<vector<FeatureVector> > DiversityMeasurer::buildBestOutput() {
+	vector<NeuralNetworkPtr> neuralNets = networkPopulation.getPopulation();
+	vector<vector<FeatureVector> > assignedTo = vector<vector<FeatureVector> >();
+	FeatureVector fv;
+	realv minError = 10e+9;
+	uint bestNetwork = 0;
+	for (uint i = 0; i < data.getNumSequences(); i++) {
+		vector<FeatureVector> sequenceAssignement = vector<FeatureVector>();
+		for (uint j = 0; j < data[i].size(); j++) {
+			bestNetwork = 0;
+			minError = 10e+9;
+			fv = data[i][j];
+			for (uint k = 0; k < neuralNets.size(); k++) {
+				neuralNets[k]->forward(fv);
+				errorMeasurer.processErrors(neuralNets[k]->getOutputSignal(), data.getTargetSample(i, j));
+				if (errorMeasurer.getError() < minError) {
+					minError = errorMeasurer.getError();
+					bestNetwork = k;
+				}
+			}
+			sequenceAssignement.push_back(neuralNets[bestNetwork]->getOutputSignal());
+		}
+		assignedTo.push_back(sequenceAssignement);
+	}
+	return assignedTo;
 }
 
 vector<Mat> DiversityMeasurer::getChiSquareMatrix() const {
@@ -249,7 +367,6 @@ Mat DiversityMeasurer::getNetworkOutputStdDevMatrix() const {
 	return networkOutputStdDevMatrix;
 }
 
-
 void DiversityMeasurer::setNetworkOutputStdDevMatrix(cv::Mat _stdDevMatrix) {
 	this->networkOutputStdDevMatrix = _stdDevMatrix;
 }
@@ -264,6 +381,10 @@ realv DiversityMeasurer::getDisagreementScalar() const {
 
 void DiversityMeasurer::setDisagreementScalar(realv _disagreementScalar) {
 	this->disagreementScalar = _disagreementScalar;
+}
+
+ErrorMeasurer& DiversityMeasurer::getErrorMeasurer() const {
+	return errorMeasurer;
 }
 
 DiversityMeasurer::~DiversityMeasurer() {

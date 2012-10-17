@@ -73,16 +73,16 @@ void LayerTanh::print(ostream& _os) const{
 }
 
 ofstream& operator<<(ofstream& _ofs, const LayerTanh& _l){
-  _ofs << "< "<< _l.getName()<<" "<< _l.getNumUnits()<<" "<< _l.isRecurrent();
+  _ofs << " < "<< _l.getName()<<" "<< _l.getNumUnits()<<" "<< _l.isRecurrent();
   /*  if(_l.isRecurrent()){
     _ofs << " "<< *_l.getRecurrentConnection();
     }*/
-  _ofs << " >"<<endl;
+  _ofs << " > "<<endl;
   return _ofs;
 }
 
 ifstream& operator>>(ifstream& _ifs, LayerTanh& _l){
-  int nUnits, intRecurrent;
+  int nUnits;
   bool boolRecurrent;
   /* Connection recCo;*/
   ValueVector meanV, stdV;
@@ -90,14 +90,10 @@ ifstream& operator>>(ifstream& _ifs, LayerTanh& _l){
   _ifs >> temp;
   _ifs >> name ;
   _ifs >> nUnits ;
-  _ifs >> intRecurrent;
-  boolRecurrent = intRecurrent == 1;
-  /*  if(boolRecurrent) {
-    _ifs >> recCo;
-    _l.setRecurrentConnection(ConnectionPtr(new Connection(recCo)));
-    }*/
+  _ifs >> boolRecurrent;
   _ifs >> temp;
   _l.setName(name);
   _l.setNumUnits(nUnits);
+  _l.setRecurent(boolRecurrent);
   return _ifs;
 }

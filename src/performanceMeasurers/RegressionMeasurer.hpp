@@ -10,8 +10,9 @@
 #include <vector>
 #include "../machines/neuralMachines/NeuralNetwork.hpp"
 #include "../dataset/supervised/RegressionDataset.hpp"
-#include "PerformanceMeasurer.hpp"
 #include "../trainer/errorMeasurers/ErrorMeasurer.hpp"
+#include "PerformanceMeasurer.hpp"
+
 
 /*!
  * \class RegressionMeasurer

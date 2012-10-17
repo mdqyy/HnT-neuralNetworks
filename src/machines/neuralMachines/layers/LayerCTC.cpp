@@ -80,16 +80,13 @@ void LayerCTC::print(ostream& _os) const{
 }
 
 ofstream& operator<<(ofstream& _ofs, const LayerCTC& _l){
-  _ofs << "< "<< _l.getName()<<" "<< _l.getNumUnits()<<" "<< _l.isRecurrent();
-  /*  if(_l.isRecurrent()){
-    _ofs << " "<< *_l.getRecurrentConnection();
-    }*/
-  _ofs << " >"<<endl;
+  _ofs << " < "<< _l.getName()<<" "<< _l.getNumUnits()<<" "<< _l.isRecurrent();
+  _ofs << " > "<<endl;
   return _ofs;
 }
 
 ifstream& operator>>(ifstream& _ifs, LayerCTC& _l){
-  int nUnits, intRecurrent;
+  int nUnits;
   bool boolRecurrent;
   ValueVector meanV, stdV;
   /*  Connection recCo; */
@@ -97,14 +94,10 @@ ifstream& operator>>(ifstream& _ifs, LayerCTC& _l){
   _ifs >> temp;
   _ifs >> name ;
   _ifs >> nUnits ;
-  _ifs >> intRecurrent;
-  boolRecurrent = intRecurrent == 1;
-  /*if(boolRecurrent) {
-    _ifs >> recCo;
-    _l.setRecurrentConnection(ConnectionPtr(new Connection(recCo)));
-    }*/
+  _ifs >> boolRecurrent;
   _ifs >> temp;
   _l.setName(name);
   _l.setNumUnits(nUnits);
+  _l.setRecurent(boolRecurrent);
   return _ifs;
 }

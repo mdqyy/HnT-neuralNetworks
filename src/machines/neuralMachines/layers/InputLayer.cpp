@@ -92,9 +92,9 @@ void InputLayer::print(std::ostream& _os) const{
 }
 
 ofstream& operator<<(ofstream& ofs, const InputLayer& l){
-  ofs << "< "<<l.getName()<<" "<<l.getNumUnits()<<" ";
+  ofs << " < "<<l.getName()<<" "<<l.getNumUnits()<<" ";
   ofs << l.getMean()<<" ";
-  ofs << l.getStandardDeviation()<<" >"<<endl;
+  ofs << l.getStandardDeviation()<<" > "<<endl;
   return ofs;
 }
 

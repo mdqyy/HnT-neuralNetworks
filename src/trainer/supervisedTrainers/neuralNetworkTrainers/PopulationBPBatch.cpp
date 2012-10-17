@@ -96,11 +96,11 @@ void PopulationBPBatch::trainOneIteration(){
 	vector<uint> indexOrderSelection=defineIndexOrderSelection(data.getNumSequences());
 	uint index=0;
 	uint bestNetwork=0;
-	DiversityMeasurer diversity(population,regData);
+	AEMeasurer mae;
+	DiversityMeasurer diversity(population,regData,mae);
 	vector<FeatureVector> errors;
 	vector<NeuralNetworkPtr> neuralNets=population.getPopulation();
 	vector<vector<Mat> > tempWeights;
-	AEMeasurer mae;
 	vector<uint> histogramOfTrainees(neuralNets.size());
 	vector< vector<uint> > correlatedTraining;
 	vector <vector< pair<int,int> > > learningAffectations = vector <vector< pair<int,int> > >();

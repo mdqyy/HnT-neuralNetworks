@@ -16,6 +16,7 @@
 #include "../machines/neuralMachines/layers/LayerTanh.hpp"
 #include "../machines/neuralMachines/connections/Connection.hpp"
 #include "../machines/neuralMachines/PBDNN.hpp"
+#include "../trainer/errorMeasurers/AEMeasurer.hpp"
 #include "../trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBP.hpp"
 #include "../trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBPParams.hpp"
 #include "../performanceMeasurers/DiversityMeasurer.hpp"
@@ -28,7 +29,8 @@ int main (int argc, char* argv[]){
   RegressionDataset dataset;
   dataset.load(argv[1]);
   PBDNN pop(5,dataset.getFeatureVectorLength(),5,dataset.getMean(), dataset.getStandardDeviation());
-  DiversityMeasurer diversity(pop, dataset);
+  AEMeasurer mae;
+  DiversityMeasurer diversity(pop, dataset, mae);
   diversity.measurePerformance();
   cout << diversity.getDisagreementMatrix() << endl;
   return EXIT_SUCCESS;

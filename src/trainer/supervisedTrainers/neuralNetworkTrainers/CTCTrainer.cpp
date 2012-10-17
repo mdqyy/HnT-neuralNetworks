@@ -14,7 +14,9 @@ CTCTrainer::CTCTrainer(LayerCTC& _ctcLayer, ClassificationDataset& _data, Mask& 
 }
 
 void CTCTrainer::train(){
-
+	for(uint i = 0; i < 1 ; i++){ /*! Todo : change threshold */
+		trainOneIteration();
+	}
 }
 
 void CTCTrainer::trainOneIteration(){
@@ -25,6 +27,7 @@ void CTCTrainer::trainOneIteration(){
 		vector<FeatureVector> inputSignal = classifactionData[index];
 		vector<int> targetSignal = classifactionData.getSequenceClassesIndex(index);
 		trainOneSample(inputSignal,targetSignal);
+		cout << "trained" << endl;
 	}
 }
 
@@ -81,7 +84,7 @@ vector<ValueVector> CTCTrainer::processForwardVariables(vector<FeatureVector> _o
 		uint minLabels = determineMinLabel(t,_outputSignals.size(),requiredSegments,_targetSequence.size());
 		uint maxLabels = determineMaxLabel(t,_targetSequence.size());
 		for(uint s=minLabels;s<maxLabels;s++){
-			if(s%2){ /* is even : blank*/
+			if(s%2==0){ /* is even : blank*/
 				if(s>0){
 					forwardVariables[t][s]= _outputSignals[t][blankIndex]*(forwardVariables[t-1][s-1]+forwardVariables[t-1][s]);
 				}
@@ -120,8 +123,8 @@ vector<ValueVector> CTCTrainer::processBackwardVariables(vector<FeatureVector> _
 		uint minLabels = determineMinLabel(t,_outputSignals.size(),requiredSegments,_targetSequence.size());
 		uint maxLabels = determineMaxLabel(t,_targetSequence.size());
 		for(uint s=minLabels;s<maxLabels;s++){
-			if(s%2){ /* is even : blank*/
-				if(s>0){
+			if(s%2==0){ /* is even : blank*/
+				if(s<_targetSequence.size()*2-1){
 					backwardVariables[t][s]= _outputSignals[t][blankIndex]*(backwardVariables[t+1][s+1]+backwardVariables[t+1][s]);
 				}
 				else{

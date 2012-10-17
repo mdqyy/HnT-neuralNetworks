@@ -121,24 +121,6 @@ void Connection::forward(){
     to->forward();
 }
 
-/*void Connection::backwardDeltas(bool _output){
-  if(from!=to){
-    from->backwardDeltas(_output);
-  }
-  }*/
-
-/*void Connection::backwardWeights(realv _learningRate){
-  ErrorVector ev=to->getErrorVector();
-  for(int i=0;i<weights.rows;i++){
-    for(int j=0;j<weights.cols;j++){
-      weights.at<realv>(i,j)=weights.at<realv>(i,j)+_learningRate*ev[i]*from->getOutputSignal()[j];
-    }
-  }
-  if(from!=to){
-    from->backwardWeights(_learningRate);
-  }
-  }*/
-
 Connection::~Connection(){
   from = 0;
   to = 0;
@@ -163,14 +145,14 @@ ostream& operator<<(ostream& os, const Connection& c){
 
 ofstream& operator<<(ofstream& ofs, const Connection& l){
   Mat weightsTmp = l.getWeights();
-  ofs << "< " << weightsTmp.rows << " "<< weightsTmp.cols <<" [" ;
+  ofs << " < " << weightsTmp.rows << " "<< weightsTmp.cols <<" [" ;
   for(int i =0; i<weightsTmp.rows;i++){
     for(int j=0;j<weightsTmp.cols;j++){
       ofs << " "<< weightsTmp.at<realv>(i,j);
     }
     ofs << endl;
   }
-  ofs <<"] >"<< endl;
+  ofs <<"] > "<< endl;
   return ofs;
 }
 
