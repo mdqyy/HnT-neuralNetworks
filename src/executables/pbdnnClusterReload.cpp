@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
 
 	vector<Vec3b> colors = createColorRepartition(pop.getPopulation().size());
 
-	PopulationClusterBP pbp(pop, dataset, params, mask, mask);
+	PopulationClusterBP pbp(pop, dataset, params, dataset2,mask, mask);
 	AEMeasurer mae;
 	DiversityMeasurer diversity(pop, dataset, mae);
 	diversity.measurePerformance();

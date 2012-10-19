@@ -33,6 +33,10 @@ using namespace cv;
 int main(int argc, char* argv[]) {
 	RegressionDataset dataset;
 	dataset.load(argv[4]);
+
+	RegressionDataset dataset2;
+	dataset2.load(argv[6]);
+
 	cout << "dataset loaded, total elements : " << dataset.getNumSamples() << endl;
 	int populationSize = atoi(argv[1]);
 	int numberOfHiddenUnits = atoi(argv[2]);
@@ -41,7 +45,7 @@ int main(int argc, char* argv[]) {
 	string filename(argv[5]);
 	AEMeasurer mae;
 	PBDNN pop = PBDNN(populationSize, dataset.getFeatureVectorLength(), numberOfHiddenUnits, dataset.getMean(), dataset.getStandardDeviation());
-	DiversityMeasurer diversity(pop, dataset, mae);
+	DiversityMeasurer diversity(pop, dataset2, mae);
 	do{
 		pop = PBDNN(populationSize, dataset.getFeatureVectorLength(), numberOfHiddenUnits, dataset.getMean(), dataset.getStandardDeviation());
 		diversity.measurePerformance();
@@ -53,7 +57,7 @@ int main(int argc, char* argv[]) {
 	params.setLearningRate(0.001);
 	params.setMaxTrainedPercentage(0.05);
 	params.setSavedDuringProcess(true);
-	PopulationClusterBP pbp(pop, dataset, params, mask, mask);
+	PopulationClusterBP pbp(pop, dataset, params, dataset2,mask, mask);
 
 
 	cout << "Starting diversity" << endl << diversity.getDisagreementMatrix() << endl;
@@ -67,11 +71,8 @@ int main(int argc, char* argv[]) {
 	outStream << pop;
 
 	vector<NeuralNetworkPtr> population = pop.getPopulation();
-	RegressionDataset dataset2;
-	dataset2.load(argv[6]);
-	DiversityMeasurer diversity2(pop, dataset2, mae);
-	vector<vector<int> > assignedTo = diversity2.findBestNetwork();
-	vector<vector<FeatureVector> > recomposed = diversity2.buildBestOutput();
+	vector<vector<int> > assignedTo = diversity.findBestNetwork();
+	vector<vector<FeatureVector> > recomposed = diversity.buildBestOutput();
 	vector<int> pngParams = vector<int>();
 	pngParams.push_back(CV_IMWRITE_PNG_COMPRESSION);
 	pngParams.push_back(3);

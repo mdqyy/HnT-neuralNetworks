@@ -25,46 +25,45 @@
  * \class PopulationClusterBP
  * Description
  */
-class PopulationClusterBP : public SupervisedTrainer{
- private :
+class PopulationClusterBP: public SupervisedTrainer {
+private:
 
- protected:
-  /*! Network population */
-  PBDNN& population;
-  /*! Learning parameters */
-  PopulationBPParams params;
-  /*! Regression dataset*/
-  RegressionDataset regData;
- public:
+protected:
+	/*! Network population */
+	PBDNN& population;
+	/*! Learning parameters */
+	PopulationBPParams params;
+	/*! Regression dataset*/
+	RegressionDataset regData;
+	/*! Diversity measurer */
+	RegressionDataset validationDataset;
 
-  /*!
-   * Parameter constructor.
-   * \param _population The neural population.
-   * \param _data The training data.
-   * \param _params The training parameters.
-   * \param _featureMask Feature mask.
-   * \param _indexMask Index mask.
-   */
-  PopulationClusterBP(PBDNN& _population, RegressionDataset& _data, PopulationBPParams& _params, Mask& _featureMask, Mask& _indexMask);
+public:
 
-  /*!
-   * Train the neural networks.
-   */
-  void train();
+	/*!
+	 * Parameter constructor.
+	 * \param _population The neural population.
+	 * \param _data The training data.
+	 * \param _params The training parameters.
+	 * \param _featureMask Feature mask.
+	 * \param _indexMask Index mask.
+	 */
+	PopulationClusterBP(PBDNN& _population, RegressionDataset& _data, PopulationBPParams& _params, RegressionDataset& _valid, Mask& _featureMask, Mask& _indexMask);
 
-  /*!
-   * Train the neural networks on one iteration.
-   */
-  void trainOneIteration();
+	/*!
+	 * Train the neural networks.
+	 */
+	void train();
 
-  /*!
-   * Destructor.
-   */
-  ~PopulationClusterBP();
+	/*!
+	 * Train the neural networks on one iteration.
+	 */
+	void trainOneIteration();
 
-
-
+	/*!
+	 * Destructor.
+	 */
+	~PopulationClusterBP();
 };
-
 
 #endif

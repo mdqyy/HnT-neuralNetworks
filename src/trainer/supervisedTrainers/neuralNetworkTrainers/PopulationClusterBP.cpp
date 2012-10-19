@@ -10,8 +10,8 @@
 using namespace cv;
 using namespace std;
 
-PopulationClusterBP::PopulationClusterBP(PBDNN& _population, RegressionDataset& _data, PopulationBPParams& _params, Mask& _featureMask, Mask& _indexMask) :
-		SupervisedTrainer(_population, _data, _featureMask, _indexMask), population(_population), params(_params), regData(_data) {
+PopulationClusterBP::PopulationClusterBP(PBDNN& _population, RegressionDataset& _data, PopulationBPParams& _params, RegressionDataset& _valid, Mask& _featureMask, Mask& _indexMask) :
+		SupervisedTrainer(_population, _data, _featureMask, _indexMask), population(_population), params(_params), regData(_data), validationDataset(_valid) {
 
 }
 
@@ -105,10 +105,11 @@ void PopulationClusterBP::trainOneIteration() {
 	uint index = 0;
 	uint bestNetwork = 0;
 	AEMeasurer mae;
-	DiversityMeasurer diversity(population, regData, mae);
 	vector<FeatureVector> errors;
 	vector<NeuralNetworkPtr> neuralNets = population.getPopulation();
 	vector<vector<Mat> > tempWeights;
+
+	DiversityMeasurer diversity = DiversityMeasurer(population, validationDataset, mae);
 
 	vector<uint> histogramOfTrainees(neuralNets.size());
 	vector<vector<uint> > correlatedTraining;
@@ -144,11 +145,6 @@ void PopulationClusterBP::trainOneIteration() {
 		}
 	}
 	uint timesTrained = data.getNumSamples();
-	/*for(uint k=0; k<neuralNets.size();k++){
-	 if(learningAffectations[k].size()<timesTrained){
-	 timesTrained = learningAffectations[k].size();
-	 }
-	 }*/
 	FeatureVector blackTarget = FeatureVector(regData.getTargetSample(0, 0));
 	for (uint k = 0; k < neuralNets.size(); k++) {
 		uint i = 0;
