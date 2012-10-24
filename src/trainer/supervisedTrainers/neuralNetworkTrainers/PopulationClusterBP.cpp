@@ -11,7 +11,7 @@ using namespace cv;
 using namespace std;
 
 PopulationClusterBP::PopulationClusterBP(PBDNN& _population, RegressionDataset& _data, PopulationBPParams& _params, RegressionDataset& _valid, Mask& _featureMask, Mask& _indexMask) :
-		SupervisedTrainer(_population, _data, _featureMask, _indexMask), population(_population), params(_params), regData(_data), validationDataset(_valid) {
+		SupervisedTrainer(_population, _data, _featureMask, _indexMask), population(_population), params(_params), regData(_data), validationDataset(_valid){
 
 }
 

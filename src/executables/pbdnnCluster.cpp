@@ -46,19 +46,18 @@ int main(int argc, char* argv[]) {
 	AEMeasurer mae;
 	PBDNN pop = PBDNN(populationSize, dataset.getFeatureVectorLength(), numberOfHiddenUnits, dataset.getMean(), dataset.getStandardDeviation());
 	DiversityMeasurer diversity(pop, dataset2, mae);
-	do{
+	do {
 		pop = PBDNN(populationSize, dataset.getFeatureVectorLength(), numberOfHiddenUnits, dataset.getMean(), dataset.getStandardDeviation());
 		diversity.measurePerformance();
 		cout << "Disagreement scalar : " << endl << diversity.getDisagreementScalar() << endl;
-	}while(diversity.getDisagreementScalar() < 0.17);
+	} while (diversity.getDisagreementScalar() < 0.17);
 	Mask mask;
 	PopulationBPParams params;
 	params.setMaxIterations(iterations);
 	params.setLearningRate(0.001);
 	params.setMaxTrainedPercentage(0.05);
 	params.setSavedDuringProcess(true);
-	PopulationClusterBP pbp(pop, dataset, params, dataset2,mask, mask);
-
+	PopulationClusterBP pbp(pop, dataset, params, dataset2, mask, mask);
 
 	cout << "Starting diversity" << endl << diversity.getDisagreementMatrix() << endl;
 	cout << "Starting overall diversity" << endl << diversity.getDisagreementScalar() << endl;
@@ -108,5 +107,6 @@ int main(int argc, char* argv[]) {
 			imwrite(name.str(), image, pngParams);
 		}
 	}
+
 	return EXIT_SUCCESS;
 }

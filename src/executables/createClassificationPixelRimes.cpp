@@ -11,28 +11,11 @@
 #include <stdio.h>
 #include <fstream>
 
-#include "../dataset/supervised/RegressionDataset.hpp"
+#include "../dataset/supervised/ClassificationDataset.hpp"
 #include "../dataset/ValueVector.hpp"
 #include "../dataset/FeatureVector.hpp"
 #include "../utilities/ImageProcessing.hpp"
 #include "../utilities/TextUtilities.hpp"
-
-#include "../dataset/supervised/ClassificationDataset.hpp"
-#include "../dataset/supervised/RegressionDataset.hpp"
-#include "../dataset/unsupervised/UnsupervisedDataset.hpp"
-#include "../dataset/ValueVector.hpp"
-#include "../dataset/Mask.hpp"
-#include "../dataset/FeatureVector.hpp"
-#include "../machines/neuralMachines/NeuralNetwork.hpp"
-#include "../machines/neuralMachines/layers/InputLayer.hpp"
-#include "../machines/neuralMachines/layers/LayerSigmoid.hpp"
-#include "../machines/neuralMachines/layers/LayerTanh.hpp"
-#include "../machines/neuralMachines/connections/Connection.hpp"
-#include "../machines/neuralMachines/PBDNN.hpp"
-#include "../trainer/errorMeasurers/AEMeasurer.hpp"
-#include "../trainer/supervisedTrainers/neuralNetworkTrainers/PopulationClusterBP.hpp"
-#include "../trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBPParams.hpp"
-#include "../utilities/ImageProcessing.hpp"
 
 using namespace std;
 using namespace cv;
@@ -114,33 +97,38 @@ void addDictionaryClasses(ClassificationDataset* dataset){
 	dataset->addClass("9");
 }
 
-int main(int argc, char* argv[]) {
-	PBDNN pop;
-	ifstream inStream(argv[1]);
-	inStream >> pop;
-	ClassificationDataset datasetBasic;
-	datasetBasic.load(argv[2]);
-	ClassificationDataset datasetNetworks;
-	datasetNetworks.setName(argv[3]);
-	addDictionaryClasses(&datasetNetworks);
-	string saveLocation = argv[4];
-	vector<NeuralNetworkPtr> population = pop.getPopulation();
-	vector<FeatureVector> sequence, errorSequence;
-	FeatureVector sample, networkOutput;
-	AEMeasurer ae;
-	for (int j = 0; j < datasetBasic.getNumSequences(); j++) {
-		sequence = datasetBasic[j];
-		errorSequence = vector<FeatureVector>(sequence.size()),FeatureVector(population.size());
-		for (int k = 0; k < sequence.size(); k++) {
-			sample = sequence[k];
-			for (int i = 0; i < population.size(); i++) {
-				population[i]->forward(sample);
-				networkOutput = population[i]->getOutputSignal();
-				errorSequence[k][i] = ae.totalError(networkOutput,sample);
+void rimesLoader(string groundTruthFile, string groundTruthFolder,int frameSize, ClassificationDataset* dataset){
+	string line, imageFile, label;
+	size_t position;
+	ifstream gtFile (groundTruthFile.c_str());
+	Mat image;
+
+	if (gtFile.is_open()){
+		while (gtFile.good()){
+			getline (gtFile,line);
+			position = line.find(" ");
+			label = line.substr(position+1);
+			imageFile = groundTruthFolder + line.substr(0,position);
+			image = imread(imageFile,0);
+			if(!image.empty() && image.rows==60){
+				vector<FeatureVector> frames = extractFrames(image,frameSize);
+				vector<string> labelSequence = extractLabelSequence(label);
+				dataset->addSequence(frames,labelSequence);
 			}
 		}
-		datasetNetworks.addSequence(errorSequence, datasetBasic.getSequenceClasses(j));
-	}
-	datasetNetworks.save(saveLocation);
-	return EXIT_SUCCESS;
+	    gtFile.close();
+	  }
+}
+
+int main (int argc, char* argv[]){
+  ClassificationDataset dataset;
+  addDictionaryClasses(&dataset);
+  string groundTruthFile = argv[1];
+  string groundTruthFolder = argv[2];
+  int frameSize = atoi(argv[3]);
+  dataset.setName(argv[4]);
+  string saveLocation = argv[5];
+  rimesLoader(groundTruthFile, groundTruthFolder, frameSize, &dataset);
+  dataset.save(saveLocation);
+  return EXIT_SUCCESS;
 }

@@ -1,14 +1,16 @@
 add_subdirectory(executables)
 add_subdirectory(machines)
 add_subdirectory(dataset)
-add_subdirectory(trainer)
 add_subdirectory(performanceMeasurers)
+add_subdirectory(trainer)
+add_subdirectory(utilities)
 
 include_directories (dataset)
 include_directories (machines)
 include_directories (tinyxml)
-include_directories (trainer)
 include_directories (performanceMeasurers)
+include_directories (trainer)
+include_directories (utilities)
 
 add_library(Machines dataset/Dataset.cpp 
   dataset/Mask.cpp 

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(PhD)
 #make flags
-set(CMAKE_CXX_FLAGS "-Wall -pedantic -g")
+set(CMAKE_CXX_FLAGS "-Wall -pedantic")
 
 find_package(OpenCV REQUIRED)
 
@@ -10,7 +10,6 @@ set(Boost_USE_MULTITHREADED ON)
 find_package(Boost COMPONENTS thread date_time program_options filesystem system REQUIRED)
 
 find_package(Threads REQUIRED STATIC)
-
 
 # check if doxygen is even installed
 find_package(Doxygen)
@@ -34,9 +33,8 @@ include_directories (/usr/include)
 include_directories (/usr/local/include)
 include_directories (src)
 
-
 add_executable(executables/tests src/executables/mainTesting.cpp)
-target_link_libraries(executables/tests Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS} )
+target_link_libraries(executables/tests Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
 
 add_executable(executables/createXORDB src/executables/createXORDB.cpp)
 target_link_libraries(executables/createXORDB Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
@@ -56,6 +54,9 @@ target_link_libraries(executables/createPixelDB Machines TinyXML ${OpenCV_LIBS} 
 add_executable(executables/createRegressionPixelRimes src/executables/createRegressionPixelRimes.cpp)
 target_link_libraries(executables/createRegressionPixelRimes Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
 
+add_executable(executables/createClassificationPixelRimes src/executables/createClassificationPixelRimes.cpp)
+target_link_libraries(executables/createClassificationPixelRimes Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
+
 add_executable(executables/pbdnnIAM src/executables/pbdnnIAM.cpp)
 target_link_libraries(executables/pbdnnIAM Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
@@ -67,6 +68,12 @@ target_link_libraries(executables/pbdnnCluster Machines TinyXML ${OpenCV_LIBS} $
 
 add_executable(executables/pbdnnClusterReload src/executables/pbdnnClusterReload.cpp)
 target_link_libraries(executables/pbdnnClusterReload Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
+add_executable(executables/pbdnnClusterIntermediateResults src/executables/pbdnnClusterIntermediateResults.cpp)
+target_link_libraries(executables/pbdnnClusterIntermediateResults Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
+add_executable(executables/pbdnnClusterDatCreator src/executables/pbdnnClusterDatCreator.cpp)
+target_link_libraries(executables/pbdnnClusterDatCreator Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
 add_executable(executables/createImagesFromDB src/executables/createImagesFromDB.cpp)
 target_link_libraries(executables/createImagesFromDB Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})

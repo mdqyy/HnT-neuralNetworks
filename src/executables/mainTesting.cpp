@@ -55,7 +55,7 @@ int main (int argc, char* argv[]){
   usset.load("../xml/testUnsupervised.xml");
   //cout << usset;
   usset.save("../xml/saveUS.xml");
-  
+
   /* Test copy constructor */
   InputLayer cil(il);
   //cout << il << cil;
@@ -80,7 +80,7 @@ int main (int argc, char* argv[]){
   LayerTanh* test = &t;
   LayerTanh* copyTest = test->clone();
   //cout << test <<" "<<copyTest;
-  
+
   /* Cloning and linking */
   //cout << endl << endl;
   clil.setOutputConnection(&clc);
