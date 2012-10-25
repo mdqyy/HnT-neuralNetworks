@@ -187,15 +187,14 @@ void DiversityMeasurer::processDisagreementScalar() {
 	disagreementScalar = 0.0;
 	realv combinations = 0.0;
 	for (int i = 0; i < disagreementMatrix.rows; i++) {
-		for (int j = i+1; j < disagreementMatrix.cols; j++) {
-				disagreementScalar += disagreementMatrix.at<double>(i, j);
-				combinations += 1.0;
+		for (int j = i + 1; j < disagreementMatrix.cols; j++) {
+			disagreementScalar += disagreementMatrix.at<double>(i, j);
+			combinations += 1.0;
 		}
 	}
-	if(combinations > 0.0){
+	if (combinations > 0.0) {
 		disagreementScalar /= combinations;
-	}
-	else{
+	} else {
 		disagreementScalar = 0.0;
 	}
 }
@@ -229,7 +228,8 @@ vector<vector<int> > DiversityMeasurer::findBestNetwork() {
 
 vector<realv> DiversityMeasurer::errorsOnBestSample() {
 	vector<NeuralNetworkPtr> neuralNets = networkPopulation.getPopulation();
-	vector<realv > errors = vector<realv>(neuralNets.size(),0.0);
+	vector<realv> errors = vector<realv>(neuralNets.size(), 0.0);
+	vector<realv> clusterSize = vector<realv>(neuralNets.size(), 0.0);
 	FeatureVector fv;
 	realv minError = 10e+9;
 	uint bestNetwork = 0;
@@ -247,15 +247,19 @@ vector<realv> DiversityMeasurer::errorsOnBestSample() {
 					bestNetwork = k;
 				}
 			}
-			errors[bestNetwork]+=minError;
+			errors[bestNetwork] += minError;
+			clusterSize[bestNetwork] += 1.0;
 		}
+	}
+	for (uint k = 0; k < neuralNets.size(); k++) {
+		errors[k] = errors[k]/clusterSize[k];
 	}
 	return errors;
 }
 
-vector<FeatureVector> DiversityMeasurer::getMeanGoodOutput(){
+vector<FeatureVector> DiversityMeasurer::getMeanGoodOutput() {
 	vector<NeuralNetworkPtr> neuralNets = networkPopulation.getPopulation();
-	vector<FeatureVector> meanOutput = vector<FeatureVector>(neuralNets.size(),FeatureVector(data.getTargetSample(0, 0).getLength()));
+	vector<FeatureVector> meanOutput = vector<FeatureVector>(neuralNets.size(), FeatureVector(data.getTargetSample(0, 0).getLength()));
 	FeatureVector fv;
 	realv minError = 10e+9;
 	uint bestNetwork = 0;
@@ -274,9 +278,9 @@ vector<FeatureVector> DiversityMeasurer::getMeanGoodOutput(){
 				}
 			}
 			fv = neuralNets[bestNetwork]->getOutputSignal();
-			realv q = 0.0 ;
-			for(int t=0; t < fv.getLength();t++){
-				meanOutput[bestNetwork][t] = (q*meanOutput[bestNetwork][t] +fv[t])/(q+1.0);
+			realv q = 0.0;
+			for (int t = 0; t < fv.getLength(); t++) {
+				meanOutput[bestNetwork][t] = (q * meanOutput[bestNetwork][t] + fv[t]) / (q + 1.0);
 				q += 1.0;
 			}
 		}

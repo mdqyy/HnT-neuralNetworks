@@ -33,29 +33,25 @@ include_directories (/usr/include)
 include_directories (/usr/local/include)
 include_directories (src)
 
+##Simple tests
+
 add_executable(executables/tests src/executables/mainTesting.cpp)
 target_link_libraries(executables/tests Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
-
-add_executable(executables/createXORDB src/executables/createXORDB.cpp)
-target_link_libraries(executables/createXORDB Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
 
 add_executable(executables/neuralNet src/executables/nnTesting.cpp)
 target_link_libraries(executables/neuralNet Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
 
-add_executable(executables/createPNDB src/executables/createPNDB.cpp)
-target_link_libraries(executables/createPNDB Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
-
 add_executable(executables/pbdnnTesting src/executables/pbdnnTesting.cpp)
 target_link_libraries(executables/pbdnnTesting Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
-add_executable(executables/createPixelDB src/executables/createPixelDB.cpp)
-target_link_libraries(executables/createPixelDB Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
+add_executable(executables/CTCTesting src/executables/CTCTesting.cpp)
+target_link_libraries(executables/CTCTesting Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
-add_executable(executables/createRegressionPixelRimes src/executables/createRegressionPixelRimes.cpp)
-target_link_libraries(executables/createRegressionPixelRimes Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
+add_executable(executables/testRNN src/executables/recurrentLearning.cpp)
+target_link_libraries(executables/testRNN Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
-add_executable(executables/createClassificationPixelRimes src/executables/createClassificationPixelRimes.cpp)
-target_link_libraries(executables/createClassificationPixelRimes Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
+
+##Network training
 
 add_executable(executables/pbdnnIAM src/executables/pbdnnIAM.cpp)
 target_link_libraries(executables/pbdnnIAM Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
@@ -69,11 +65,17 @@ target_link_libraries(executables/pbdnnCluster Machines TinyXML ${OpenCV_LIBS} $
 add_executable(executables/pbdnnClusterReload src/executables/pbdnnClusterReload.cpp)
 target_link_libraries(executables/pbdnnClusterReload Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
-add_executable(executables/pbdnnClusterIntermediateResults src/executables/pbdnnClusterIntermediateResults.cpp)
-target_link_libraries(executables/pbdnnClusterIntermediateResults Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+add_executable(executables/pbdnnClusterBestNetwork src/executables/pbdnnClusterBestNetwork.cpp)
+target_link_libraries(executables/pbdnnClusterBestNetwork Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
-add_executable(executables/pbdnnClusterDatCreator src/executables/pbdnnClusterDatCreator.cpp)
-target_link_libraries(executables/pbdnnClusterDatCreator Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
+##Create databases 
+
+add_executable(executables/createXORDB src/executables/createXORDB.cpp)
+target_link_libraries(executables/createXORDB Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
+
+add_executable(executables/createPNDB src/executables/createPNDB.cpp)
+target_link_libraries(executables/createPNDB Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
 
 add_executable(executables/createImagesFromDB src/executables/createImagesFromDB.cpp)
 target_link_libraries(executables/createImagesFromDB Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
@@ -84,11 +86,26 @@ target_link_libraries(executables/createPixelRimes Machines TinyXML ${OpenCV_LIB
 add_executable(executables/createClassificationRimesNetworks src/executables/createClassificationRimesNetworks.cpp)
 target_link_libraries(executables/createClassificationRimesNetworks Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
-add_executable(executables/testRNN src/executables/recurrentLearning.cpp)
-target_link_libraries(executables/testRNN Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+add_executable(executables/createPixelDB src/executables/createPixelDB.cpp)
+target_link_libraries(executables/createPixelDB Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
+
+add_executable(executables/createRegressionPixelRimes src/executables/createRegressionPixelRimes.cpp)
+target_link_libraries(executables/createRegressionPixelRimes Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
+
+add_executable(executables/createClassificationPixelRimes src/executables/createClassificationPixelRimes.cpp)
+target_link_libraries(executables/createClassificationPixelRimes Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
+
+add_executable(executables/createHTKFiles src/executables/createHTKFiles.cpp)
+target_link_libraries(executables/createHTKFiles Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
+
+
+## Various tasks
+
+add_executable(executables/pbdnnClusterIntermediateResults src/executables/pbdnnClusterIntermediateResults.cpp)
+target_link_libraries(executables/pbdnnClusterIntermediateResults Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
+add_executable(executables/pbdnnClusterDatCreator src/executables/pbdnnClusterDatCreator.cpp)
+target_link_libraries(executables/pbdnnClusterDatCreator Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
 add_executable(executables/diversityMeasurement src/executables/diversityMeasurement.cpp)
 target_link_libraries(executables/diversityMeasurement Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
-
-add_executable(executables/CTCTesting src/executables/CTCTesting.cpp)
-target_link_libraries(executables/CTCTesting Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})

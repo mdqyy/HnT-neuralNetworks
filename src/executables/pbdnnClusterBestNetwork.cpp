@@ -31,30 +31,36 @@ using namespace std;
 using namespace cv;
 
 int main(int argc, char* argv[]) {
-
-	RegressionDataset dataset;
-	dataset.load(argv[2]);
-	cout << "Validation dataset loaded, total elements : " << dataset.getNumSamples() << endl;
-
-	int iterations = atoi(argv[1]);
-
-
-	string locationPrefix = argv[3];
-	AEMeasurer mae;
-	ofstream outStream(argv[4]);
-	for(int n = 1;n<=iterations;n++){
+	ifstream inStream(argv[3]);
+	int numberNetworks = atoi(argv[1]);
+	int iterations = atoi(argv[2]);
+	vector<realv> smallestError = vector<realv>(numberNetworks, 100000.0);
+	vector<int> smallestErrorIndex = vector<int>(numberNetworks, 0.0);
+	realv error;
+	for (int i = 0; i < iterations; i++) {
+		for (int j = 0; j < numberNetworks + 1; j++) {
+			if (j < numberNetworks) {
+				inStream >> error;
+				if (error < smallestError[j]) {
+					smallestError[j] = error;
+					smallestErrorIndex[j] = i;
+				}
+			}
+		}
+	}
+	string locationPrefix = argv[4];
+	vector<NeuralNetworkPtr> newPopulation;
+	for (int n = 0; n < numberNetworks; n++) {
 		ostringstream file;
-		file <<  locationPrefix << n <<".txt";
+		file << locationPrefix << smallestErrorIndex[n] << ".txt";
 		PBDNN pop;
 		ifstream inStream(file.str().c_str());
 		inStream >> pop;
-		DiversityMeasurer diversity(pop, dataset, mae);
-		vector<realv> bestErrors = diversity.errorsOnBestSample();
-		diversity.measurePerformance();
-		for(uint i= 0; i<bestErrors.size();i++){
-			outStream << bestErrors[i]<<" ";
-		}
-		outStream<< diversity.getDisagreementScalar()<< " " << endl;
+		vector<NeuralNetworkPtr> population = pop.getPopulation();
+		newPopulation.push_back(population[smallestErrorIndex[n]]);
 	}
+	PBDNN recomposedPopulation(newPopulation);
+	ofstream outStream(argv[5]);
+	outStream << recomposedPopulation;
 	return EXIT_SUCCESS;
 }
