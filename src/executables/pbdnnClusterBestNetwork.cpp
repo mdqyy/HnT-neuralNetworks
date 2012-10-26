@@ -39,11 +39,11 @@ int main(int argc, char* argv[]) {
 	realv error;
 	for (int i = 0; i < iterations; i++) {
 		for (int j = 0; j < numberNetworks + 1; j++) {
+			inStream >> error;
 			if (j < numberNetworks) {
-				inStream >> error;
 				if (error < smallestError[j]) {
 					smallestError[j] = error;
-					smallestErrorIndex[j] = i;
+					smallestErrorIndex[j] = i+1;
 				}
 			}
 		}
@@ -51,13 +51,15 @@ int main(int argc, char* argv[]) {
 	string locationPrefix = argv[4];
 	vector<NeuralNetworkPtr> newPopulation;
 	for (int n = 0; n < numberNetworks; n++) {
+		cout << smallestErrorIndex[n] << " Best Iteration for " << n << endl;
 		ostringstream file;
 		file << locationPrefix << smallestErrorIndex[n] << ".txt";
+		cout << file.str() << endl;
 		PBDNN pop;
 		ifstream inStream(file.str().c_str());
 		inStream >> pop;
 		vector<NeuralNetworkPtr> population = pop.getPopulation();
-		newPopulation.push_back(population[smallestErrorIndex[n]]);
+		newPopulation.push_back(population[n]);
 	}
 	PBDNN recomposedPopulation(newPopulation);
 	ofstream outStream(argv[5]);

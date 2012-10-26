@@ -176,8 +176,8 @@ void ClassificationDataset::load(std::string _fileName) {
 	}
 	TiXmlHandle hdl(&doc);
 	/* Get Dataset infos */
-	if (hdl.FirstChildElement("ClassificationDataset").Element() == 0) {
-		throw invalid_argument("ClassificationDataset :This is not an classification dataset.");
+	if (hdl.FirstChildElement("classificationDataset").Element() == 0) {
+		throw invalid_argument("ClassificationDataset :This is not a classification dataset.");
 	}
 	TiXmlElement *elem = hdl.FirstChildElement("classificationDataset").FirstChildElement("datasetInfos").FirstChildElement("name").Element();
 	name = elem->GetText();

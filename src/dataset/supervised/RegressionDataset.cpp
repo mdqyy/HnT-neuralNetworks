@@ -33,7 +33,7 @@ void RegressionDataset::load(std::string _fileName) {
 	TiXmlHandle hdl(&doc);
 	/* Get Dataset infos */
 	if (hdl.FirstChildElement("regressionDataset").Element() ==0) {
-		throw invalid_argument("RegressionDataset :This is not an unsupervised dataset");
+		throw invalid_argument("RegressionDataset :This is not a regression dataset");
 	}
 	TiXmlElement *elem = hdl.FirstChildElement("regressionDataset").FirstChildElement("datasetInfos").FirstChildElement("name").Element();
 	name = elem->GetText();

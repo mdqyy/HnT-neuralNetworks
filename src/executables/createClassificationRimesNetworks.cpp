@@ -125,22 +125,26 @@ int main(int argc, char* argv[]) {
 	addDictionaryClasses(&datasetNetworks);
 	string saveLocation = argv[4];
 	vector<NeuralNetworkPtr> population = pop.getPopulation();
-	vector<FeatureVector> sequence, errorSequence;
+	vector<FeatureVector> sequence;
 	FeatureVector sample, networkOutput;
 	AEMeasurer ae;
-	for (int j = 0; j < datasetBasic.getNumSequences(); j++) {
+	cout << "Loaded datasets and population, now processing : " << endl;
+	for (uint j = 0; j < datasetBasic.getNumSequences(); j++) {
 		sequence = datasetBasic[j];
-		errorSequence = vector<FeatureVector>(sequence.size()),FeatureVector(population.size());
-		for (int k = 0; k < sequence.size(); k++) {
+		vector<FeatureVector> errorSequence;
+		for (uint k = 0; k < sequence.size(); k++) {
 			sample = sequence[k];
-			for (int i = 0; i < population.size(); i++) {
+			FeatureVector errorSample(population.size());
+			for (uint i = 0; i < population.size(); i++) {
 				population[i]->forward(sample);
 				networkOutput = population[i]->getOutputSignal();
-				errorSequence[k][i] = ae.totalError(networkOutput,sample);
+				errorSample[i] = ae.totalError(networkOutput,sample);
 			}
+			errorSequence.push_back(errorSample);
 		}
 		datasetNetworks.addSequence(errorSequence, datasetBasic.getSequenceClasses(j));
 	}
+	cout << "Saving new dataset" << endl;
 	datasetNetworks.save(saveLocation);
 	return EXIT_SUCCESS;
 }
