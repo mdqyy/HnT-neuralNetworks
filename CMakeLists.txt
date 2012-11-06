@@ -62,6 +62,9 @@ target_link_libraries(executables/pbdnnBatch Machines TinyXML ${OpenCV_LIBS} ${B
 add_executable(executables/pbdnnCluster src/executables/pbdnnCluster.cpp)
 target_link_libraries(executables/pbdnnCluster Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
+add_executable(executables/pbdnnClusterForToys src/executables/pbdnnClusterForToys.cpp)
+target_link_libraries(executables/pbdnnClusterForToys Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
 add_executable(executables/pbdnnClusterReload src/executables/pbdnnClusterReload.cpp)
 target_link_libraries(executables/pbdnnClusterReload Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
@@ -97,6 +100,9 @@ target_link_libraries(executables/createClassificationPixelRimes Machines TinyXM
 
 add_executable(executables/createHTKFiles src/executables/createHTKFiles.cpp)
 target_link_libraries(executables/createHTKFiles Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
+
+add_executable(executables/createToyClusterDatasets src/executables/createToyClusterDatasets.cpp)
+target_link_libraries(executables/createToyClusterDatasets Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
 
 
 ## Various tasks

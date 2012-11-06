@@ -105,9 +105,15 @@ public:
 
 	/*!
 	 * Find the best network error for every sample.
-	 * \return The error vector of the networks on olnly their best samples.
+	 * \return The error vector of the networks on only their best samples.
 	 */
 	std::vector<realv> errorsOnBestSample();
+
+	/*!
+	 * Find the best network error for every sample.
+	 * \return The number fo samples assigned to each network.
+	 */
+	std::vector<int> sampleRepartition();
 
 	/*!
 	 * Build a composite answer only taking the best network output for every sample in the database.

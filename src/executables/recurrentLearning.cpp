@@ -19,7 +19,7 @@
 #include "../machines/neuralMachines/connections/Connection.hpp"
 #include "../machines/neuralMachines/PBDNN.hpp"
 #include "../trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBP.hpp"
-#include "../trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBPParams.hpp"
+#include "../trainer/supervisedTrainers/neuralNetworkTrainers/LearningParams.hpp"
 #include <sstream>
 
 using namespace std;

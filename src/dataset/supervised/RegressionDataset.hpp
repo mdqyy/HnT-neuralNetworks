@@ -58,13 +58,13 @@ class RegressionDataset : public SupervisedDataset{
 
   /*!
    * Load a database from a file.
-   * \param fileName
+   * \param _fileName
    */ 
   void load(std::string _fileName);
 
   /*!
    * Save a database to a file.
-   * \param fileName
+   * \param _fileName
    */ 
   void save(std::string _fileName);
 
@@ -73,7 +73,13 @@ class RegressionDataset : public SupervisedDataset{
    */
   ~RegressionDataset();
 
-  friend  std::ostream& operator<<(std::ostream& os, RegressionDataset& cd);
+  /*!
+   * Output stream for the dataset.
+   * \param _os Output stream.
+   * \param _rd Regression dataset.
+   * \return Output stream.
+   */
+  friend  std::ostream& operator<<(std::ostream& _os, RegressionDataset& _rd);
 };
 
 

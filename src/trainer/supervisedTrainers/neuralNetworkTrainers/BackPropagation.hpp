@@ -10,7 +10,7 @@
 #include "../../errorMeasurers/SEMeasurer.hpp"
 #include "../../errorMeasurers/ClassificationErrorMeasurer.hpp"
 #include "NeuralNetworkTrainer.hpp"
-#include "BackPropParams.hpp"
+#include "LearningParams.hpp"
 #include <math.h>
 
 /*!
@@ -22,7 +22,7 @@ class BackPropagation : public NeuralNetworkTrainer {
 
 
  protected:
-  BackPropParams bpp;
+  LearningParams bpp;
   std::vector<realv> errorPerIteration;
   
   ErrorVector calculateDeltas(LayerPtr _layer, FeatureVector _target, ValueVector _derivatives, ErrorVector _previousLayerDelta);
@@ -46,7 +46,7 @@ class BackPropagation : public NeuralNetworkTrainer {
    * \param _indexMask Sample index mask.
    * \param _bpparams Backpropagation parameters.
    */
-  BackPropagation(NeuralNetwork& _neuralNet, SupervisedDataset& _data, BackPropParams& _bpparams, Mask& _featureMask, Mask& _indexMask);
+  BackPropagation(NeuralNetwork& _neuralNet, SupervisedDataset& _data, LearningParams& _bpparams, Mask& _featureMask, Mask& _indexMask);
 
   /*!
    * Train the neural network.
@@ -57,8 +57,8 @@ class BackPropagation : public NeuralNetworkTrainer {
    * Train the neural network on one iteration.
    */
   void trainOneIteration();
-  
-  /*! 
+
+  /*!
    * Backward errors from one target.
    * \param _target Target feature vector.
    * \param _learningRate Learning rate for weight changes.

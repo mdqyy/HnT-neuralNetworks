@@ -18,7 +18,7 @@
 #include "../machines/neuralMachines/PBDNN.hpp"
 #include "../trainer/errorMeasurers/AEMeasurer.hpp"
 #include "../trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBP.hpp"
-#include "../trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBPParams.hpp"
+#include "../trainer/supervisedTrainers/neuralNetworkTrainers/LearningParams.hpp"
 #include "../performanceMeasurers/DiversityMeasurer.hpp"
 
 using namespace std;

@@ -12,7 +12,7 @@
 #include "../SupervisedTrainer.hpp"
 #include "../../../machines/neuralMachines/PBDNN.hpp"
 #include "../../../machines/neuralMachines/NeuralNetwork.hpp"
-#include "PopulationBPParams.hpp"
+#include "LearningParams.hpp"
 #include <boost/thread/thread.hpp>
 
 /*!
@@ -26,7 +26,7 @@ class PopulationBP : public SupervisedTrainer{
   /*! Network population */
   PBDNN& population;
   /*! Learning parameters */
-  PopulationBPParams params;
+  LearningParams params;
  public:
 
   /*!
@@ -37,7 +37,7 @@ class PopulationBP : public SupervisedTrainer{
    * \param _featureMask Feature mask.
    * \param _indexMask Index mask.
    */
-  PopulationBP(PBDNN& _population, SupervisedDataset& _data, PopulationBPParams& _params, Mask& _featureMask, Mask& _indexMask);
+  PopulationBP(PBDNN& _population, SupervisedDataset& _data, LearningParams& _params, Mask& _featureMask, Mask& _indexMask);
 
   /*!
    * Train the neural networks.

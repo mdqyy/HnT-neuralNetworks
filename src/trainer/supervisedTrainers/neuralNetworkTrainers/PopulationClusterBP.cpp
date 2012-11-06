@@ -10,8 +10,9 @@
 using namespace cv;
 using namespace std;
 
-PopulationClusterBP::PopulationClusterBP(PBDNN& _population, RegressionDataset& _data, PopulationBPParams& _params, RegressionDataset& _valid, Mask& _featureMask, Mask& _indexMask) :
-		SupervisedTrainer(_population, _data, _featureMask, _indexMask), population(_population), params(_params), regData(_data), validationDataset(_valid){
+PopulationClusterBP::PopulationClusterBP(PBDNN& _population, RegressionDataset& _data, LearningParams& _params, RegressionDataset& _valid,
+		Mask& _featureMask, Mask& _indexMask) :
+		SupervisedTrainer(_population, _data, _featureMask, _indexMask), population(_population), params(_params), regData(_data), validationDataset(_valid) {
 
 }
 
@@ -24,12 +25,16 @@ void PopulationClusterBP::train() {
 		params.setActualIteration(i);
 		params.setLearningRate(params.getLearningRate() * params.getLearningRateDecrease());
 		params.setErrorToFirst(params.getErrorToFirst() * params.getErrorToFirstIncrease());
-		if(params.isSavedDuringProcess()){
+		if (params.isSavedDuringProcess()) {
 			ostringstream name;
-			name << params.getSaveLocation()<<"/populationIteration"<< i << ".txt";
+			name << params.getSaveLocation() << "/populationIteration" << i << ".txt";
 			ofstream outStream(name.str().c_str());
 			outStream << this->population;
 			outStream << this->params;
+		}
+		if (params.isValidatedDuringProcess()) {
+			cout << "Validation "<< endl;
+			validateIteration();
 		}
 	} while (i < params.getMaxIterations());
 }
@@ -148,8 +153,8 @@ void PopulationClusterBP::trainOneIteration() {
 	FeatureVector blackTarget = FeatureVector(regData.getTargetSample(0, 0));
 	for (uint k = 0; k < neuralNets.size(); k++) {
 		uint i = 0;
-		while (i < learningAffectations[k].size() && i < (data.getNumSamples())*params.getMaxTrainedPercentage() ) {
-			 /* forward backward good sample */
+		while (i < learningAffectations[k].size() && i < (data.getNumSamples()) * params.getMaxTrainedPercentage()) {
+			/* forward backward good sample */
 			pair<int, int> index = learningAffectations[k][i];
 			neuralNets[k]->forward(regData[index.first][index.second]);
 			backward2(neuralNets[k], regData.getTargetSample(index.first, index.second), params.getLearningRate());
@@ -169,13 +174,19 @@ void PopulationClusterBP::trainOneIteration() {
 			i++;
 		}
 	}
+}
+
+void PopulationClusterBP::validateIteration() {
+	AEMeasurer mae;
+	vector<NeuralNetworkPtr> neuralNets = population.getPopulation();
+	DiversityMeasurer diversity = DiversityMeasurer(population, validationDataset, mae);
+	vector<int> validationAffectations = diversity.sampleRepartition();
 	vector<realv> bestErrors = diversity.errorsOnBestSample();
 	cout << "network  | \t Global error \t|\t Best errors \t| \t timesSelected" << endl;
 	for (uint i = 0; i < neuralNets.size(); i++) {
 		RegressionMeasurer regMeasurer = RegressionMeasurer(*(neuralNets[i].get()), regData, mae);
 		regMeasurer.measurePerformance();
-		cout << i << " \t | \t " << regMeasurer.getTotalError() << "\t | \t" << bestErrors[i] / learningAffectations[i].size() << "\t | \t"
-				<< learningAffectations[i].size() << endl;
+		cout << i << " \t | \t " << regMeasurer.getTotalError() << "\t | \t" << bestErrors[i] << "\t | \t" << validationAffectations[i] << endl;
 	}
 	diversity.measurePerformance();
 	cout << "Diversity : " << endl << diversity.getDisagreementMatrix() << endl;

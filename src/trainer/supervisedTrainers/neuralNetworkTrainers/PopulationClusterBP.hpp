@@ -14,7 +14,7 @@
 #include "../../../machines/neuralMachines/NeuralNetwork.hpp"
 #include "../../../performanceMeasurers/DiversityMeasurer.hpp"
 #include "../../../performanceMeasurers/RegressionMeasurer.hpp"
-#include "PopulationBPParams.hpp"
+#include "LearningParams.hpp"
 #include <boost/thread/thread.hpp>
 #include <iostream>
 #include <sstream>
@@ -32,7 +32,7 @@ protected:
 	/*! Network population */
 	PBDNN& population;
 	/*! Learning parameters */
-	PopulationBPParams params;
+	LearningParams params;
 	/*! Regression dataset*/
 	RegressionDataset regData;
 	/*! Diversity measurer */
@@ -48,7 +48,7 @@ public:
 	 * \param _featureMask Feature mask.
 	 * \param _indexMask Index mask.
 	 */
-	PopulationClusterBP(PBDNN& _population, RegressionDataset& _data, PopulationBPParams& _params, RegressionDataset& _valid, Mask& _featureMask, Mask& _indexMask);
+	PopulationClusterBP(PBDNN& _population, RegressionDataset& _data, LearningParams& _params, RegressionDataset& _valid, Mask& _featureMask, Mask& _indexMask);
 
 	/*!
 	 * Train the neural networks.
@@ -59,6 +59,11 @@ public:
 	 * Train the neural networks on one iteration.
 	 */
 	void trainOneIteration();
+
+	/*!
+	 * Validate against a reference dataset.
+	 */
+	void validateIteration();
 
 	/*!
 	 * Destructor.

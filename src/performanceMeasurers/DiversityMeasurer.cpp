@@ -226,6 +226,32 @@ vector<vector<int> > DiversityMeasurer::findBestNetwork() {
 	return assignedTo;
 }
 
+vector<int> DiversityMeasurer::sampleRepartition(){
+	vector<NeuralNetworkPtr> neuralNets = networkPopulation.getPopulation();
+	vector<int> clusterSize = vector<int>(neuralNets.size(), 0);
+	FeatureVector fv;
+	realv minError = 10e+9;
+	uint bestNetwork = 0;
+	for (uint i = 0; i < data.getNumSequences(); i++) {
+		vector<int> sequenceAssignement = vector<int>();
+		for (uint j = 0; j < data[i].size(); j++) {
+			bestNetwork = 0;
+			minError = 10e+9;
+			fv = data[i][j];
+			for (uint k = 0; k < neuralNets.size(); k++) {
+				neuralNets[k]->forward(fv);
+				errorMeasurer.processErrors(neuralNets[k]->getOutputSignal(), data.getTargetSample(i, j));
+				if (errorMeasurer.getError() < minError) {
+					minError = errorMeasurer.getError();
+					bestNetwork = k;
+				}
+			}
+			clusterSize[bestNetwork] += 1;
+		}
+	}
+	return clusterSize;
+}
+
 vector<realv> DiversityMeasurer::errorsOnBestSample() {
 	vector<NeuralNetworkPtr> neuralNets = networkPopulation.getPopulation();
 	vector<realv> errors = vector<realv>(neuralNets.size(), 0.0);

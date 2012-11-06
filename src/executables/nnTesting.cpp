@@ -15,7 +15,7 @@
 #include "../machines/neuralMachines/layers/LayerTanh.hpp"
 #include "../machines/neuralMachines/connections/Connection.hpp"
 #include "../trainer/supervisedTrainers/neuralNetworkTrainers/BackPropagation.hpp"
-#include "../trainer/supervisedTrainers/neuralNetworkTrainers/BackPropParams.hpp"
+#include "../trainer/supervisedTrainers/neuralNetworkTrainers/LearningParams.hpp"
 
 using namespace std;
 using namespace cv;
@@ -58,7 +58,7 @@ int main (int argc, char* argv[]){
   */
   cout << "Training" << endl;
   Mask mask;
-  BackPropParams bpp;
+  LearningParams bpp;
   bpp.setLearningRate(0.5);
   bpp.setLearningRateDecrease(0.95);
   bpp.setMinChangeError(1.0e-9);

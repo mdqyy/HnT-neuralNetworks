@@ -50,13 +50,13 @@ add_library(Machines dataset/Dataset.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/NeuralNetworkTrainer.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/BackPropagation.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/CTCTrainer.cpp
-  trainer/supervisedTrainers/neuralNetworkTrainers/BackPropParams.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBP.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBPBatch.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/PopulationClusterBP.cpp
-  trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBPParams.cpp
+  trainer/supervisedTrainers/neuralNetworkTrainers/LearningParams.cpp
   utilities/ImageProcessing.cpp
   utilities/TextUtilities.cpp
+  utilities/ToyDatasets.cpp
 )
 
 add_library(TinyXML   

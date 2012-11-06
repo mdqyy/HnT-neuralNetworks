@@ -19,7 +19,7 @@
 #include "../machines/neuralMachines/connections/Connection.hpp"
 #include "../machines/neuralMachines/PBDNN.hpp"
 #include "../trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBP.hpp"
-#include "../trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBPParams.hpp"
+#include "../trainer/supervisedTrainers/neuralNetworkTrainers/LearningParams.hpp"
 #include <sstream>
 
 using namespace std;
@@ -36,7 +36,7 @@ int main (int argc, char* argv[]){
 	string filename(argv[5]);
 	PBDNN pop(populationSize,dataset.getFeatureVectorLength(),numberOfHiddenUnits,dataset.getMean(), dataset.getStandardDeviation());
 	Mask mask;
-	PopulationBPParams params;
+	LearningParams params;
 	params.setMaxIterations(iterations);
 	params.setLearningRate(0.0001);
 	params.setErrorToFirst(1.0);

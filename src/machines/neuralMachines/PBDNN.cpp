@@ -18,7 +18,7 @@ PBDNN::PBDNN(vector<NeuralNetworkPtr> _forwards) : forwardPopulation(_forwards),
 }
 
 PBDNN::PBDNN(uint _numNetworks, uint _numEntries, uint _hiddenLayerSize, ValueVector _mean, ValueVector _stdDev) : forwardPopulation(vector<NeuralNetworkPtr>()) , errors(vector<FeatureVector>()) {
-	RNG random;
+	RNG random(getTickCount());
 	for(uint i=0;i<_numNetworks;i++){
       LayerPtr il = LayerPtr(new InputLayer(_numEntries, _mean, _stdDev));
       LayerPtr th = LayerPtr(new LayerSigmoid(_hiddenLayerSize));

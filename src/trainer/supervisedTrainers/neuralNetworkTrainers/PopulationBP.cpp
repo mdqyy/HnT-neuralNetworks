@@ -10,7 +10,7 @@
 using namespace cv;
 using namespace std;
 
-PopulationBP::PopulationBP(PBDNN& _population, SupervisedDataset& _data, PopulationBPParams& _params, Mask& _featureMask, Mask& _indexMask) : SupervisedTrainer(_population, _data, _featureMask, _indexMask), population(_population), params(_params){
+PopulationBP::PopulationBP(PBDNN& _population, SupervisedDataset& _data, LearningParams& _params, Mask& _featureMask, Mask& _indexMask) : SupervisedTrainer(_population, _data, _featureMask, _indexMask), population(_population), params(_params){
 
 }
 

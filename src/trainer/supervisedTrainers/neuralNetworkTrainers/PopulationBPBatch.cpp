@@ -10,7 +10,7 @@
 using namespace cv;
 using namespace std;
 
-PopulationBPBatch::PopulationBPBatch(PBDNN& _population, RegressionDataset& _data, PopulationBPParams& _params, Mask& _featureMask, Mask& _indexMask) : SupervisedTrainer(_population, _data, _featureMask, _indexMask), population(_population), params(_params), regData(_data){
+PopulationBPBatch::PopulationBPBatch(PBDNN& _population, RegressionDataset& _data, LearningParams& _params, Mask& _featureMask, Mask& _indexMask) : SupervisedTrainer(_population, _data, _featureMask, _indexMask), population(_population), params(_params), regData(_data){
 
 }
 

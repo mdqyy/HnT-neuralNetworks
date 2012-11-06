@@ -10,7 +10,7 @@
 using namespace cv;
 using namespace std;
 
-BackPropagation::BackPropagation(NeuralNetwork& _neuralNet, SupervisedDataset& _data, BackPropParams& _bpparams, Mask& _featureMask, Mask& _indexMask) : NeuralNetworkTrainer(_neuralNet, _data, _featureMask, _indexMask, _bpparams.getDoStochastic()), bpp(_bpparams){ 
+BackPropagation::BackPropagation(NeuralNetwork& _neuralNet, SupervisedDataset& _data, LearningParams& _bpparams, Mask& _featureMask, Mask& _indexMask) : NeuralNetworkTrainer(_neuralNet, _data, _featureMask, _indexMask, _bpparams.isStochastic()), bpp(_bpparams){
   
 }
 

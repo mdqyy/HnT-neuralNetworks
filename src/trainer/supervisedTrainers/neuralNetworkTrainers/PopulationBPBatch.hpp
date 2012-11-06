@@ -15,7 +15,7 @@
 #include "../../../performanceMeasurers/DiversityMeasurer.hpp"
 #include "../../../performanceMeasurers/RegressionMeasurer.hpp"
 #include "../../../dataset/supervised/RegressionDataset.hpp"
-#include "PopulationBPParams.hpp"
+#include "LearningParams.hpp"
 #include <boost/thread/thread.hpp>
 
 /*!
@@ -29,7 +29,7 @@ class PopulationBPBatch : public SupervisedTrainer{
   /*! Network population */
   PBDNN& population;
   /*! Learning parameters */
-  PopulationBPParams params;
+  LearningParams params;
   /*! Regression dataset*/
   RegressionDataset regData;
  public:
@@ -42,7 +42,7 @@ class PopulationBPBatch : public SupervisedTrainer{
    * \param _featureMask Feature mask.
    * \param _indexMask Index mask.
    */
-  PopulationBPBatch(PBDNN& _population, RegressionDataset& _data, PopulationBPParams& _params, Mask& _featureMask, Mask& _indexMask);
+  PopulationBPBatch(PBDNN& _population, RegressionDataset& _data, LearningParams& _params, Mask& _featureMask, Mask& _indexMask);
 
   /*!
    * Train the neural networks.

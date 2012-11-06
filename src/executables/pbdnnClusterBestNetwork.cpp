@@ -23,7 +23,7 @@
 #include "../machines/neuralMachines/PBDNN.hpp"
 #include "../trainer/errorMeasurers/AEMeasurer.hpp"
 #include "../trainer/supervisedTrainers/neuralNetworkTrainers/PopulationClusterBP.hpp"
-#include "../trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBPParams.hpp"
+#include "../trainer/supervisedTrainers/neuralNetworkTrainers/LearningParams.hpp"
 #include "../utilities/ImageProcessing.hpp"
 #include <sstream>
 

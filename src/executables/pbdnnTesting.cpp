@@ -18,7 +18,7 @@
 #include "../machines/neuralMachines/connections/Connection.hpp"
 #include "../machines/neuralMachines/PBDNN.hpp"
 #include "../trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBP.hpp"
-#include "../trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBPParams.hpp"
+#include "../trainer/supervisedTrainers/neuralNetworkTrainers/LearningParams.hpp"
 
 using namespace std;
 using namespace cv;
@@ -34,7 +34,7 @@ int main (int argc, char* argv[]){
   cout << testpop.getOutputSequence()[0];
   
   Mask mask;
-  PopulationBPParams params;
+  LearningParams params;
   PopulationBP pbp(testpop,dataset,params,mask,mask);
 
   pbp.train();

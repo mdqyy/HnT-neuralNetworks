@@ -10,6 +10,7 @@
 #include "../SupervisedTrainer.hpp"
 #include "../../../machines/neuralMachines/layers/LayerCTC.hpp"
 #include "../../../dataset/supervised/ClassificationDataset.hpp"
+#include "LearningParams.hpp"
 #include <vector>
 #include <opencv/cv.h>
 
@@ -87,6 +88,9 @@ protected:
 
 	/*! Classification dataset */
 	ClassificationDataset& classifactionData;
+
+	/* Backpropagation */
+	LearningParams params;
 
 	/*! C normalizing values produced during forward pass */
 	std::vector<realv> normalizeC;

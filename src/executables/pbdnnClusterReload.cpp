@@ -23,7 +23,7 @@
 #include "../machines/neuralMachines/PBDNN.hpp"
 #include "../trainer/errorMeasurers/AEMeasurer.hpp"
 #include "../trainer/supervisedTrainers/neuralNetworkTrainers/PopulationClusterBP.hpp"
-#include "../trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBPParams.hpp"
+#include "../trainer/supervisedTrainers/neuralNetworkTrainers/LearningParams.hpp"
 #include "../utilities/ImageProcessing.hpp"
 #include <sstream>
 
@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
 
 	cout << "Dataset loaded, total elements : " << dataset.getNumSamples() << endl;
 	Mask mask;
-	PopulationBPParams params;
+	LearningParams params;
 	PBDNN pop;
 	ifstream inStream(argv[1]);
 	inStream >> pop;

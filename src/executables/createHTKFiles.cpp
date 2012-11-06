@@ -32,7 +32,7 @@
 #include "../machines/neuralMachines/PBDNN.hpp"
 #include "../trainer/errorMeasurers/AEMeasurer.hpp"
 #include "../trainer/supervisedTrainers/neuralNetworkTrainers/PopulationClusterBP.hpp"
-#include "../trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBPParams.hpp"
+#include "../trainer/supervisedTrainers/neuralNetworkTrainers/LearningParams.hpp"
 #include "../utilities/ImageProcessing.hpp"
 
 using namespace std;
@@ -42,8 +42,8 @@ int main(int argc, char* argv[]) {
 	ClassificationDataset datasetBasic;
 	datasetBasic.load(argv[1]);
 	string saveLocation = argv[2];
-	vector<FeatureVector> sequence, errorSequence;
-	FeatureVector sample, networkOutput;
+	vector<FeatureVector> sequence;
+	FeatureVector sample;
 	AEMeasurer ae;
 	for (uint j = 0; j < datasetBasic.getNumSequences(); j++) {
 		ostringstream sequenceFile;
@@ -56,11 +56,16 @@ int main(int argc, char* argv[]) {
 		for (uint k = 0; k < sequence.size(); k++) {
 			sample = sequence[k];
 			for (uint i = 0; i < sample.getLength(); i++) {
-				sequenceFile << sample[i] <<" " ;
+				outputSequence << sample[i] <<" " ;
 			}
-			sequenceFile << endl;
+		outputSequence << endl;
 		}
-		outputWord << datasetBasic.getClassLabel(j)<< " ";
+		vector<string> target = datasetBasic.getSequenceClasses(j);
+		for(uint k=0; k < target.size();k++){
+			outputWord << target[k] << endl;
+		}
+		outputWord.close();
+		outputSequence.close();
 	}
 	return EXIT_SUCCESS;
 }
