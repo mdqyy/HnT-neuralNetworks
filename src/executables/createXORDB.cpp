@@ -4,12 +4,8 @@
 #include <iostream>
 #include <opencv/cv.h>
 
-#include "../dataset/supervised/ClassificationDataset.hpp"
-#include "../dataset/ValueVector.hpp"
-#include "../dataset/FeatureVector.hpp"
-#include "../machines/neuralMachines/layers/InputLayer.hpp"
-#include "../machines/neuralMachines/layers/LayerTanh.hpp"
-#include "../machines/neuralMachines/connections/Connection.hpp"
+#include "../HnT.hpp"
+
 
 using namespace std;
 using namespace cv;

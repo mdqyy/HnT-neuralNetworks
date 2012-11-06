@@ -6,19 +6,8 @@
 #include <list>
 #include <vector>
 
-#include "../dataset/supervised/ClassificationDataset.hpp"
-#include "../dataset/supervised/RegressionDataset.hpp"
-#include "../dataset/ValueVector.hpp"
-#include "../dataset/Mask.hpp"
-#include "../dataset/FeatureVector.hpp"
-#include "../machines/neuralMachines/NeuralNetwork.hpp"
-#include "../machines/neuralMachines/layers/InputLayer.hpp"
-#include "../machines/neuralMachines/layers/LayerSigmoid.hpp"
-#include "../machines/neuralMachines/layers/LayerTanh.hpp"
-#include "../machines/neuralMachines/connections/Connection.hpp"
-#include "../machines/neuralMachines/PBDNN.hpp"
-#include "../trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBP.hpp"
-#include "../trainer/supervisedTrainers/neuralNetworkTrainers/LearningParams.hpp"
+#include "../HnT.hpp"
+
 
 using namespace std;
 using namespace cv;

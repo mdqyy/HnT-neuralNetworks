@@ -11,11 +11,8 @@
 #include <stdio.h>
 #include <fstream>
 
-#include "../dataset/unsupervised/UnsupervisedDataset.hpp"
-#include "../dataset/supervised/RegressionDataset.hpp"
-#include "../dataset/supervised/ClassificationDataset.hpp"
-#include "../dataset/ValueVector.hpp"
-#include "../dataset/FeatureVector.hpp"
+#include "../HnT.hpp"
+
 
 using namespace std;
 using namespace cv;
