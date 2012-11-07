@@ -45,6 +45,7 @@
 #include "trainer/supervisedTrainers/neuralNetworkTrainers/PopulationClusterBP.hpp"
 #include "trainer/supervisedTrainers/neuralNetworkTrainers/LearningParams.hpp"
 #include "utilities/ImageProcessing.hpp"
+#include "utilities/GeneralUtilities.hpp"
 #include "utilities/TextUtilities.hpp"
 #include "utilities/ToyDatasets.hpp"
 

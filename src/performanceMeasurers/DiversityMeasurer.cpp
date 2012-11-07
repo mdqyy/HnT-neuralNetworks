@@ -226,7 +226,7 @@ vector<vector<int> > DiversityMeasurer::findBestNetwork() {
 	return assignedTo;
 }
 
-vector<int> DiversityMeasurer::sampleRepartition(){
+vector<int> DiversityMeasurer::sampleRepartition() {
 	vector<NeuralNetworkPtr> neuralNets = networkPopulation.getPopulation();
 	vector<int> clusterSize = vector<int>(neuralNets.size(), 0);
 	FeatureVector fv;
@@ -260,12 +260,14 @@ vector<realv> DiversityMeasurer::errorsOnBestSample() {
 	realv minError = 10e+9;
 	uint bestNetwork = 0;
 	for (uint i = 0; i < data.getNumSequences(); i++) {
+		double t = (double) getTickCount();
 		vector<int> sequenceAssignement = vector<int>();
 		for (uint j = 0; j < data[i].size(); j++) {
 			bestNetwork = 0;
 			minError = 10e+9;
 			fv = data[i][j];
 			for (uint k = 0; k < neuralNets.size(); k++) {
+
 				neuralNets[k]->forward(fv);
 				errorMeasurer.processErrors(neuralNets[k]->getOutputSignal(), data.getTargetSample(i, j));
 				if (errorMeasurer.getError() < minError) {
@@ -276,9 +278,11 @@ vector<realv> DiversityMeasurer::errorsOnBestSample() {
 			errors[bestNetwork] += minError;
 			clusterSize[bestNetwork] += 1.0;
 		}
+		t = ((double) getTickCount() - t) / getTickFrequency();
+		cout << "Time :" << t << endl;
 	}
 	for (uint k = 0; k < neuralNets.size(); k++) {
-		errors[k] = errors[k]/clusterSize[k];
+		errors[k] = errors[k] / clusterSize[k];
 	}
 	return errors;
 }

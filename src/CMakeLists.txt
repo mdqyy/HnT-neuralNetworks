@@ -55,6 +55,7 @@ add_library(Machines dataset/Dataset.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/PopulationClusterBP.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/LearningParams.cpp
   utilities/ImageProcessing.cpp
+  utilities/GeneralUtilities.cpp
   utilities/TextUtilities.cpp
   utilities/ToyDatasets.cpp
 )
