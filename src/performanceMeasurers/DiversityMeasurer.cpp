@@ -260,7 +260,6 @@ vector<realv> DiversityMeasurer::errorsOnBestSample() {
 	realv minError = 10e+9;
 	uint bestNetwork = 0;
 	for (uint i = 0; i < data.getNumSequences(); i++) {
-		double t = (double) getTickCount();
 		vector<int> sequenceAssignement = vector<int>();
 		for (uint j = 0; j < data[i].size(); j++) {
 			bestNetwork = 0;
@@ -278,8 +277,6 @@ vector<realv> DiversityMeasurer::errorsOnBestSample() {
 			errors[bestNetwork] += minError;
 			clusterSize[bestNetwork] += 1.0;
 		}
-		t = ((double) getTickCount() - t) / getTickFrequency();
-		cout << "Time :" << t << endl;
 	}
 	for (uint k = 0; k < neuralNets.size(); k++) {
 		errors[k] = errors[k] / clusterSize[k];

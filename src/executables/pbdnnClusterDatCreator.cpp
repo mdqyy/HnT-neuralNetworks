@@ -37,7 +37,6 @@ int main(int argc, char* argv[]) {
 	AEMeasurer mae;
 	ofstream outStream(argv[4]);
 	for (int n = 1; n <= iterations; n++) {
-		double t = (double) getTickCount();
 
 		ostringstream file;
 		file << locationPrefix << n << ".txt";
@@ -46,13 +45,12 @@ int main(int argc, char* argv[]) {
 		inStream >> pop;
 		DiversityMeasurer diversity(pop, dataset, mae);
 		vector<realv> bestErrors = diversity.errorsOnBestSample();
-		//		diversity.measurePerformance();
+		diversity.measurePerformance();
 		for (uint i = 0; i < bestErrors.size(); i++) {
 			outStream << bestErrors[i] << " ";
 		}
-		t = ((double) getTickCount() - t) / getTickFrequency();
-		cout << "Time :" << t << endl;
-		/*	outStream << diversity.getDisagreementScalar() << " " << endl;*/
+
+		outStream << diversity.getDisagreementScalar() << " " << endl;
 	}
 	return EXIT_SUCCESS;
 }
