@@ -37,6 +37,8 @@ protected:
 	RegressionDataset regData;
 	/*! Diversity measurer */
 	RegressionDataset validationDataset;
+	/*! Logging stream*/
+	std::ostream& log;
 
 public:
 
@@ -45,10 +47,12 @@ public:
 	 * \param _population The neural population.
 	 * \param _data The training data.
 	 * \param _params The training parameters.
+	 * \param _valid The validation dataset.
 	 * \param _featureMask Feature mask.
 	 * \param _indexMask Index mask.
+	 *
 	 */
-	PopulationClusterBP(PBDNN& _population, RegressionDataset& _data, LearningParams& _params, RegressionDataset& _valid, Mask& _featureMask, Mask& _indexMask);
+	PopulationClusterBP(PBDNN& _population, RegressionDataset& _data, LearningParams& _params, RegressionDataset& _valid, Mask& _featureMask, Mask& _indexMask, std::ostream& _log);
 
 	/*!
 	 * Train the neural networks.

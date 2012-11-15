@@ -39,6 +39,17 @@ void rimesLoader(string groundTruthFile, string groundTruthFolder, int frameSize
 }
 
 int main(int argc, char* argv[]) {
+	vector<string> arguments;
+	arguments.push_back("ground truth file containing the location of the datasets");
+	arguments.push_back("folder containing the datasets");
+	arguments.push_back("frame size in pixels");
+	arguments.push_back("dataset name");
+	arguments.push_back("dataset save location");
+	cout << helper("Create Rimes Regression Dataset", "Create a regression dataset from Rimes files", arguments) << endl;
+	if (argc != arguments.size() + 1) {
+		cerr << "Not enough arguments, " << argc-1 << " given and "<< arguments.size()<<" required" << endl;
+		return EXIT_FAILURE;
+	}
 	RegressionDataset dataset;
 	string groundTruthFile = argv[1];
 	string groundTruthFolder = argv[2];

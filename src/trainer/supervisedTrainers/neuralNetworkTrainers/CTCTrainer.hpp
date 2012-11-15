@@ -87,7 +87,7 @@ protected:
 	LayerCTC& ctcLayer;
 
 	/*! Classification dataset */
-	ClassificationDataset& classifactionData;
+	ClassificationDataset& trainingData;
 
 	/* Backpropagation */
 	LearningParams params;
@@ -106,7 +106,7 @@ public:
 	 * \param _featureMask Feature mask.
 	 * \param _indexMask Sample index mask.
 	 */
-	CTCTrainer(LayerCTC& _ctcLayer, ClassificationDataset& _data, Mask& _featureMask, Mask& _indexMask);
+	CTCTrainer(LayerCTC& _ctcLayer, ClassificationDataset& _trainingData, ClassificationDataset& _validationData, Mask& _featureMask, Mask& _indexMask);
 
 	/*!
 	 * Train the layer.
@@ -135,6 +135,11 @@ public:
 	 * \param _deltas Derivatives.
 	 */
 	void updateConnection(Connection* _connection, ErrorVector _deltas);
+
+	/*!
+	 * Validate against a reference dataset.
+	 */
+	void validateIteration();
 
 	/*!
 	 * Destructor.

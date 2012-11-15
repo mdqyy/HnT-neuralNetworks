@@ -32,7 +32,7 @@ int main (int argc, char* argv[]){
 	double t = (double)getTickCount();
 	pbp.train();
 	t = ((double)getTickCount() - t)/getTickFrequency();
-	cout << "Temps :" << t << endl;
+	cout << "Time :" << t << endl;
 
 	cout << endl <<"Saving network" << endl;
 	ofstream outStream("IAMpop.txt");

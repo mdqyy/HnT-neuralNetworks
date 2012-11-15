@@ -115,3 +115,6 @@ target_link_libraries(executables/pbdnnClusterDatCreator Machines TinyXML ${Open
 
 add_executable(executables/diversityMeasurement src/executables/diversityMeasurement.cpp)
 target_link_libraries(executables/diversityMeasurement Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
+add_executable(executables/createFoldRimes src/executables/createFoldRimes.cpp)
+target_link_libraries(executables/createFoldRimes)

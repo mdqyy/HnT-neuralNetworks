@@ -16,7 +16,7 @@
 using namespace std;
 using namespace cv;
 
-void addDictionaryClasses(ClassificationDataset* dataset){
+void addDictionaryClasses(ClassificationDataset* dataset) {
 	dataset->addClass("a");
 	dataset->addClass("â");
 	dataset->addClass("à");
@@ -93,38 +93,49 @@ void addDictionaryClasses(ClassificationDataset* dataset){
 	dataset->addClass("9");
 }
 
-void rimesLoader(string groundTruthFile, string groundTruthFolder,int frameSize, ClassificationDataset* dataset){
+void rimesLoader(string groundTruthFile, string groundTruthFolder, int frameSize, ClassificationDataset* dataset) {
 	string line, imageFile, label;
 	size_t position;
-	ifstream gtFile (groundTruthFile.c_str());
+	ifstream gtFile(groundTruthFile.c_str());
 	Mat image;
 
-	if (gtFile.is_open()){
-		while (gtFile.good()){
-			getline (gtFile,line);
+	if (gtFile.is_open()) {
+		while (gtFile.good()) {
+			getline(gtFile, line);
 			position = line.find(" ");
-			label = line.substr(position+1);
-			imageFile = groundTruthFolder + line.substr(0,position);
-			image = imread(imageFile,0);
-			if(!image.empty() && image.rows==60){
-				vector<FeatureVector> frames = extractFrames(image,frameSize);
+			label = line.substr(position + 1);
+			imageFile = groundTruthFolder + line.substr(0, position);
+			image = imread(imageFile, 0);
+			if (!image.empty() && image.rows == 60) {
+				vector<FeatureVector> frames = extractFrames(image, frameSize);
 				vector<string> labelSequence = extractLabelSequence(label);
-				dataset->addSequence(frames,labelSequence);
+				dataset->addSequence(frames, labelSequence);
 			}
 		}
-	    gtFile.close();
-	  }
+		gtFile.close();
+	}
 }
 
-int main (int argc, char* argv[]){
-  ClassificationDataset dataset;
-  addDictionaryClasses(&dataset);
-  string groundTruthFile = argv[1];
-  string groundTruthFolder = argv[2];
-  int frameSize = atoi(argv[3]);
-  dataset.setName(argv[4]);
-  string saveLocation = argv[5];
-  rimesLoader(groundTruthFile, groundTruthFolder, frameSize, &dataset);
-  dataset.save(saveLocation);
-  return EXIT_SUCCESS;
+int main(int argc, char* argv[]) {
+	vector<string> arguments;
+	arguments.push_back("ground truth file containing the location of the datasets");
+	arguments.push_back("folder containing the datasets");
+	arguments.push_back("frame size in pixels");
+	arguments.push_back("dataset name");
+	arguments.push_back("dataset save location");
+	cout << helper("Create Rimes Classification Dataset", "Create a classification dataset from Rimes files", arguments);
+	if (argc != arguments.size() + 1) {
+		cerr << "Not enough arguments" << endl;
+		return EXIT_FAILURE;
+	}
+	ClassificationDataset dataset;
+	addDictionaryClasses(&dataset);
+	string groundTruthFile = argv[1];
+	string groundTruthFolder = argv[2];
+	int frameSize = atoi(argv[3]);
+	dataset.setName(argv[4]);
+	string saveLocation = argv[5];
+	rimesLoader(groundTruthFile, groundTruthFolder, frameSize, &dataset);
+	dataset.save(saveLocation);
+	return EXIT_SUCCESS;
 }

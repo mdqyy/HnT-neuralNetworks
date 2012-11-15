@@ -15,6 +15,11 @@ using namespace std;
 using namespace cv;
 
 int main (int argc, char* argv[]){
+	vector<string> arguments;
+	arguments.push_back("dataset used for training");
+	arguments.push_back("number of classes (with no label)");
+	arguments.push_back("training iterations");
+	helper("CTC Learning", "Create a CTC architecture and train it on a dataset.",arguments);
 	ClassificationDataset dataset;
 	dataset.load(argv[1]);
 	cout << "dataset loaded, total elements : "<< dataset.getNumSamples()<< endl ;

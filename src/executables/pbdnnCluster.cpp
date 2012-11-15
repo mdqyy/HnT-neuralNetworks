@@ -44,14 +44,15 @@ int main(int argc, char* argv[]) {
 	params.setLearningRate(0.001);
 	params.setMaxTrainedPercentage(0.05);
 	params.setSavedDuringProcess(true);
-	PopulationClusterBP pbp(pop, dataset, params, dataset2, mask, mask);
+	ofstream log("training.log");
+	PopulationClusterBP pbp(pop, dataset, params, dataset2, mask, mask,log);
 
 	cout << "Starting diversity" << endl << diversity.getDisagreementMatrix() << endl;
 	cout << "Starting overall diversity" << endl << diversity.getDisagreementScalar() << endl;
 	double t = (double) getTickCount();
 	pbp.train();
 	t = ((double) getTickCount() - t) / getTickFrequency();
-	cout << "Temps :" << t << endl;
+	cout << "Time :" << t << endl;
 	cout << endl << "Saving network" << endl;
 	ofstream outStream("IAMpop.txt");
 	outStream << pop;

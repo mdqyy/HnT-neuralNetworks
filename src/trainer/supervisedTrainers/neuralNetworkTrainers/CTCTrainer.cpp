@@ -9,8 +9,8 @@
 using namespace std;
 using namespace cv;
 
-CTCTrainer::CTCTrainer(LayerCTC& _ctcLayer, ClassificationDataset& _data, Mask& _featureMask, Mask& _indexMask) :
-		SupervisedTrainer(_ctcLayer, _data, _featureMask, _indexMask), ctcLayer(_ctcLayer), classifactionData(_data) {
+CTCTrainer::CTCTrainer(LayerCTC& _ctcLayer, ClassificationDataset& _trainingData, ClassificationDataset& _validationData, Mask& _featureMask, Mask& _indexMask) :
+		SupervisedTrainer(_ctcLayer, _trainingData, _featureMask, _indexMask), ctcLayer(_ctcLayer), trainingData(_trainingData) {
 
 }
 
@@ -40,10 +40,10 @@ void CTCTrainer::train() {
 void CTCTrainer::trainOneIteration() {
 	vector<uint> indexOrderSelection = defineIndexOrderSelection(data.getNumSequences());
 	uint index = 0;
-	for (uint i = 0; i < classifactionData.getNumSequences(); i++) {
+	for (uint i = 0; i < trainingData.getNumSequences(); i++) {
 		index = indexOrderSelection[i];
-		vector<FeatureVector> inputSignal = classifactionData[index];
-		vector<int> targetSignal = classifactionData.getSequenceClassesIndex(index);
+		vector<FeatureVector> inputSignal = trainingData[index];
+		vector<int> targetSignal = trainingData.getSequenceClassesIndex(index);
 		trainOneSample(inputSignal, targetSignal);
 		cout << "trained" << endl;
 	}
@@ -221,6 +221,10 @@ uint CTCTrainer::determineMinLabel(uint _t, uint _outputSignalsSize, uint _requi
 		minLabels = _requiredSegments - (_outputSignalsSize - _t) * 2;
 	}
 	return minLabels;
+}
+
+void CTCTrainer::validateIteration() {
+	//WECMeasurer wec;
 }
 
 CTCTrainer::~CTCTrainer() {

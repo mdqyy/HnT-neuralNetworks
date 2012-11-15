@@ -33,8 +33,8 @@ int main(int argc, char* argv[]) {
 	inStream >> params;
 
 	vector<Vec3b> colors = createColorRepartition(pop.getPopulation().size());
-
-	PopulationClusterBP pbp(pop, dataset, params, dataset2,mask, mask);
+	ofstream log("training.log");
+	PopulationClusterBP pbp(pop, dataset, params, dataset2,mask, mask,log);
 	AEMeasurer mae;
 	DiversityMeasurer diversity(pop, dataset, mae);
 	diversity.measurePerformance();
@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
 	double t = (double) getTickCount();
 	pbp.train();
 	t = ((double) getTickCount() - t) / getTickFrequency();
-	cout << "Temps :" << t << endl;
+	log << "Time :" << t << endl;
 	cout << endl << "Saving network" << endl;
 	ofstream outStream("IAMpop.txt");
 	outStream << pop;

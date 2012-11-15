@@ -41,14 +41,15 @@ int main(int argc, char* argv[]) {
 	params.setMaxTrainedPercentage(1.0/((realv)(2*populationSize)));
 	params.setSavedDuringProcess(true);
 	cout << "Training " << endl;
-	PopulationClusterBP pbp(pop, dataset, params, datasetValid, mask, mask);
+	ofstream log("training.log");
+	PopulationClusterBP pbp(pop, dataset, params, datasetValid, mask, mask,log);
 
 	cout << "Starting diversity" << endl << diversity.getDisagreementMatrix() << endl;
 	cout << "Starting overall diversity" << endl << diversity.getDisagreementScalar() << endl;
 	double t = (double) getTickCount();
 	pbp.train();
 	t = ((double) getTickCount() - t) / getTickFrequency();
-	cout << "Time :" << t << endl;
+	log << "Temps :" << t << endl;
 
 	vector<NeuralNetworkPtr> population = pop.getPopulation();
 	vector<vector<int> > assignedTo = diversity.findBestNetwork();
