@@ -31,7 +31,7 @@ public:
 	 * \param _featureMask Feature mask.
 	 * \param _indexMask Sample index mask.
 	 */
-	SupervisedTrainer(Machine& _machine, SupervisedDataset& _data, Mask& _featureMask, Mask& _indexMask);
+	SupervisedTrainer(Machine& _machine, SupervisedDataset& _data, Mask& _featureMask, Mask& _indexMask, std::ostream& _log );
 
 	/*!
 	 * Used to define the index order call of the different sequences during learning.

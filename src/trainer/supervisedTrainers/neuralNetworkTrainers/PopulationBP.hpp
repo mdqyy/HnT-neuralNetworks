@@ -37,7 +37,7 @@ class PopulationBP : public SupervisedTrainer{
    * \param _featureMask Feature mask.
    * \param _indexMask Index mask.
    */
-  PopulationBP(PBDNN& _population, SupervisedDataset& _data, LearningParams& _params, Mask& _featureMask, Mask& _indexMask);
+  PopulationBP(PBDNN& _population, SupervisedDataset& _data, LearningParams& _params, Mask& _featureMask, Mask& _indexMask, std::ostream& _log );
 
   /*!
    * Train the neural networks.

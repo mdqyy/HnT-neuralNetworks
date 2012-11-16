@@ -29,7 +29,8 @@ int main (int argc, char* argv[]){
 	Connection c2 = Connection(0,&ctc,weights);
 	c2.initializeWeights(1,0,1.0);
 	Mask mask;
-	CTCTrainer ctcTrainer = CTCTrainer(ctc, dataset,dataset,mask, mask);
+	ofstream log("training.log");
+	CTCTrainer ctcTrainer = CTCTrainer(ctc, dataset,dataset,mask, mask, log);
 	ctcTrainer.train();
 	/*
 	params.setMaxIterations(iterations);

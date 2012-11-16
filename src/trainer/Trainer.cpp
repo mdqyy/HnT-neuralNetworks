@@ -6,8 +6,10 @@
 
 #include "Trainer.hpp"
 
-Trainer::Trainer(Machine& _machine, Dataset& _data, Mask& _featureMask, Mask& _indexMask) :
-		machine(_machine), data(_data), featureMask(_featureMask), indexMask(_indexMask) {
+using namespace std;
+
+Trainer::Trainer(Machine& _machine, Dataset& _data, Mask& _featureMask, Mask& _indexMask, ostream& _log) :
+		machine(_machine), data(_data), featureMask(_featureMask), indexMask(_indexMask) , log(_log){
 	assert(featureMask.getLength()==0 || featureMask.getLength()==data.getFeatureVectorLength());
 	assert(indexMask.getLength()==0 || indexMask.getLength()==data.getNumSequences());
 }

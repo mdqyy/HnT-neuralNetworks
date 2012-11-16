@@ -10,7 +10,7 @@
 using namespace cv;
 using namespace std;
 
-PopulationBPBatch::PopulationBPBatch(PBDNN& _population, RegressionDataset& _data, LearningParams& _params, Mask& _featureMask, Mask& _indexMask) : SupervisedTrainer(_population, _data, _featureMask, _indexMask), population(_population), params(_params), regData(_data){
+PopulationBPBatch::PopulationBPBatch(PBDNN& _population, RegressionDataset& _data, LearningParams& _params, Mask& _featureMask, Mask& _indexMask, ostream& _log ) : SupervisedTrainer(_population, _data, _featureMask, _indexMask, _log), population(_population), params(_params), regData(_data){
 
 }
 
@@ -18,7 +18,7 @@ void PopulationBPBatch::train(){
 	uint i=0;
 	do{
 		i++;
-		cout << "Iteration" << i <<endl;
+		log << "Iteration" << i <<endl;
 		trainOneIteration();
 		params.setLearningRate(params.getLearningRate()*params.getLearningRateDecrease());
 		params.setErrorToFirst(params.getErrorToFirst()*params.getErrorToFirstIncrease());
@@ -145,15 +145,15 @@ void PopulationBPBatch::trainOneIteration(){
 			timesTrained = learningAffectations[k].size();
 		}
 	}
-	cout << "network  | \t Global error \t | \t timesSelected" << endl;
+	log << "network  | \t Global error \t | \t timesSelected" << endl;
 	for(uint i=0;i<neuralNets.size();i++){
 		RegressionMeasurer regMeasurer = RegressionMeasurer(*(neuralNets[i].get()),regData,mae);
 		regMeasurer.measurePerformance();
-		cout << i << " \t | \t " << regMeasurer.getTotalError() <<"\t | \t" << learningAffectations[i].size() <<endl;
+		log << i << " \t | \t " << regMeasurer.getTotalError() <<"\t | \t" << learningAffectations[i].size() <<endl;
 	}
 	diversity.measurePerformance();
-	cout << "Diversity : " << endl << diversity.getDisagreementMatrix() << endl;
-	cout << "Diversity scalar: " << endl << diversity.getDisagreementScalar() << endl;
+	log << "Diversity : " << endl << diversity.getDisagreementMatrix() << endl;
+	log << "Diversity scalar: " << endl << diversity.getDisagreementScalar() << endl;
 }
 
 PopulationBPBatch::~PopulationBPBatch(){

@@ -10,7 +10,7 @@
 using namespace cv;
 using namespace std;
 
-BackPropagation::BackPropagation(NeuralNetwork& _neuralNet, SupervisedDataset& _data, LearningParams& _bpparams, Mask& _featureMask, Mask& _indexMask) : NeuralNetworkTrainer(_neuralNet, _data, _featureMask, _indexMask, _bpparams.isStochastic()), bpp(_bpparams){
+BackPropagation::BackPropagation(NeuralNetwork& _neuralNet, SupervisedDataset& _data, LearningParams& _bpparams, Mask& _featureMask, Mask& _indexMask, ostream& _log) : NeuralNetworkTrainer(_neuralNet, _data, _featureMask, _indexMask, _log), bpp(_bpparams){
   
 }
 
@@ -24,13 +24,13 @@ void BackPropagation::train(){
       change=abs(errorPerIteration[i-2]-errorPerIteration[i-1]);
     }
     bpp.setLearningRate(bpp.getLearningRate()*bpp.getLearningRateDecrease());
-    cout << "Iteration : "<< i << " ; Error : " << errorPerIteration[i-1]<< endl;
+    log << "Iteration : "<< i << " ; Error : " << errorPerIteration[i-1]<< endl;
   }while(i<bpp.getMaxIterations()/* && change>bpp.getMinChangeError()*/ && errorPerIteration[i-1]>bpp.getMinError());
 }
 
 void BackPropagation::trainOneIteration(){
   vector<uint> indexOrderSelection=defineIndexOrderSelection(data.getNumSequences());
-  cout << indexOrderSelection[0] << endl;
+  log << indexOrderSelection[0] << endl;
   uint index=0;
   realv error= 0;
   FeatureVector dataOutput;
@@ -51,7 +51,7 @@ void BackPropagation::trainOneIteration(){
       }
     }
   }
-  cout << error/data.getNumSequences() << endl;
+  log << error/data.getNumSequences() << endl;
   errorPerIteration.push_back(error/data.getNumSequences());
 }
 

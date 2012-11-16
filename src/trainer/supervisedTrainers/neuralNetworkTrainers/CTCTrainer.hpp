@@ -106,7 +106,7 @@ public:
 	 * \param _featureMask Feature mask.
 	 * \param _indexMask Sample index mask.
 	 */
-	CTCTrainer(LayerCTC& _ctcLayer, ClassificationDataset& _trainingData, ClassificationDataset& _validationData, Mask& _featureMask, Mask& _indexMask);
+	CTCTrainer(LayerCTC& _ctcLayer, ClassificationDataset& _trainingData, ClassificationDataset& _validationData, Mask& _featureMask, Mask& _indexMask, std::ostream& _log );
 
 	/*!
 	 * Train the layer.

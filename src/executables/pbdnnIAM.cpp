@@ -29,7 +29,8 @@ int main (int argc, char* argv[]){
 	params.setErrorToFirst(1.0);
 	params.setErrorToFirstIncrease(1.0);
 	params.setMaxTrained(populationSize);
-	PopulationBP pbp(pop,dataset,params,mask,mask);
+	ofstream log("training.log");
+	PopulationBP pbp(pop,dataset,params,mask,mask, log);
 	double t = (double)getTickCount();
 	pbp.train();
 	t = ((double)getTickCount() - t)/getTickFrequency();

@@ -24,7 +24,8 @@ int main (int argc, char* argv[]){
   
   Mask mask;
   LearningParams params;
-  PopulationBP pbp(testpop,dataset,params,mask,mask);
+  ofstream log("training.log");
+  PopulationBP pbp(testpop,dataset,params,mask,mask,log);
 
   pbp.train();
   ClassificationDataset errxor;

@@ -20,8 +20,6 @@ class NeuralNetworkTrainer : public SupervisedTrainer {
 
  protected:
   NeuralNetwork& neuralNet;
-  /*! Defined to true when randomization of sequences is required. */
-  bool doStochastic;
 
  public:
 
@@ -31,7 +29,7 @@ class NeuralNetworkTrainer : public SupervisedTrainer {
    * \param _data Supervised dataset to use for learning.
    
    */
-  NeuralNetworkTrainer(NeuralNetwork& _neuralNet, SupervisedDataset& _data, Mask& _featureMask, Mask& _indexMask, bool _doStochastic=true );
+  NeuralNetworkTrainer(NeuralNetwork& _neuralNet, SupervisedDataset& _data, Mask& _featureMask, Mask& _indexMask, std::ostream& _log);
 
   /*!
    * Train the machine.

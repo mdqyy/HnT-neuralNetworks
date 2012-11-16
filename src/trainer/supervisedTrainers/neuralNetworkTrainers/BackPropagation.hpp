@@ -46,7 +46,7 @@ class BackPropagation : public NeuralNetworkTrainer {
    * \param _indexMask Sample index mask.
    * \param _bpparams Backpropagation parameters.
    */
-  BackPropagation(NeuralNetwork& _neuralNet, SupervisedDataset& _data, LearningParams& _bpparams, Mask& _featureMask, Mask& _indexMask);
+  BackPropagation(NeuralNetwork& _neuralNet, SupervisedDataset& _data, LearningParams& _bpparams, Mask& _featureMask, Mask& _indexMask, std::ostream& _log);
 
   /*!
    * Train the neural network.

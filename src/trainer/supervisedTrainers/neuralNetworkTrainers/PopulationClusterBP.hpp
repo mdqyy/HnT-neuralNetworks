@@ -37,8 +37,7 @@ protected:
 	RegressionDataset regData;
 	/*! Diversity measurer */
 	RegressionDataset validationDataset;
-	/*! Logging stream*/
-	std::ostream& log;
+
 
 public:
 

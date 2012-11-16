@@ -9,8 +9,8 @@
 using namespace std;
 using namespace cv;
 
-CTCTrainer::CTCTrainer(LayerCTC& _ctcLayer, ClassificationDataset& _trainingData, ClassificationDataset& _validationData, Mask& _featureMask, Mask& _indexMask) :
-		SupervisedTrainer(_ctcLayer, _trainingData, _featureMask, _indexMask), ctcLayer(_ctcLayer), trainingData(_trainingData) {
+CTCTrainer::CTCTrainer(LayerCTC& _ctcLayer, ClassificationDataset& _trainingData, ClassificationDataset& _validationData, Mask& _featureMask, Mask& _indexMask, ostream& _log ) :
+		SupervisedTrainer(_ctcLayer, _trainingData, _featureMask, _indexMask, _log ), ctcLayer(_ctcLayer), trainingData(_trainingData) {
 
 }
 
@@ -18,7 +18,7 @@ void CTCTrainer::train() {
 	uint i = params.getActualIteration();
 	do {
 		i++;
-		cout << "Iteration" << i << endl;
+		log << "Iteration" << i << endl;
 		trainOneIteration();
 		params.setActualIteration(i);
 		params.setLearningRate(params.getLearningRate() * params.getLearningRateDecrease());
@@ -31,7 +31,7 @@ void CTCTrainer::train() {
 			outStream << this->params;
 		}
 		/*		if (params.isValidatedDuringProcess()) {
-		 cout << "Validation "<< endl;
+		 log << "Validation "<< endl;
 		 validateIteration();
 		 }*/
 	} while (i < params.getMaxIterations());
@@ -45,7 +45,7 @@ void CTCTrainer::trainOneIteration() {
 		vector<FeatureVector> inputSignal = trainingData[index];
 		vector<int> targetSignal = trainingData.getSequenceClassesIndex(index);
 		trainOneSample(inputSignal, targetSignal);
-		cout << "trained" << endl;
+		log << "trained" << endl;
 	}
 }
 

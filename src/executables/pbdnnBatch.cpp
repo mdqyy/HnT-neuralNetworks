@@ -27,7 +27,8 @@ int main(int argc, char* argv[]) {
 	LearningParams params;
 	params.setMaxIterations(iterations);
 	params.setLearningRate(0.1);
-	PopulationBPBatch pbp(pop, dataset, params, mask, mask);
+	ofstream log("training.log");
+	PopulationBPBatch pbp(pop, dataset, params, mask, mask, log);
 	AEMeasurer mae;
 	DiversityMeasurer diversity(pop, dataset, mae);
 	diversity.measurePerformance();

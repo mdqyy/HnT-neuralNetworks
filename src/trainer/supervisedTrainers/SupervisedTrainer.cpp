@@ -9,7 +9,7 @@
 using namespace std;
 using namespace cv;
 
-SupervisedTrainer::SupervisedTrainer(Machine& _machine, SupervisedDataset& _data, Mask& _featureMask, Mask& _indexMask ) : Trainer(_machine, _data, _featureMask, _indexMask), trainData(_data){
+SupervisedTrainer::SupervisedTrainer(Machine& _machine, SupervisedDataset& _data, Mask& _featureMask, Mask& _indexMask, ostream& _log ) : Trainer(_machine, _data, _featureMask, _indexMask, _log), trainData(_data){
 
 }
 

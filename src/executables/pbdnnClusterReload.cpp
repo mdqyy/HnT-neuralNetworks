@@ -87,5 +87,6 @@ int main(int argc, char* argv[]) {
 			imwrite(name.str(), image, pngParams);
 		}
 	}
+	log.close();
 	return EXIT_SUCCESS;
 }
