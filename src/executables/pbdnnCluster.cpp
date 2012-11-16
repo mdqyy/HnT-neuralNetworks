@@ -40,6 +40,7 @@ int main(int argc, char* argv[]) {
 	} while (diversity.getDisagreementScalar() < 0.17);
 	Mask mask;
 	LearningParams params;
+	params.setActualIteration(0);
 	params.setMaxIterations(iterations);
 	params.setLearningRate(0.001);
 	params.setMaxTrainedPercentage(0.05);
