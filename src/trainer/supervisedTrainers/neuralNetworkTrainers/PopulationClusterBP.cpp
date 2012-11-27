@@ -31,6 +31,7 @@ void PopulationClusterBP::train() {
 			ofstream outStream(name.str().c_str());
 			outStream << this->population;
 			outStream << this->params;
+			outStream.close();
 		}
 		if (params.isValidatedDuringProcess()) {
 			log << "Validation "<< endl;

@@ -18,6 +18,14 @@ using namespace std;
 using namespace cv;
 
 int main(int argc, char* argv[]) {
+	vector<string> arguments;
+	arguments.push_back("classification dataset");
+	arguments.push_back("save folder for the dataset, the folder must contain a lab and htk subfolder");
+	cout << helper("Create HTK learning files", "Create HTK learning files using a classification dataset.", arguments) << endl;
+	if (argc != arguments.size() + 1) {
+		cerr << "Not enough arguments, " << argc-1 << " given and "<< arguments.size()<<" required" << endl;
+		return EXIT_FAILURE;
+	}
 	ClassificationDataset datasetBasic;
 	datasetBasic.load(argv[1]);
 	string saveLocation = argv[2];
@@ -27,8 +35,8 @@ int main(int argc, char* argv[]) {
 	for (uint j = 0; j < datasetBasic.getNumSequences(); j++) {
 		ostringstream sequenceFile;
 		ostringstream wordFile;
-		sequenceFile << saveLocation << j <<".htk";
-		wordFile << saveLocation << j <<".lab";
+		sequenceFile << saveLocation << "htk/" << j <<".htk";
+		wordFile << saveLocation << "lab/"<<j <<".lab";
 		sequence = datasetBasic[j];
 		ofstream outputSequence(sequenceFile.str().c_str());
 		ofstream outputWord(wordFile.str().c_str());

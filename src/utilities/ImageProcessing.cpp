@@ -24,7 +24,6 @@ FeatureVector extractBlackAndWhiteFrame(Mat _image, int _horizontalStartingPoint
 
 vector<FeatureVector> extractFrames(Mat _image, int _frameLength) {
 	int subparts = floor(((float) _image.cols) / ((float) _frameLength));
-	cout << subparts << endl;
 	vector<FeatureVector> features = vector<FeatureVector>();
 	for (int i = 0; i < subparts; i++) {
 		features.push_back(extractBlackAndWhiteFrame(_image, i, _frameLength));

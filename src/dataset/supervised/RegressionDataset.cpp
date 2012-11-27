@@ -11,7 +11,6 @@ using namespace cv;
 
 RegressionDataset::RegressionDataset() :
 		SupervisedDataset(), values(vector<vector<FeatureVector> >()) {
-
 }
 
 int RegressionDataset::getDatasetType() const {
@@ -72,6 +71,7 @@ void RegressionDataset::load(std::string _fileName) {
 		}
 		addSequence(sequence, vals);
 	}
+	doc.Clear();
 }
 
 void RegressionDataset::save(std::string _fileName) {

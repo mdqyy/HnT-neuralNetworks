@@ -18,6 +18,17 @@ using namespace std;
 using namespace cv;
 
 int main(int argc, char* argv[]) {
+	vector<string> arguments;
+	arguments.push_back("number of networks");
+	arguments.push_back("number of iterations to check");
+	arguments.push_back("dat file containing the best performance of each network at every iteration");
+	arguments.push_back("location and prefix of files containing the populations during the iterations");
+	arguments.push_back("location and file name to save to");
+	cout << helper("Create PBDNN from bests", "Create PBDNN using the best networks from a serie of trainings", arguments);
+	if (argc != arguments.size() + 1) {
+		cerr << "Not enough arguments" << endl;
+		return EXIT_FAILURE;
+	}
 	ifstream inStream(argv[3]);
 	int numberNetworks = atoi(argv[1]);
 	int iterations = atoi(argv[2]);

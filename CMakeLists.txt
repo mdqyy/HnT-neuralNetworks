@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(PhD)
 #make flags
-set(CMAKE_CXX_FLAGS "-Wall -pedantic -o1")
+set(CMAKE_CXX_FLAGS "-Wall -pedantic -O3 -std=c99")
 
 find_package(OpenCV REQUIRED)
 
