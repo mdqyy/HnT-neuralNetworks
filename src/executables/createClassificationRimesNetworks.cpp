@@ -18,11 +18,10 @@ using namespace cv;
 
 int main(int argc, char* argv[]) {
 	vector<string> arguments;
-	arguments.push_back("ground truth file containing the location of the datasets");
-	arguments.push_back("folder containing the datasets");
-	arguments.push_back("frame size in pixels");
-	arguments.push_back("dataset name");
-	arguments.push_back("dataset save location");
+	arguments.push_back("population");
+	arguments.push_back("classification dataset");
+	arguments.push_back("output classification dataset");
+	arguments.push_back("output classification dataset save location");
 	cout << helper("Create Population Network Rimes Classification Dataset", "Create a classification dataset from Rimes files using the errors produced by passing the frames in a network population.", arguments) << endl;
 	if (argc != arguments.size() + 1) {
 		cerr << "Not enough arguments, " << argc-1 << " given and "<< arguments.size()<<" required" << endl;

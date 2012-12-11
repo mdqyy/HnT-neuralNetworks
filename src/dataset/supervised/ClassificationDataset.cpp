@@ -282,6 +282,30 @@ ClassificationDataset::~ClassificationDataset() {
 
 }
 
+std::vector<std::vector<int> > ClassificationDataset::getClasses() const {
+	return classes;
+}
+
+std::map<std::string, int> ClassificationDataset::getClassLabelIndex() const {
+	return classLabelIndex;
+}
+
+void ClassificationDataset::setClassLabelIndex(std::map<std::string, int> classLabelIndex) {
+	this->classLabelIndex = classLabelIndex;
+}
+
+std::map<int, std::string> ClassificationDataset::getClassLabels() const {
+	return classLabels;
+}
+
+void ClassificationDataset::setClassLabels(std::map<int, std::string> classLabels) {
+	this->classLabels = classLabels;
+}
+
+uint ClassificationDataset::getMaxClasses() const {
+	return maxClasses;
+}
+
 ostream& operator<<(ostream& _os, ClassificationDataset& _cd) {
 	_os << "Classification dataset '" << _cd.getName() << "' : " << endl;
 	_os << "\t - Class mapping  :";

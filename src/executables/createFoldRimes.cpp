@@ -8,7 +8,7 @@
 #include <sys/types.h>
 #include <fstream>
 #include <sstream>
-
+#include "../HnT.hpp"
 using namespace std;
 
 int main(int argc, char* argv[]) {

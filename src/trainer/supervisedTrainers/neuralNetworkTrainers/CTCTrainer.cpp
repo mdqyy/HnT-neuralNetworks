@@ -9,8 +9,9 @@
 using namespace std;
 using namespace cv;
 
-CTCTrainer::CTCTrainer(LayerCTC& _ctcLayer, ClassificationDataset& _trainingData, ClassificationDataset& _validationData, Mask& _featureMask, Mask& _indexMask, ostream& _log ) :
-		SupervisedTrainer(_ctcLayer, _trainingData, _featureMask, _indexMask, _log ), ctcLayer(_ctcLayer), trainingData(_trainingData) {
+CTCTrainer::CTCTrainer(LayerCTC& _ctcLayer, ClassificationDataset& _trainingData, ClassificationDataset& _validationData, LearningParams _params, Mask& _featureMask ,Mask& _indexMask,
+		ostream& _log) :
+		SupervisedTrainer(_ctcLayer, _trainingData, _featureMask, _indexMask, _log), ctcLayer(_ctcLayer), trainingData(_trainingData), validationData(_validationData), params(_params) {
 
 }
 
@@ -30,10 +31,10 @@ void CTCTrainer::train() {
 			outStream << this->ctcLayer;
 			outStream << this->params;
 		}
-		/*		if (params.isValidatedDuringProcess()) {
+		if (params.isValidatedDuringProcess()) {
 		 log << "Validation "<< endl;
 		 validateIteration();
-		 }*/
+		 }
 	} while (i < params.getMaxIterations());
 }
 
@@ -224,7 +225,17 @@ uint CTCTrainer::determineMinLabel(uint _t, uint _outputSignalsSize, uint _requi
 }
 
 void CTCTrainer::validateIteration() {
-	//WECMeasurer wec;
+//	CERMEasurer mae;
+
+	log << "Target \t|\t Output\t| "<< endl;
+	for(uint i = 0; i < validationData.getNumSequences();i++){
+		ctcLayer.forwardSequence(validationData[i]);
+		vector<string> target = validationData.getSequenceClasses(i);
+		for(int j = 0; j<target.size();j++){
+			cout << target[j];
+		}
+		cout << ctcLayer.outputWord()<< endl;
+	}
 }
 
 CTCTrainer::~CTCTrainer() {
