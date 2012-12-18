@@ -22,12 +22,31 @@
 FeatureVector extractBlackAndWhiteFrame(cv::Mat _image, int _horizontalStartingPoint,uint _frameLength);
 
 /*!
+ * Extract a frame from an image.
+ * \param _image The image.
+ * \param _horizontalStartingPoint Starting horizontal point.
+ * \param _frameLength Frame Length.
+ * \param _frameZone A given frame zone to extract.
+ * \return Feature vector of the frame.
+ */
+FeatureVector extractBlackAndWhiteFrame(cv::Mat _image, int _horizontalStartingPoint,uint _frameLength, std::pair<int,int> _frameZone);
+
+/*!
  * Extract frames of an images.
  * \param _image The image.
  * \param _frameLength Frame Length.
  * \return The feature vector of frames.
  */
 std::vector<FeatureVector> extractFrames(cv::Mat _image, int _frameLength);
+
+/*!
+ * Extract frames of an images.
+ * \param _image The image.
+ * \param _frameLength Frame Length.
+ * \param _frameZone A given frame zone to extract.
+ * \return The feature vector of frames.
+ */
+std::vector<FeatureVector> extractFrames(cv::Mat _image, int _frameLength, std::pair<int,int> _frameZone);
 
 /*!
  * Rebuild an image from a sequence.

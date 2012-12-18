@@ -95,6 +95,9 @@ target_link_libraries(executables/createPixelDB Machines TinyXML ${OpenCV_LIBS} 
 add_executable(executables/createRegressionPixelRimes src/executables/createRegressionPixelRimes.cpp)
 target_link_libraries(executables/createRegressionPixelRimes Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
 
+add_executable(executables/createRegressionPixelRimesPerPart src/executables/createRegressionPixelRimesPerPart.cpp)
+target_link_libraries(executables/createRegressionPixelRimesPerPart Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
+
 add_executable(executables/createClassificationPixelRimes src/executables/createClassificationPixelRimes.cpp)
 target_link_libraries(executables/createClassificationPixelRimes Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
 

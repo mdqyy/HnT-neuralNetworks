@@ -67,6 +67,9 @@ protected:
 
 	/*! Validate during process */
 	bool validatedDuringProcess;
+	
+	/*! Validation steps every n iteration */
+	int validateEveryNIteration;
 
 	/*! Problem type (BP_CLASSIFICATION, BP_REGRESSION, BP_AUTOENCODER) */
 	int task;
@@ -78,7 +81,7 @@ public:
 	 */
 	LearningParams(realv _learningRate = 0.001, realv _learningRateDecrease = 0.95, uint _maxIterations = 10, uint _actualIteration = 0, uint _maxTrained = 5,
 			realv _maxTrainedPercentage = 0.25, realv _errorToFirst = 0.5, realv errorToFirstIncrease = 1.1, bool _savedDuringProcess = false,
-			std::string _saveLocation = ".", bool _validatedDuringProcess = true);
+			std::string _saveLocation = ".", bool _validatedDuringProcess = true, int _validateEveryNIteration=5);
 
 	/*!
 	 * Do stochastic.
@@ -284,6 +287,8 @@ public:
 	 * \return Input file stream.
 	 */
 	friend std::ifstream& operator>>(std::ifstream& _ifs, LearningParams& _p);
+	int getValidateEveryNIteration() const;
+	void setValidateEveryNIteration(int validateEveryNIteration);
 
 
 }

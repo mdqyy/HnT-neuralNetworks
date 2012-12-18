@@ -18,18 +18,28 @@ using namespace std;
 using namespace cv;
 
 int main(int argc, char* argv[]) {
+	vector<string> arguments;
+	arguments.push_back("population size");
+	arguments.push_back("number of hidden units");
+	arguments.push_back("number of iterations");
+	arguments.push_back("learning dataset");
+	arguments.push_back("validation dataset");
+	cout << helper("Pbdnn cluster", "Train a population of neural networks on a regression task.", arguments) << endl;
+	if (argc != arguments.size() + 1) {
+		cerr << "Not enough arguments, " << argc-1 << " given and "<< arguments.size()<<" required" << endl;
+		return EXIT_FAILURE;
+	}
 	RegressionDataset dataset;
 	dataset.load(argv[4]);
 
 	RegressionDataset dataset2;
-	dataset2.load(argv[6]);
+	dataset2.load(argv[5]);
 
 	cout << "dataset loaded, total elements : " << dataset.getNumSamples() << endl;
 	int populationSize = atoi(argv[1]);
 	int numberOfHiddenUnits = atoi(argv[2]);
 	int iterations = atoi(argv[3]);
 	vector<Vec3b> colors = createColorRepartition(populationSize);
-	string filename(argv[5]);
 	AEMeasurer mae;
 	PBDNN pop = PBDNN(populationSize, dataset.getFeatureVectorLength(), numberOfHiddenUnits, dataset.getMean(), dataset.getStandardDeviation());
 	DiversityMeasurer diversity(pop, dataset2, mae);

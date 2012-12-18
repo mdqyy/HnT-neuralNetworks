@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
 	}
 	ClassificationDataset datasetBasic;
 	datasetBasic.load(argv[1]);
-	cout << "loaded dateset" << endl;
+	cout << "loaded dataset" << endl;
 	string saveLocation = argv[2];
 	vector<FeatureVector> sequence;
 	FeatureVector sample;
