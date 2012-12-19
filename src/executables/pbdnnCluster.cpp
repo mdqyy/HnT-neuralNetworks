@@ -13,7 +13,6 @@
 
 #include "../HnT.hpp"
 
-
 using namespace std;
 using namespace cv;
 
@@ -26,7 +25,7 @@ int main(int argc, char* argv[]) {
 	arguments.push_back("validation dataset");
 	cout << helper("Pbdnn cluster", "Train a population of neural networks on a regression task.", arguments) << endl;
 	if (argc != arguments.size() + 1) {
-		cerr << "Not enough arguments, " << argc-1 << " given and "<< arguments.size()<<" required" << endl;
+		cerr << "Not enough arguments, " << argc - 1 << " given and " << arguments.size() << " required" << endl;
 		return EXIT_FAILURE;
 	}
 	RegressionDataset dataset;
@@ -43,27 +42,29 @@ int main(int argc, char* argv[]) {
 	AEMeasurer mae;
 	PBDNN pop = PBDNN(populationSize, dataset.getFeatureVectorLength(), numberOfHiddenUnits, dataset.getMean(), dataset.getStandardDeviation());
 	DiversityMeasurer diversity(pop, dataset2, mae);
+
 	do {
 		pop = PBDNN(populationSize, dataset.getFeatureVectorLength(), numberOfHiddenUnits, dataset.getMean(), dataset.getStandardDeviation());
 		diversity.measurePerformance();
-		cout << "Disagreement scalar : " << endl << diversity.getDisagreementScalar() << endl;
 	} while (diversity.getDisagreementScalar() < 0.17);
 	Mask mask;
 	LearningParams params;
 	params.setActualIteration(0);
 	params.setMaxIterations(iterations);
 	params.setLearningRate(0.001);
-	params.setMaxTrainedPercentage(0.05);
+	params.setMaxTrainedPercentage(0.01);
 	params.setSavedDuringProcess(true);
+	params.setValidateEveryNIteration(5);
 	ofstream log("training.log");
-	PopulationClusterBP pbp(pop, dataset, params, dataset2, mask, mask,log);
-
+	PopulationClusterBP pbp(pop, dataset, params, dataset2, mask, mask, log);
 	cout << "Starting diversity" << endl << diversity.getDisagreementMatrix() << endl;
-	cout << "Starting overall diversity" << endl << diversity.getDisagreementScalar() << endl;
+	cout << "Starting overall diversity : " << diversity.getDisagreementScalar() << endl;
+
 	double t = (double) getTickCount();
 	pbp.train();
 	t = ((double) getTickCount() - t) / getTickFrequency();
 	cout << "Time :" << t << endl;
+
 	cout << endl << "Saving network" << endl;
 	ofstream outStream("IAMpop.txt");
 	outStream << pop;
