@@ -7,7 +7,13 @@
  */
 
 #include "Layer.hpp"
+#include <map>
 #include <stdexcept>
+#include <string>
+#include <iostream>
+#include <sstream>
+#include <ostream>
+#include <stdio.h>
 
 /*!
  * \class LayerCTC
@@ -17,6 +23,11 @@ class LayerCTC: public Layer {
 private:
 
 protected:
+	/*! Map containing the correspondence between ints and strings representing classes. */
+	std::map<int, std::string> classLabels;
+
+	/*! Reversed map containing correspondence between ints and strings representing classes. */
+	std::map<std::string, int> classLabelIndex;
 
 public:
 
@@ -49,6 +60,31 @@ public:
 	int getLayerType() const;
 
 	/*!
+	 * Get class label mapping.
+	 * \return Int to label map.
+	 */
+	std::map<int, std::string> getClassLabelMap();
+
+	/*!
+	 * Set class label mapping.
+	 * \param _intToString Int to label map.
+	 */
+	void setClassLabels(std::map<int, std::string> _intToSring);
+
+	/*!
+	 * Get class integer mapping.
+	 * \return Label to int map.
+	 */
+	std::map<std::string, int> getClassLabelIndexMap();
+
+	/*!
+	 * Set class integer mapping.
+	 * \param _stringToInt Label to int map.
+	 */
+	void setClassLabelIndex(std::map<std::string, int> _stringToInt);
+
+
+	/*!
 	 * Forward a feature vector.
 	 */
 	void forward();
@@ -59,6 +95,26 @@ public:
 	 * \return Output feature vector.
 	 */
 	void forward(FeatureVector _signal);
+
+	FeatureVector createInputSignal();
+
+	/*!
+	 * Get the result sequence as the maximum outputs neuron of each input sample.
+	 * \return The result sequence.
+	 */
+	std::vector<int> processResultSequence();
+
+	/*!
+	 * Get the cleaned result sequence (minus blanks and same letters).
+	 * \return The cleaned result sequence.
+	 */
+	std::vector<int> processCleanedResultSequence();
+
+	/*!
+	 * Get the output word from the last input sequence.
+	 * \return A word.
+	 */
+	std::string outputWord();
 
 	/*!
 	 * Process the derivative for the layer.
@@ -98,6 +154,8 @@ public:
 	 * \return File Input stream.
 	 */
 	friend std::ifstream& operator>>(std::ifstream& _ifs, LayerCTC& _l);
+
+
 };
 
 #endif

@@ -55,7 +55,8 @@ int main (int argc, char* argv[]){
   bpp.setMinChangeError(1.0e-9);
   bpp.setMaxIterations(1000);
   bpp.setTask(BP_CLASSIFICATION);
-  BackPropagation bp(nnTest,dataset,bpp,mask,mask);
+  ofstream log("training.log");
+  BackPropagation bp(nnTest,dataset,bpp,mask,mask, log);
   bp.train();
   cout << "Ended training" << endl;
   nnTest.forward(dataset[0][0]);

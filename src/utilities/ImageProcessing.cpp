@@ -22,12 +22,36 @@ FeatureVector extractBlackAndWhiteFrame(Mat _image, int _horizontalStartingPoint
 	return fv;
 }
 
+FeatureVector extractBlackAndWhiteFrame(Mat _image, int _horizontalStartingPoint, uint _frameLength, pair<int,int> _frameZone) {
+	FeatureVector fv(_frameLength * (_frameZone.second - _frameZone.first));
+	int i=0;
+	for (uint j = 0; j < _frameLength; j++) {
+		for (int k = _frameZone.first; k < _frameZone.second; k++) {
+			if ((int) _image.at<uchar>(k, _horizontalStartingPoint * _frameLength + j) > 0) {
+				fv[i] = 1.0;
+			} else {
+				fv[i] = 0.0;
+			}
+			i++;
+		}
+	}
+	return fv;
+}
+
 vector<FeatureVector> extractFrames(Mat _image, int _frameLength) {
 	int subparts = floor(((float) _image.cols) / ((float) _frameLength));
-	cout << subparts << endl;
 	vector<FeatureVector> features = vector<FeatureVector>();
 	for (int i = 0; i < subparts; i++) {
 		features.push_back(extractBlackAndWhiteFrame(_image, i, _frameLength));
+	}
+	return features;
+}
+
+vector<FeatureVector> extractFrames(Mat _image, int _frameLength, pair<int,int> _frameZone) {
+	int subparts = floor(((float) _image.cols) / ((float) _frameLength));
+	vector<FeatureVector> features = vector<FeatureVector>();
+	for (int i = 0; i < subparts; i++) {
+		features.push_back(extractBlackAndWhiteFrame(_image, i, _frameLength, _frameZone));
 	}
 	return features;
 }

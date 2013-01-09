@@ -10,7 +10,7 @@
 using namespace cv;
 using namespace std;
 
-PopulationBP::PopulationBP(PBDNN& _population, SupervisedDataset& _data, LearningParams& _params, Mask& _featureMask, Mask& _indexMask) : SupervisedTrainer(_population, _data, _featureMask, _indexMask), population(_population), params(_params){
+PopulationBP::PopulationBP(PBDNN& _population, SupervisedDataset& _data, LearningParams& _params, Mask& _featureMask, Mask& _indexMask, ostream& _log ) : SupervisedTrainer(_population, _data, _featureMask, _indexMask, _log ), population(_population), params(_params){
 
 }
 
@@ -18,7 +18,7 @@ void PopulationBP::train(){
 	uint i=0;
 	do{
 		i++;
-		cout << "Iteration" << i <<endl;
+		log << "Iteration" << i <<endl;
 		trainOneIteration();
 		params.setLearningRate(params.getLearningRate()*params.getLearningRateDecrease());
 		params.setErrorToFirst(params.getErrorToFirst()*params.getErrorToFirstIncrease());
@@ -162,17 +162,17 @@ void PopulationBP::trainOneIteration(){
 		iterationError+=seqError/((realv)data[index].size());
 	}
 	for(uint k=0; k<neuralNets.size();k++){
-		cout << k << "\t "<< histogramOfTrainees[k] << endl;
+		log << k << "\t "<< histogramOfTrainees[k] << endl;
 	}
-	cout << "Correlated trainings" << endl;
+	log << "Correlated trainings" << endl;
 	for(uint k=0; k<neuralNets.size();k++){
 		for(uint l=0; l<neuralNets.size();l++){
-			cout << correlatedTraining[k][l]/((realv)data.getNumSamples())<<" ";
+			log << correlatedTraining[k][l]/((realv)data.getNumSamples())<<" ";
 		}
-		cout << endl;
+		log << endl;
 	}
 	averageNumberTrained/=((realv)data.getNumSamples());
-	cout << "Iteration error " << (iterationError/((realv)data.getNumSequences())) <<", average number of networks trained "<< averageNumberTrained << endl;
+	log << "Iteration error " << (iterationError/((realv)data.getNumSequences())) <<", average number of networks trained "<< averageNumberTrained << endl;
 }
 
 PopulationBP::~PopulationBP(){

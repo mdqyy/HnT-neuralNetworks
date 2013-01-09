@@ -10,10 +10,10 @@ using namespace cv;
 using namespace std;
 
 LearningParams::LearningParams(realv _learningRate, realv _learningRateDecrease, uint _maxIterations, uint _actualIteration, uint _maxTrained, realv _maxTrainedPercentage,
-		realv _errorToFirst, realv _errorToFirstIncrease, bool _savedDuringProcess, string _saveLocation, bool _validatedDuringProcess) :
+		realv _errorToFirst, realv _errorToFirstIncrease, bool _savedDuringProcess, string _saveLocation, bool _validatedDuringProcess, int _validateEveryNIteration) :
 		learningRate(_learningRate), learningRateDecrease(_learningRateDecrease), maxIterations(_maxIterations), maxTrained(_maxTrained), maxTrainedPercentage(
 				_maxTrainedPercentage), errorToFirst(_errorToFirst), errorToFirstIncrease(_errorToFirstIncrease), savedDuringProcess(_savedDuringProcess), saveLocation(
-				_saveLocation), validatedDuringProcess(_validatedDuringProcess) {
+				_saveLocation), validatedDuringProcess(_validatedDuringProcess), validateEveryNIteration(_validateEveryNIteration) {
 
 }
 
@@ -160,6 +160,14 @@ ofstream& operator<<(ofstream& _ofs, const LearningParams& _p) {
 	_ofs << " " << _p.getSaveLocation();
 	_ofs << " >";
 	return _ofs;
+}
+
+int LearningParams::getValidateEveryNIteration() const {
+	return validateEveryNIteration;
+}
+
+void LearningParams::setValidateEveryNIteration(int validateEveryNIteration) {
+	this->validateEveryNIteration = validateEveryNIteration;
 }
 
 ifstream& operator>>(ifstream& _ifs, LearningParams& _p) {

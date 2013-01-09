@@ -42,7 +42,7 @@ class PopulationBPBatch : public SupervisedTrainer{
    * \param _featureMask Feature mask.
    * \param _indexMask Index mask.
    */
-  PopulationBPBatch(PBDNN& _population, RegressionDataset& _data, LearningParams& _params, Mask& _featureMask, Mask& _indexMask);
+  PopulationBPBatch(PBDNN& _population, RegressionDataset& _data, LearningParams& _params, Mask& _featureMask, Mask& _indexMask, std::ostream& _log );
 
   /*!
    * Train the neural networks.

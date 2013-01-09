@@ -135,7 +135,7 @@ void DiversityMeasurer::processChiSquareMatrix() {
 	}
 }
 
-void DiversityMeasurer::processDisagreementMatrix() {
+/*void DiversityMeasurer::processDisagreementMatrix() {
 	vector<NeuralNetworkPtr> population = networkPopulation.getPopulation();
 	FeatureVector outputA, outputB, target;
 	double agreement, disagreementA, disagreementB;
@@ -179,6 +179,52 @@ void DiversityMeasurer::processDisagreementMatrix() {
 			}
 			disagreementMatrix.at<double>(j, k) = (disagreementB + disagreementA) / (agreement + disagreementB + disagreementA);
 			disagreementMatrix.at<double>(k, j) = (disagreementB + disagreementA) / (agreement + disagreementB + disagreementA);
+		}
+	}
+}*/
+
+void DiversityMeasurer::processDisagreementMatrix() {
+	vector<NeuralNetworkPtr> population = networkPopulation.getPopulation();
+	FeatureVector outputA, outputB, target;
+	double agreement, disagreementA, disagreementB;
+	bool AGood, BGood;
+	for (uint l = 0; l < data.getNumSequences(); l++) {
+		for (uint m = 0; m < data[l].size(); m++) {
+			target = data.getTargetSample(l, m);
+			for (uint j = 0; j < population.size(); j++) {
+				population[j]->forward(data[l][m]);
+				outputA = population[j]->getOutputSignal();
+				for (uint k = j + 1; k < population.size(); k++) {
+					agreement = 0.0;
+					disagreementA = 0.0;
+					disagreementB = 0.0;
+					population[k]->forward(data[l][m]);
+					outputB = population[k]->getOutputSignal();
+					for (uint n = 0; n < outputA.getLength(); n++) {
+						if (outputA[n] > target[n] - sqrt(networkOutputStdDevMatrix.at<double>(j, n))
+								&& outputA[n] < target[n] + sqrt(networkOutputStdDevMatrix.at<double>(j, n))) {
+							AGood = true;
+						} else {
+							AGood = false;
+						}
+						if (outputB[n] > target[n] - sqrt(networkOutputStdDevMatrix.at<double>(k, n))
+								&& outputB[n] < target[n] + sqrt(networkOutputStdDevMatrix.at<double>(k, n))) {
+							BGood = true;
+						} else {
+							BGood = false;
+						}
+						if (AGood && !BGood) {
+							disagreementA += 1.0;
+						} else if (BGood && !AGood) {
+							disagreementB += 1.0;
+						} else {
+							agreement += 1.0;
+						}
+					}
+					disagreementMatrix.at<double>(j, k) = (disagreementB + disagreementA) / (agreement + disagreementB + disagreementA);
+					disagreementMatrix.at<double>(k, j) = (disagreementB + disagreementA) / (agreement + disagreementB + disagreementA);
+				}
+			}
 		}
 	}
 }

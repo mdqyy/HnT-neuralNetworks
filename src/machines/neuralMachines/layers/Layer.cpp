@@ -105,6 +105,8 @@ void Layer::setInputConnection(Connection* _connection) {
 
 
 void Layer::forwardSequence(std::vector<FeatureVector> _sequence) {
+	inputSignals = vector<FeatureVector>();
+	outputSignals = vector<FeatureVector>();
 	for (uint i = 0; i < _sequence.size(); i++) {
 		forward(_sequence[i]);
 		inputSignals.push_back(this->getInputSignal());

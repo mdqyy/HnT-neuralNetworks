@@ -16,84 +16,20 @@
 using namespace std;
 using namespace cv;
 
-void addDictionaryClasses(ClassificationDataset* dataset){
-	dataset->addClass("a");
-	dataset->addClass("â");
-	dataset->addClass("à");
-	dataset->addClass("b");
-	dataset->addClass("c");
-	dataset->addClass("d");
-	dataset->addClass("e");
-	dataset->addClass("ê");
-	dataset->addClass("é");
-	dataset->addClass("è");
-	dataset->addClass("f");
-	dataset->addClass("g");
-	dataset->addClass("h");
-	dataset->addClass("i");
-	dataset->addClass("j");
-	dataset->addClass("k");
-	dataset->addClass("l");
-	dataset->addClass("m");
-	dataset->addClass("n");
-	dataset->addClass("o");
-	dataset->addClass("p");
-	dataset->addClass("q");
-	dataset->addClass("r");
-	dataset->addClass("s");
-	dataset->addClass("t");
-	dataset->addClass("u");
-	dataset->addClass("ù");
-	dataset->addClass("ü");
-	dataset->addClass("v");
-	dataset->addClass("w");
-	dataset->addClass("x");
-	dataset->addClass("y");
-	dataset->addClass("z");
-	dataset->addClass("A");
-	dataset->addClass("B");
-	dataset->addClass("C");
-	dataset->addClass("D");
-	dataset->addClass("E");
-	dataset->addClass("F");
-	dataset->addClass("G");
-	dataset->addClass("H");
-	dataset->addClass("I");
-	dataset->addClass("J");
-	dataset->addClass("K");
-	dataset->addClass("L");
-	dataset->addClass("M");
-	dataset->addClass("N");
-	dataset->addClass("O");
-	dataset->addClass("P");
-	dataset->addClass("Q");
-	dataset->addClass("R");
-	dataset->addClass("S");
-	dataset->addClass("T");
-	dataset->addClass("U");
-	dataset->addClass("V");
-	dataset->addClass("W");
-	dataset->addClass("X");
-	dataset->addClass("Y");
-	dataset->addClass("Z");
-	dataset->addClass("'");
-	dataset->addClass("°");
-	dataset->addClass("%");
-	dataset->addClass("-");
-	dataset->addClass("/");
-	dataset->addClass("0");
-	dataset->addClass("1");
-	dataset->addClass("2");
-	dataset->addClass("3");
-	dataset->addClass("4");
-	dataset->addClass("5");
-	dataset->addClass("6");
-	dataset->addClass("7");
-	dataset->addClass("8");
-	dataset->addClass("9");
-}
-
 int main(int argc, char* argv[]) {
+	vector<string> arguments;
+	arguments.push_back("population");
+	arguments.push_back("classification dataset");
+	arguments.push_back("output classification dataset");
+	arguments.push_back("output classification dataset save location");
+	cout
+			<< helper("Create Population Network Rimes Classification Dataset",
+					"Create a classification dataset from Rimes files using the errors produced by passing the frames in a network population.", arguments)
+			<< endl;
+	if (argc != arguments.size() + 1) {
+		cerr << "Not enough arguments, " << argc - 1 << " given and " << arguments.size() << " required" << endl;
+		return EXIT_FAILURE;
+	}
 	PBDNN pop;
 	ifstream inStream(argv[1]);
 	inStream >> pop;
@@ -113,11 +49,45 @@ int main(int argc, char* argv[]) {
 		vector<FeatureVector> errorSequence;
 		for (uint k = 0; k < sequence.size(); k++) {
 			sample = sequence[k];
-			FeatureVector errorSample(population.size());
+			FeatureVector errorSample(population.size() * 4);
+			FeatureVector topNetwork(54);
+			FeatureVector topSample(54);
+			FeatureVector midNetwork(120);
+			FeatureVector midSample(120);
+			FeatureVector botNetwork(54);
+			FeatureVector botSample(54);
 			for (uint i = 0; i < population.size(); i++) {
 				population[i]->forward(sample);
 				networkOutput = population[i]->getOutputSignal();
-				errorSample[i] = ae.totalError(networkOutput,sample);
+				errorSample[i] = ae.totalError(networkOutput, sample);
+
+				int v = 0;
+				int vtop = 0;
+				int vmid = 0;
+				int vbot = 0;
+				for (int t = 0; t < 3; t++) {
+					for (int w = 0; w < 60; w++) {
+						if (w < 18) {
+							topNetwork[vtop] = networkOutput[v];
+							topSample[vtop] = sample[v];
+							vtop++;
+						}
+						if (w >= 10 && w < 50) {
+							midNetwork[vmid] = networkOutput[v];
+							midSample[vmid] = sample[v];
+							vmid++;
+						}
+						if (w >= 42) {
+							botNetwork[vbot] = networkOutput[v];
+							botSample[vbot] = sample[v];
+							vbot++;
+						}
+						v++;
+					}
+				}
+				errorSample[i+10] = ae.totalError(topNetwork,topSample);
+				errorSample[i+20] = ae.totalError(midNetwork,midSample);
+				errorSample[i+30] = ae.totalError(botNetwork,botSample);
 			}
 			errorSequence.push_back(errorSample);
 		}

@@ -12,7 +12,7 @@ using namespace std;
 
 PopulationClusterBP::PopulationClusterBP(PBDNN& _population, RegressionDataset& _data, LearningParams& _params, RegressionDataset& _valid,
 		Mask& _featureMask, Mask& _indexMask, ostream& _log) :
-		SupervisedTrainer(_population, _data, _featureMask, _indexMask), population(_population), params(_params), regData(_data), validationDataset(_valid), log(_log) {
+		SupervisedTrainer(_population, _data, _featureMask, _indexMask, _log), population(_population), params(_params), regData(_data), validationDataset(_valid){
 
 }
 
@@ -31,8 +31,9 @@ void PopulationClusterBP::train() {
 			ofstream outStream(name.str().c_str());
 			outStream << this->population;
 			outStream << this->params;
+			outStream.close();
 		}
-		if (params.isValidatedDuringProcess()) {
+		if (params.isValidatedDuringProcess() && i%params.getValidateEveryNIteration()==0) {
 			log << "Validation "<< endl;
 			validateIteration();
 		}
@@ -53,7 +54,8 @@ ErrorVector calculateDeltas2(LayerPtr _layer, FeatureVector _target, ValueVector
 ErrorVector calculateOutputDeltas2(LayerPtr _layer, FeatureVector _target, ValueVector _derivatives) {
 	ErrorVector delta = ErrorVector(_layer->getNumUnits());
 	for (uint i = 0; i < _target.getLength(); i++) {
-		delta[i] = _derivatives[i] * (_target[i] - _layer->getOutputSignal()[i]); // error calculation if output layer
+		delta[i] = _derivatives[i] * (_target[i] - _layer->getOutputSignal()[i]); // error calculation if output layer with MSE
+		//delta[i] = _derivatives[i]; // error calculation if output layer with Cross-Entropy
 	}
 	return delta;
 }
@@ -132,7 +134,7 @@ void PopulationClusterBP::trainOneIteration() {
 			correlatedTraining[k][l] = 0;
 		}
 	}
-	for (uint i = 0; i < data.getNumSequences(); i++) {
+	for (uint i = 0; i < data.getNumSequences()*params.getMaxTrainedPercentage(); i++) {
 		index = indexOrderSelection[i];
 		for (uint j = 0; j < data[index].size(); j++) {
 			realv minError = 10e+9;
@@ -152,8 +154,7 @@ void PopulationClusterBP::trainOneIteration() {
 	uint timesTrained = data.getNumSamples();
 	FeatureVector blackTarget = FeatureVector(regData.getTargetSample(0, 0));
 	for (uint k = 0; k < neuralNets.size(); k++) {
-		uint i = 0;
-		while (i < learningAffectations[k].size() && i < (data.getNumSamples()) * params.getMaxTrainedPercentage()) {
+		for(uint i=0; i< learningAffectations[k].size(); i++){
 			/* forward backward good sample */
 			pair<int, int> index = learningAffectations[k][i];
 			neuralNets[k]->forward(regData[index.first][index.second]);

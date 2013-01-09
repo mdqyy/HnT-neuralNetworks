@@ -6,6 +6,7 @@
  * \author Luc Mioulet
  */
 
+#include <ostream>
 #include "../dataset/Dataset.hpp"
 #include "../dataset/Mask.hpp"
 #include "../machines/Machine.hpp"
@@ -26,6 +27,8 @@ protected:
 	Mask& featureMask;
 	/*! Index mask */
 	Mask& indexMask;
+	/*! Logging stream*/
+	std::ostream& log;
 
 public:
 
@@ -36,7 +39,7 @@ public:
 	 * \param _featureMask Feature mask.
 	 * \param _indexMask Sample index mask.
 	 */
-	Trainer(Machine& _machine, Dataset& _data, Mask& _featureMask, Mask& _indexMask);
+	Trainer(Machine& _machine, Dataset& _data, Mask& _featureMask, Mask& _indexMask, std::ostream& _log);
 
 	/*!
 	 * Get the training dataset.
