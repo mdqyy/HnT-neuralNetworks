@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(PhD)
 #make flags
-set(CMAKE_CXX_FLAGS "-Wall -pedantic -o1")
+set(CMAKE_CXX_FLAGS "-Wall -pedantic -g -std=c99")
 
 find_package(OpenCV REQUIRED)
 
@@ -95,11 +95,17 @@ target_link_libraries(executables/createPixelDB Machines TinyXML ${OpenCV_LIBS} 
 add_executable(executables/createRegressionPixelRimes src/executables/createRegressionPixelRimes.cpp)
 target_link_libraries(executables/createRegressionPixelRimes Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
 
+add_executable(executables/createRegressionPixelRimesPerPart src/executables/createRegressionPixelRimesPerPart.cpp)
+target_link_libraries(executables/createRegressionPixelRimesPerPart Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
+
 add_executable(executables/createClassificationPixelRimes src/executables/createClassificationPixelRimes.cpp)
 target_link_libraries(executables/createClassificationPixelRimes Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
 
 add_executable(executables/createHTKFiles src/executables/createHTKFiles.cpp)
 target_link_libraries(executables/createHTKFiles Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
+
+add_executable(executables/createHTKHundredDictionnaries src/executables/createHTKHundredDictionnariesFiles.cpp)
+target_link_libraries(executables/createHTKHundredDictionnaries Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
 
 add_executable(executables/createToyClusterDatasets src/executables/createToyClusterDatasets.cpp)
 target_link_libraries(executables/createToyClusterDatasets Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
@@ -117,4 +123,4 @@ add_executable(executables/diversityMeasurement src/executables/diversityMeasure
 target_link_libraries(executables/diversityMeasurement Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
 add_executable(executables/createFoldRimes src/executables/createFoldRimes.cpp)
-target_link_libraries(executables/createFoldRimes)
+target_link_libraries(executables/createFoldRimes Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
