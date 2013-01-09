@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
 	vector<string> arguments;
 	arguments.push_back("classification dataset");
 	arguments.push_back("save folder for the dataset, the folder must contain a lab, labTrain and htk subfolder");
-	cout << helper("Create HTK learning files", "Create HTK learning files using a classification dataset.", arguments) << endl;
+	cout << helper("Create HTK testing files", "Create HTK testing files using a classification dataset.", arguments) << endl;
 	if (argc != arguments.size() + 1) {
 		cerr << "Not enough arguments, " << argc - 1 << " given and " << arguments.size() << " required" << endl;
 		return EXIT_FAILURE;
