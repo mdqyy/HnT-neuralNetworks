@@ -29,11 +29,16 @@ void rimesLoader(string groundTruthFile, string groundTruthFolder, int frameSize
 			position = line.find(" ");
 			label = line.substr(position + 1);
 			imageFile = groundTruthFolder + line.substr(0, position);
+			label = rtrim(label);
 			image = imread(imageFile, 0);
 			if (!image.empty() && image.rows == 60) {
 				vector<FeatureVector> frames = extractFrames(image, frameSize);
 				vector<string> labelSequence = extractLabelSequence(label);
 				dataset->addSequence(frames, labelSequence);
+			}
+			else {
+				cout << "Is empty label : " << label << endl;
+				cout << "In file : "<< imageFile << endl;
 			}
 		}
 		gtFile.close();
@@ -62,5 +67,6 @@ int main(int argc, char* argv[]) {
 	string saveLocation = argv[5];
 	rimesLoader(groundTruthFile, groundTruthFolder, frameSize, &dataset);
 	dataset.save(saveLocation);
+	cout <<" num sequences" <<dataset.getNumSequences() << endl;
 	return EXIT_SUCCESS;
 }

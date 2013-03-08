@@ -26,4 +26,13 @@ std::vector<std::string> extractLabelSequence(std::string _label);
  */
 void addDictionaryClasses(ClassificationDataset* _dataset);
 
+std::string &ltrim(std::string &s);
+
+// trim from end
+std::string &rtrim(std::string &s);
+
+// trim from both ends
+std::string &trim(std::string &s);
+
+
 #endif

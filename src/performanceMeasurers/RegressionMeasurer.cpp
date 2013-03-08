@@ -6,9 +6,27 @@
 
 #include "RegressionMeasurer.hpp"
 
+using namespace std;
+using namespace cv;
 
-RegressionMeasurer::RegressionMeasurer(NeuralNetwork& _machine, RegressionDataset& _data, ErrorMeasurer& _em) : machine(_machine), data(_data), errorMeasurer(_em), totalError(0.0){
+RegressionMeasurer::RegressionMeasurer(NeuralNetwork& _machine, RegressionDataset& _data, ErrorMeasurer& _em, realv _percentageOfElements) : machine(_machine), data(_data), errorMeasurer(_em), totalError(0.0), percentageOfElements(_percentageOfElements){
 	initMatrices();
+}
+
+vector<uint> RegressionMeasurer::defineIndexOrderSelection(uint _numSequences){
+  vector<uint> indexOrder;
+  for(uint i=0 ;  i<_numSequences; i++){
+    indexOrder.push_back(i);
+  }
+  int exchangeIndex=0;
+  RNG random(getTickCount());
+  random.next();
+  for(uint i=0 ;  i<_numSequences; i++){
+    random.next();
+    exchangeIndex=random.uniform(0,_numSequences);
+    swap(indexOrder[i],indexOrder[exchangeIndex]);
+  }
+  return indexOrder;
 }
 
 void RegressionMeasurer::initMatrices(){
@@ -29,15 +47,18 @@ void RegressionMeasurer::measurePerformance(){
 }
 
 void RegressionMeasurer::processMeanOutputAndStdDevOutputError(){
+	vector<uint> indexOrderSelection = defineIndexOrderSelection(data.getNumSequences());
+	uint index = 0;
 	FeatureVector output;
 	ErrorVector error;
 	realv oldMean;
 	realv numElements=1.0;
-	for(uint i=0; i < data.getNumSequences();i++){
-		for(uint j=0; j < data[i].size(); j++){
-			machine.forward(data[i][j]);
+	for(uint i=0; i < data.getNumSequences()*percentageOfElements;i++){
+		index = indexOrderSelection[i];
+		for(uint j=0; j < data[index].size(); j++){
+			machine.forward(data[index][j]);
 			output = machine.getOutputSignal();
-			error = errorMeasurer.errorPerUnit(output,data.getTargetSample(i,j));
+			error = errorMeasurer.errorPerUnit(output,data.getTargetSample(index,j));
 			for(uint k=0;k<output.getLength();k++){
 				oldMean = meanOutputError[k];
 				meanOutputError[k] = meanOutputError[k] + (error[k]-oldMean)/(numElements);

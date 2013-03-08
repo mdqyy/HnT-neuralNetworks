@@ -105,6 +105,7 @@ void ClassificationDataset::addSequence(vector<FeatureVector> _sequence, vector<
 	vector<int> indexClasses;
 	for (uint i = 0; i < _classes.size(); i++) {
 		if (classLabelIndex.find(_classes[i]) == classLabelIndex.end()) {
+		  cout <<_classes[i] << endl;
 			throw invalid_argument("ClassificationDataset : Class non existent");
 		}
 		indexClasses.push_back(getIndexLabel(_classes[i]));

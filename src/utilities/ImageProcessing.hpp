@@ -32,7 +32,7 @@ FeatureVector extractBlackAndWhiteFrame(cv::Mat _image, int _horizontalStartingP
 FeatureVector extractBlackAndWhiteFrame(cv::Mat _image, int _horizontalStartingPoint,uint _frameLength, std::pair<int,int> _frameZone);
 
 /*!
- * Extract frames of an images.
+ * Extract frames of an image.
  * \param _image The image.
  * \param _frameLength Frame Length.
  * \return The feature vector of frames.
@@ -40,7 +40,15 @@ FeatureVector extractBlackAndWhiteFrame(cv::Mat _image, int _horizontalStartingP
 std::vector<FeatureVector> extractFrames(cv::Mat _image, int _frameLength);
 
 /*!
- * Extract frames of an images.
+ * Extract overlapping frames of an image. Overlapping is at 50%.
+ * \param _image The image.
+ * \param _frameLength Frame Length.
+ * \return The feature vector of frames.
+ */
+std::vector<FeatureVector> extractOverlappingFrames(cv::Mat _image, int _frameLength);
+
+/*!
+ * Extract frames of an image.
  * \param _image The image.
  * \param _frameLength Frame Length.
  * \param _frameZone A given frame zone to extract.

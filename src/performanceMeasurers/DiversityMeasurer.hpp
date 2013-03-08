@@ -53,13 +53,23 @@ protected:
 
 	/*! Error measurer. */
 	ErrorMeasurer& errorMeasurer;
+
+	/*! Percentage of population */
+	realv percentageOfPopulation;
 public:
 	/*!
 	 * Parameter constructor.
 	 * \param _population Population.
 	 * \param _data Dataset To test diversity.
 	 */
-	DiversityMeasurer(PBDNN& _population, RegressionDataset& _data, ErrorMeasurer& _em);
+	DiversityMeasurer(PBDNN& _population, RegressionDataset& _data, ErrorMeasurer& _em, realv _percentageOfPopulation=0.05);
+
+	/*!
+	 * Used to define the index order call of the different sequences during validation.
+	 * \param _numSequences Number of sequences in the data.
+	 * \return Vector of unsigned integers.
+	 */
+	std::vector<uint> defineIndexOrderSelection(uint _numSequences);
 
 	/*!
 	 * Measure performances.

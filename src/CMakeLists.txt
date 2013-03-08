@@ -18,6 +18,8 @@ add_library(Machines dataset/Dataset.cpp
   dataset/ErrorVector.cpp 
   dataset/FeatureVector.cpp 
   dataset/supervised/ClassificationDataset.cpp
+  #dataset/supervised/AutoRegressionDataset.cpp
+  #dataset/supervised/NRegressionDataset.cpp
   dataset/supervised/RegressionDataset.cpp
   dataset/supervised/SupervisedDataset.cpp
   dataset/unsupervised/UnsupervisedDataset.cpp

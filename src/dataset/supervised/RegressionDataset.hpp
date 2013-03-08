@@ -35,14 +35,14 @@ class RegressionDataset : public SupervisedDataset{
    */
   void addSequence(std::vector<FeatureVector> _sequence, std::vector<FeatureVector> _value);
 
-  /*! 
+  /*!
    * Get the target feature vector for a sequence.
    * \param _i Sequence index.
    * \return The target sequence.
    */
   std::vector<FeatureVector> getTargetSequence(uint _i) const;
 
-  /*! 
+  /*!
    * Get the target feature vector for a sequence.
    * \param _i Sequence index.
    * \param _j Sample in sequence index.
@@ -59,14 +59,28 @@ class RegressionDataset : public SupervisedDataset{
   /*!
    * Load a database from a file.
    * \param _fileName
-   */ 
+   */
   void load(std::string _fileName);
 
   /*!
    * Save a database to a file.
    * \param _fileName
-   */ 
+   */
   void save(std::string _fileName);
+
+  /*!
+   * Simple save process.
+   * Will save everything as a feature vector per line.
+   * \param _fileName
+   */
+   void simpleSave(std::string _fileName);
+
+  /*!
+   * Simple load process.
+   * Will load everything as a feature vector per line.
+   * \param _fileName
+   */
+   void simpleLoad(std::string _fileName);
 
   /*!
    * Destructor.
