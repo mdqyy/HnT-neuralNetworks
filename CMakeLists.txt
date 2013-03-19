@@ -3,6 +3,7 @@ project(PhD)
 #make flags
 set(CMAKE_CXX_FLAGS "-Wall -pedantic -std=c99")
 
+SET(OpenCV_DIR "/home/entitees/labo-litis/partages/maurdor-labo-litis/libraries_install/share/OpenCV")
 find_package(OpenCV REQUIRED)
 
 set(Boost_USE_STATIC_LIBS   ON)
@@ -12,20 +13,6 @@ find_package(Boost COMPONENTS thread date_time program_options filesystem system
 find_package(Threads REQUIRED STATIC)
 
 # check if doxygen is even installed
-find_package(Doxygen)
-if (DOXYGEN_FOUND STREQUAL "NO")
-    message(FATAL_ERROR "Doxygen not found. Please get a copy http://www.doxygen.org")
-endif (DOXYGEN_FOUND STREQUAL "NO")
-if (DOXYGEN_FOUND STREQUAL "YES")
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
-  add_custom_target(doxygen ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
-  set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES doc)
-  get_target_property(DOC_TARGET doc TYPE)
-  if(NOT DOC_TARGET)
-    add_custom_target(doc)
-  endif()
-  add_dependencies(doc doxygen)
-endif (DOXYGEN_FOUND STREQUAL "YES")
 
 add_subdirectory(src)
 	
