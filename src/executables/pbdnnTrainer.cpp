@@ -45,7 +45,6 @@ int main(int argc, char* argv[]) {
   int populationSize = atoi(argv[1]);
   int numberOfHiddenUnits = atoi(argv[2]);
   int iterations = atoi(argv[3]);
-  vector<Vec3b> colors = createColorRepartition(populationSize);
   AEMeasurer mae;
   PBDNN pop = PBDNN(populationSize, dataset.getFeatureVectorLength(), numberOfHiddenUnits, dataset.getMean(), dataset.getStandardDeviation());
   DiversityMeasurer diversity(pop, dataset2, mae,0.01);
@@ -61,10 +60,12 @@ int main(int argc, char* argv[]) {
   params.setMaxIterations(iterations);
   params.setLearningRate(0.001);
   params.setMaxTrainedPercentage(0.1);
+  params.setDodges(1);
+  params.setProximity(0.35);
   params.setSavedDuringProcess(true);
   params.setValidateEveryNIteration(100);
   ofstream log("training.log");
-  PopulationClusterBP pbp(pop, dataset, params, dataset2, mask, mask, log);
+  PopulationTrainer pbp(pop, dataset, params, dataset2, mask, mask, log);
   // 07/02/13 : Not sure if useful or not so stop doing it
   /*cout << "Starting diversity" << endl << diversity.getDisagreementMatrix() << endl;
     cout << "Starting overall diversity : " << diversity.getDisagreementScalar() << endl;*/
@@ -82,6 +83,7 @@ int main(int argc, char* argv[]) {
   if(simpleMode == 0) {
     cout << "Recording Data" << endl;
     vector<NeuralNetworkPtr> population = pop.getPopulation();
+    vector<Vec3b> colors = createColorRepartition(pop.size());
     vector<vector<int> > assignedTo = diversity.findBestNetwork();
     vector<vector<FeatureVector> > recomposed = diversity.buildBestOutput();
     vector<int> pngParams = vector<int>();

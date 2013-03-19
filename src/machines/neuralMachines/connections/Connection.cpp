@@ -108,7 +108,10 @@ void Connection::setOutputLayer(Layer* _output) {
 void Connection::initializeWeights(uint _seed, realv _mean, realv _stdev) {
 	RNG random(_seed);
 	random.next();
-	random.fill(weights, RNG::NORMAL, _mean, _stdev);
+//	random.fill(weights, RNG::NORMAL, _mean, _stdev);
+	realv upper = 4*sqrt(6.0/((realv)(weights.cols+weights.rows-1)));
+	realv lower = -4*sqrt(6.0/((realv)(weights.cols+weights.rows-1)));
+	random.fill(weights,RNG::UNIFORM,upper,lower);
 }
 
 Mat Connection::getWeightsToNeuron(int _i) {

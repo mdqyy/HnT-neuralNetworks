@@ -74,6 +74,12 @@ protected:
 	/*! Problem type (BP_CLASSIFICATION, BP_REGRESSION, BP_AUTOENCODER) */
 	int task;
 
+	/*! Number of consecutive times a population can have an element learn no training data*/
+	uint dodges;
+
+	/* Proximity */
+	realv proximity;
+
 public:
 
 	/*!
@@ -81,7 +87,7 @@ public:
 	 */
 	LearningParams(realv _learningRate = 0.001, realv _learningRateDecrease = 0.95, uint _maxIterations = 10, uint _actualIteration = 0, uint _maxTrained = 5,
 			realv _maxTrainedPercentage = 0.25, realv _errorToFirst = 0.5, realv errorToFirstIncrease = 1.1, bool _savedDuringProcess = false,
-			std::string _saveLocation = ".", bool _validatedDuringProcess = true, int _validateEveryNIteration=5);
+		       std::string _saveLocation = ".", bool _validatedDuringProcess = true, int _validateEveryNIteration=5, int _dodges = 2, realv proximity = 0.30);
 
 	/*!
 	 * Do stochastic.
@@ -138,6 +144,41 @@ public:
 	realv getErrorToFirstIncrease() const;
 
 	/*!
+	 * Get number of dodges.
+	 * \return Number of dodges.
+	 */
+	uint getDodges() const;
+
+	/*!
+	 * Get maximum percentage of trained samples over one iteration.
+	 */
+	realv getMaxTrainedPercentage() const;
+
+	/*!
+	 * Get save location.
+	 * \return Save location.
+	 */
+	std::string getSaveLocation() const;
+
+	/*!
+	 * Get proximity .
+	 * \return Proximity.
+	 */
+	realv getProximity() const;
+
+	/*!
+	 * Get validated during process.
+	 * \return Is validated during learning.
+	 */
+	bool isValidatedDuringProcess() const;
+
+	/*!
+	 * Get saved during process.
+	 * \return Is saved during learning.
+	 */
+	bool isSavedDuringProcess() const;
+
+	/*!
 	 * Set learning rate.
 	 * \param _learningRate New learning rate.
 	 */
@@ -174,20 +215,9 @@ public:
 	void setErrorToFirstIncrease(realv _errorToFirstIncrease);
 
 	/*!
-	 * Get maximum percentage of trained samples over one iteration.
-	 */
-	realv getMaxTrainedPercentage() const;
-
-	/*!
 	 * Set maximum percentage of trained samples over one iteration.
 	 */
 	void setMaxTrainedPercentage(realv _maxTrainedPercentage);
-
-	/*!
-	 * Get saved during process.
-	 * \return Is saved during learning.
-	 */
-	bool isSavedDuringProcess() const;
 
 	/*!
 	 * Set saved during process.
@@ -195,11 +225,6 @@ public:
 	 */
 	void setSavedDuringProcess(bool _savedDuringProcess);
 
-	/*!
-	 * Get save location.
-	 * \return Save location.
-	 */
-	std::string getSaveLocation() const;
 
 	/*!
 	 * Set save location
@@ -214,16 +239,16 @@ public:
 	uint getActualIteration() const;
 
 	/*!
+	 * Get the task.
+	 * \return Get the processing task.
+	 */
+	int getTask() const;
+
+	/*!
 	 * Set actual iteration.
 	 * \param _actualIteration Actual iteration.
 	 */
 	void setActualIteration(uint _actualIteration);
-
-	/*!
-	 * Get validated during process.
-	 * \return Is validated during learning.
-	 */
-	bool isValidatedDuringProcess() const;
 
 	/*!
 	 * Set validated during process.
@@ -256,16 +281,22 @@ public:
 	void setStochastic(bool _stochastic);
 
 	/*!
-	 * Get the task.
-	 * \return Get the processing task.
-	 */
-	int getTask() const;
-
-	/*!
 	 * Set the task.
 	 * \param _task The learning task.
 	 */
 	void setTask(int _task);
+
+	/*! 
+	 * Set the number of dodges.
+	 * \param _dodges The number of doges.
+	 */
+	void setDodges(uint _dodges);
+
+	/*!
+	 * Set the proximity.
+	 * \param _proximity The proximity as a precentage.
+	 */
+	void setProximity(realv _proximity);
 
 	/*!
 	 * Destructor.

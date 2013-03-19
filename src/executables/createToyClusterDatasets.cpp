@@ -47,6 +47,6 @@ int main(int argc, char* argv[]) {
 	smilePotato(&dataset, numberOfPoints, centerX, centerY, standardDeviationX, standardDeviationY);
 	smilePotato(&dataset, numberOfPoints, -10.0, -1.0, 5.0, 10.0);
 	createDatFile(saveDatLocation, dataset);
-	dataset.save(saveDatasetLocation);
+	dataset.simpleSave(saveDatasetLocation);
 	return EXIT_SUCCESS;
 }

@@ -33,10 +33,13 @@ int main(int argc, char* argv[]) {
 	PBDNN pop;
 	ifstream inStream(argv[1]);
 	inStream >> pop;
+	cout << "Loaded population" << endl;
 	ClassificationDataset datasetBasic;
 	datasetBasic.load(argv[2]);
+	cout << "Loaded previous dataset" << endl;
 	ClassificationDataset datasetNetworks;
 	datasetNetworks.setName(argv[3]);
+	cout << "Created new dataset" << endl;
 	addDictionaryClasses(&datasetNetworks);
 	string saveLocation = argv[4];
 	vector<NeuralNetworkPtr> population = pop.getPopulation();

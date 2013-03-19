@@ -14,9 +14,9 @@ using namespace cv;
 int main (int argc, char* argv[]){
   /*RegressionDataset dataset;
   dataset.load("../xml/rimes-cv/Folds1/Training1.xml");*/
-  RegressionDataset dataset2;
-    dataset2.load("../xml/rimes-cv/Folds1/fold1.xml");
-    waitKey(10000);
+  /*  RegressionDataset dataset2;
+    dataset2.simpleLoad("test.xml");
+    cout << dataset2 << endl;*/
 //  Mat testMat(5,1,CV_64FC1,1.0);
 //  Mat meanMat(5,1,CV_64FC1,0.0);
 //  Mat stdevMat(5,1,CV_64FC1,1.0);

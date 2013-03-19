@@ -14,15 +14,18 @@ using namespace cv;
 
 
 int main (int argc, char* argv[]){
-   ClassificationDataset dataset;
-  //  RegressionDataset dataset;
-  dataset.load("../xml/xor.xml");
-  PBDNN testpop(1,dataset.getFeatureVectorLength(),5,dataset.getMean(), dataset.getStandardDeviation());
-  cout << dataset[0][0];
+  // ClassificationDataset dataset;
+  RegressionDataset dataset;
+  dataset.load("../../../../Bases/RIMES-CV/Images-Processed-30px-20px-13/fold1-noOverlapping.xml");
+  PBDNN testpop(2,dataset.getFeatureVectorLength(),5,dataset.getMean(), dataset.getStandardDeviation());
+  cout << testpop.getPopulation()[0]->getConnections()[0]->getWeights() << endl << endl;
+  testpop.regenerate(0);
+  cout << testpop.getPopulation()[0]->getConnections()[0]->getWeights() << endl  << endl;
+  /*cout << dataset[0][0];
   testpop.forwardSequence(dataset[0]);
-  cout << testpop.getOutputSequence()[0];
+  cout << testpop.getOutputSequence()[0];*/
   
-  Mask mask;
+  /* Mask mask;
   LearningParams params;
   ofstream log("training.log");
   PopulationBP pbp(testpop,dataset,params,mask,mask,log);
@@ -49,6 +52,6 @@ int main (int argc, char* argv[]){
   testpop.forwardSequence(dataset[0]);
   loadedPBDNN.forwardSequence(dataset[0]);
   cout << testpop.getOutputSequence()[0];
-  cout << loadedPBDNN.getOutputSequence()[0];
+  cout << loadedPBDNN.getOutputSequence()[0];*/
   return EXIT_SUCCESS;
 }

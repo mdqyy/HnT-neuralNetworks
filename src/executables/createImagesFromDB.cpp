@@ -13,12 +13,20 @@
 
 #include "../HnT.hpp"
 
-
 using namespace std;
 using namespace cv;
 
 int main(int argc, char* argv[]) {
-	UnsupervisedDataset dataset;
+	vector<string> arguments;
+	arguments.push_back("regression dataset");
+	arguments.push_back("save folder location");
+	arguments.push_back("number of image rows in a data vector");
+	cout << helper("Dataset to images", "Create images from a regression dataset.", arguments) << endl;
+	if (argc != arguments.size() + 1) {
+		cerr << "Not enough arguments, " << argc - 1 << " given and " << arguments.size() << " required" << endl;
+		return EXIT_FAILURE;
+	}
+	RegressionDataset dataset;
 	dataset.load(argv[1]);
 	uint rowsPerVector = atoi(argv[3]);
 	vector<int> params = vector<int>();

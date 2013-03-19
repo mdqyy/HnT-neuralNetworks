@@ -13,12 +13,11 @@
 #include "../trainer/errorMeasurers/ErrorMeasurer.hpp"
 #include "PerformanceMeasurer.hpp"
 
-
 /*!
  * \class RegressionMeasurer
  * Description
  */
-class RegressionMeasurer : public PerformanceMeasurer {
+class RegressionMeasurer: public PerformanceMeasurer {
 private:
 
 protected:
@@ -39,6 +38,9 @@ protected:
 
 	/*! Global error */
 	realv totalError;
+
+	/*! Percentage of elements */
+	realv percentageOfElements;
 public:
 
 	/*!
@@ -47,7 +49,14 @@ public:
 	 * \param _data Data to use for measurements.
 	 * \param _em Error measurer.
 	 */
-	RegressionMeasurer(NeuralNetwork& _machine, RegressionDataset& _data, ErrorMeasurer& _em);
+	RegressionMeasurer(NeuralNetwork& _machine, RegressionDataset& _data, ErrorMeasurer& _em, realv _percentageOfElements = 0.05);
+
+	/*!
+	 * Used to define the index order call of the different sequences during validation.
+	 * \param _numSequences Number of sequences in the data.
+	 * \return Vector of unsigned integers.
+	 */
+	std::vector<uint> defineIndexOrderSelection(uint _numSequences);
 
 	/*!
 	 * Process global mean output error.

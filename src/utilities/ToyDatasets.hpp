@@ -16,6 +16,7 @@
 #include <sstream>
 
 #include "../dataset/supervised/RegressionDataset.hpp"
+#include "../dataset/supervised/RegressionDataset.hpp"
 #include "../dataset/ValueVector.hpp"
 #include "../dataset/FeatureVector.hpp"
 

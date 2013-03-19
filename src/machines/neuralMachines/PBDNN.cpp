@@ -18,23 +18,31 @@ PBDNN::PBDNN(vector<NeuralNetworkPtr> _forwards) : forwardPopulation(_forwards),
 }
 
 PBDNN::PBDNN(uint _numNetworks, uint _numEntries, uint _hiddenLayerSize, ValueVector _mean, ValueVector _stdDev) : forwardPopulation(vector<NeuralNetworkPtr>()) , errors(vector<FeatureVector>()) {
-	RNG random(getTickCount());
-	for(uint i=0;i<_numNetworks;i++){
-      LayerPtr il = LayerPtr(new InputLayer(_numEntries, _mean, _stdDev));
-      LayerPtr th = LayerPtr(new LayerSigmoid(_hiddenLayerSize));
-      LayerPtr out = LayerPtr(new LayerSigmoid(_numEntries));
-      ConnectionPtr c1 = ConnectionPtr(new Connection(il.get(),th.get(), random.next()));
-      ConnectionPtr c2 = ConnectionPtr(new Connection(th.get(),out.get(), random.next()));
-      vector<LayerPtr> layers;
-      layers.push_back(il);
-      layers.push_back(th);
-      layers.push_back(out);
-      vector<ConnectionPtr> connections;
-      connections.push_back(c1);
-      connections.push_back(c2);
-      NeuralNetwork network(layers,connections,"network");
-      forwardPopulation.push_back(NeuralNetworkPtr(network.clone()));
+  RNG random(getTickCount());
+  for(uint i=0;i<_numNetworks;i++){
+    LayerPtr il = LayerPtr(new InputLayer(_numEntries, _mean, _stdDev));
+    LayerPtr th = LayerPtr(new LayerSigmoid(_hiddenLayerSize));
+    LayerPtr out = LayerPtr(new LayerSigmoid(_numEntries));
+    ConnectionPtr c1 = ConnectionPtr(new Connection(il.get(),th.get(), random.next()));
+    ConnectionPtr c2 = ConnectionPtr(new Connection(th.get(),out.get(), random.next()));
+    Mat ts = c1->getWeights();
+    Mat td = c2->getWeights();
+    for(int i=0;i<ts.cols-1;i++){
+      for(int j=i;j<td.cols-1;j++){
+	td.at<realv>(i,j)=ts.at<realv>(j,i);
+      }
     }
+    c2->setWeights(td.clone());
+    vector<LayerPtr> layers;
+    layers.push_back(il);
+    layers.push_back(th);
+    layers.push_back(out);
+    vector<ConnectionPtr> connections;
+    connections.push_back(c1);
+    connections.push_back(c2);
+    NeuralNetwork network(layers,connections,"network");
+    forwardPopulation.push_back(NeuralNetworkPtr(network.clone()));
+  }
 }
 
 void PBDNN::forwardSequence(std::vector<FeatureVector> _sequence){
@@ -50,12 +58,28 @@ void PBDNN::forwardSequence(std::vector<FeatureVector> _sequence){
 }
 
 void PBDNN::forward(FeatureVector _sample){
-	SEMeasurer mse;
-	errors = vector<FeatureVector>(1,FeatureVector(forwardPopulation.size()));
-	for(uint j=0;j<forwardPopulation.size();j++){
-		forwardPopulation[j]->forward(_sample);
-		errors[0][j]=mse.totalError(_sample,forwardPopulation[j]->getOutputSignal());
-	}
+  SEMeasurer mse;
+  errors = vector<FeatureVector>(1,FeatureVector(forwardPopulation.size()));
+  for(uint j=0;j<forwardPopulation.size();j++){
+    forwardPopulation[j]->forward(_sample);
+    errors[0][j]=mse.totalError(_sample,forwardPopulation[j]->getOutputSignal());
+  }
+}
+
+void PBDNN::regenerate(uint _k){
+  NeuralNetworkPtr old = forwardPopulation[_k];
+  vector<ConnectionPtr> connections = old->getConnections();
+  RNG rng;
+  connections[1]->initializeWeights(rng.next());
+  Mat ts = connections[1]->getWeights();
+  Mat td = connections[0]->getWeights();
+  for(int i=0;i<ts.cols-1;i++){
+    for(int j=i;j<td.cols-1;j++){
+      td.at<realv>(i,j)=ts.at<realv>(j,i);
+    }
+  }
+  connections[1]->setWeights(ts.clone());
+  connections[0]->setWeights(td.clone());
 }
 
 vector<NeuralNetworkPtr> PBDNN::getPopulation() const{
