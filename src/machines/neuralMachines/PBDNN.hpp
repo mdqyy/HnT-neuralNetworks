@@ -71,6 +71,9 @@ public:
 	 */
 	std::vector<FeatureVector> getOutputSequence();
 
+	/* Regenerate weight matrices */
+	void regenerate(uint _k);
+
 	/*!
 	 * Print data concerning the object.
 	 * \param _os Output file stream.

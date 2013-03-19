@@ -10,10 +10,8 @@ using namespace cv;
 using namespace std;
 
 LearningParams::LearningParams(realv _learningRate, realv _learningRateDecrease, uint _maxIterations, uint _actualIteration, uint _maxTrained, realv _maxTrainedPercentage,
-		realv _errorToFirst, realv _errorToFirstIncrease, bool _savedDuringProcess, string _saveLocation, bool _validatedDuringProcess, int _validateEveryNIteration) :
-		learningRate(_learningRate), learningRateDecrease(_learningRateDecrease), maxIterations(_maxIterations), maxTrained(_maxTrained), maxTrainedPercentage(
-				_maxTrainedPercentage), errorToFirst(_errorToFirst), errorToFirstIncrease(_errorToFirstIncrease), savedDuringProcess(_savedDuringProcess), saveLocation(
-				_saveLocation), validatedDuringProcess(_validatedDuringProcess), validateEveryNIteration(_validateEveryNIteration) {
+			       realv _errorToFirst, realv _errorToFirstIncrease, bool _savedDuringProcess, string _saveLocation, bool _validatedDuringProcess, int _validateEveryNIteration, int _dodges, realv _proximity) :
+learningRate(_learningRate), learningRateDecrease(_learningRateDecrease), maxIterations(_maxIterations), maxTrained(_maxTrained), maxTrainedPercentage(_maxTrainedPercentage), errorToFirst(_errorToFirst), errorToFirstIncrease(_errorToFirstIncrease), savedDuringProcess(_savedDuringProcess), saveLocation(_saveLocation), validatedDuringProcess(_validatedDuringProcess), validateEveryNIteration(_validateEveryNIteration), dodges(_dodges), proximity(_proximity) {
 
 }
 
@@ -49,6 +47,26 @@ realv LearningParams::getErrorToFirstIncrease() const {
 	return errorToFirstIncrease;
 }
 
+uint LearningParams::getDodges() const {
+	return dodges;
+}
+
+uint LearningParams::getActualIteration() const {
+	return actualIteration;
+}
+
+realv LearningParams::getProximity() const {
+  return proximity;
+}
+
+realv LearningParams::getMaxTrainedPercentage() const {
+	return maxTrainedPercentage;
+}
+
+std::string LearningParams::getSaveLocation() const {
+	return saveLocation;
+}
+
 void LearningParams::setLearningRate(realv _learningRate) {
 	learningRate = _learningRate;
 }
@@ -77,10 +95,6 @@ void LearningParams::setErrorToFirstIncrease(realv _errorToFirstIncrease) {
 	errorToFirstIncrease = _errorToFirstIncrease;
 }
 
-realv LearningParams::getMaxTrainedPercentage() const {
-	return maxTrainedPercentage;
-}
-
 void LearningParams::setMaxTrainedPercentage(realv maxTrainedPercentage) {
 	if (maxTrainedPercentage <= 1.0 && maxTrainedPercentage >= 0.0) {
 		this->maxTrainedPercentage = maxTrainedPercentage;
@@ -95,17 +109,15 @@ void LearningParams::setSavedDuringProcess(bool _saveDuringProcess) {
 	this->savedDuringProcess = _saveDuringProcess;
 }
 
-std::string LearningParams::getSaveLocation() const {
-	return saveLocation;
-}
 
 void LearningParams::setSaveLocation(std::string _saveLocation) {
 	this->saveLocation = _saveLocation;
 }
 
-uint LearningParams::getActualIteration() const {
-	return actualIteration;
+void LearningParams::setDodges(uint _dodges) {
+	this->dodges = _dodges;
 }
+
 
 void LearningParams::setActualIteration(uint _actualIteration) {
 	this->actualIteration = _actualIteration;
@@ -135,12 +147,16 @@ int LearningParams::getTask() const {
 	return task;
 }
 
-void LearningParams::setTask(int task) {
+void LearningParams::setTask(int _task) {
 	this->task = task;
 }
 
 void LearningParams::setStochastic(bool _stochastic) {
 	this->stochastic = _stochastic;
+}
+
+void LearningParams::setProximity(realv _proximity){
+  this->proximity = _proximity;
 }
 
 LearningParams::~LearningParams() {

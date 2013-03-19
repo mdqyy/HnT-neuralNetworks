@@ -71,6 +71,15 @@ target_link_libraries(executables/pbdnnClusterReload Machines TinyXML ${OpenCV_L
 add_executable(executables/pbdnnClusterBestNetwork src/executables/pbdnnClusterBestNetwork.cpp)
 target_link_libraries(executables/pbdnnClusterBestNetwork Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
+add_executable(executables/pbdnnTrainer src/executables/pbdnnTrainer.cpp)
+target_link_libraries(executables/pbdnnTrainer Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
+add_executable(executables/pbdnnRecomposer src/executables/pbdnnRecomposeNewNetwork.cpp)
+target_link_libraries(executables/pbdnnRecomposer Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
+add_executable(executables/pbdnnTrainerPursuit src/executables/pbdnnTrainerPursuit.cpp)
+target_link_libraries(executables/pbdnnTrainerPursuit Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
 
 ##Create databases 
 
@@ -82,6 +91,10 @@ target_link_libraries(executables/createPNDB Machines TinyXML ${OpenCV_LIBS} ${B
 
 add_executable(executables/createImagesFromDB src/executables/createImagesFromDB.cpp)
 target_link_libraries(executables/createImagesFromDB Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
+add_executable(executables/createImagesFromNetwork src/executables/createImageFromNetwork.cpp)
+target_link_libraries(executables/createImagesFromNetwork Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
 
 add_executable(executables/createPixelRimes src/executables/createPixelRimes.cpp)
 target_link_libraries(executables/createPixelRimes Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})

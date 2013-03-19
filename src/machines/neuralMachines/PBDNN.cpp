@@ -66,6 +66,22 @@ void PBDNN::forward(FeatureVector _sample){
   }
 }
 
+void PBDNN::regenerate(uint _k){
+  NeuralNetworkPtr old = forwardPopulation[_k];
+  vector<ConnectionPtr> connections = old->getConnections();
+  RNG rng;
+  connections[1]->initializeWeights(rng.next());
+  Mat ts = connections[1]->getWeights();
+  Mat td = connections[0]->getWeights();
+  for(int i=0;i<ts.cols-1;i++){
+    for(int j=i;j<td.cols-1;j++){
+      td.at<realv>(i,j)=ts.at<realv>(j,i);
+    }
+  }
+  connections[1]->setWeights(ts.clone());
+  connections[0]->setWeights(td.clone());
+}
+
 vector<NeuralNetworkPtr> PBDNN::getPopulation() const{
   return forwardPopulation;
 }

@@ -156,8 +156,7 @@ void PopulationClusterBP::trainOneIteration() {
       learningAffectations[bestNetwork].push_back(pair<int, int>(index, j));
     }
   }
-  uint timesTrained = data.getNumSamples();
-  FeatureVector blackTarget = FeatureVector(regData.getTargetSample(0, 0));
+  FeatureVector blackTarget = FeatureVector(regData.getTargetSample(0, 0).getLength());
 
   for (uint k = 0; k < neuralNets.size(); k++) {
     log << "during training network "<<k <<" received " <<learningAffectations[k].size()<< " elements" << endl;

@@ -18,8 +18,7 @@ using namespace cv;
 
 int main(int argc, char* argv[]) {
   vector<string> arguments;
-  arguments.push_back("population size");
-  arguments.push_back("number of hidden units");
+  arguments.push_back("populationFile");
   arguments.push_back("number of iterations");
   arguments.push_back("learning dataset");
   arguments.push_back("validation dataset");
@@ -29,25 +28,25 @@ int main(int argc, char* argv[]) {
     cerr << "Not enough arguments, " << argc - 1 << " given and " << arguments.size() << " required" << endl;
     return EXIT_FAILURE;
   }
-  int simpleMode = atoi(argv[6]);
+  int simpleMode = atoi(argv[5]);
   RegressionDataset dataset;
   RegressionDataset dataset2;
   if(simpleMode!=0) {
-    dataset.simpleLoad(argv[4]);
-    dataset2.simpleLoad(argv[5]);
+    dataset.simpleLoad(argv[3]);
+    dataset2.simpleLoad(argv[4]);
   }
   else {
-    dataset.load(argv[4]);
-    dataset2.load(argv[5]);
+    dataset.load(argv[3]);
+    dataset2.load(argv[4]);
   }
   cout << "Learning dataset loaded, total elements : " << dataset.getNumSamples() << endl;
   cout << "Validation dataset loaded, total elements : " << dataset2.getNumSamples() << endl;
-  int populationSize = atoi(argv[1]);
-  int numberOfHiddenUnits = atoi(argv[2]);
-  int iterations = atoi(argv[3]);
-  vector<Vec3b> colors = createColorRepartition(populationSize);
+  int iterations = atoi(argv[2]);
+
   AEMeasurer mae;
-  PBDNN pop = PBDNN(populationSize, dataset.getFeatureVectorLength(), numberOfHiddenUnits, dataset.getMean(), dataset.getStandardDeviation());
+  PBDNN pop;
+  ifstream in(argv[1]);
+  in >> pop;
   DiversityMeasurer diversity(pop, dataset2, mae,0.01);
 
   // 07/02/13 : Not sure if useful or not so stop doing it
@@ -61,10 +60,12 @@ int main(int argc, char* argv[]) {
   params.setMaxIterations(iterations);
   params.setLearningRate(0.001);
   params.setMaxTrainedPercentage(0.1);
+  params.setDodges(1);
+  params.setProximity(0.10);
   params.setSavedDuringProcess(true);
   params.setValidateEveryNIteration(100);
   ofstream log("training.log");
-  PopulationClusterBP pbp(pop, dataset, params, dataset2, mask, mask, log);
+  PopulationTrainer pbp(pop, dataset, params, dataset2, mask, mask, log);
   // 07/02/13 : Not sure if useful or not so stop doing it
   /*cout << "Starting diversity" << endl << diversity.getDisagreementMatrix() << endl;
     cout << "Starting overall diversity : " << diversity.getDisagreementScalar() << endl;*/
@@ -81,7 +82,8 @@ int main(int argc, char* argv[]) {
 
   if(simpleMode == 0) {
     cout << "Recording Data" << endl;
-    vector<NeuralNetworkPtr> population = pop.getPopulation();
+    vector<NeuralNetworkPtr> population = pop.getPopulation();  
+    vector<Vec3b> colors = createColorRepartition(population.size());
     vector<vector<int> > assignedTo = diversity.findBestNetwork();
     vector<vector<FeatureVector> > recomposed = diversity.buildBestOutput();
     vector<int> pngParams = vector<int>();

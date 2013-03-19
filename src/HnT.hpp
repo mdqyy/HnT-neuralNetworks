@@ -43,6 +43,7 @@
 #include "trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBP.hpp"
 #include "trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBPBatch.hpp"
 #include "trainer/supervisedTrainers/neuralNetworkTrainers/PopulationClusterBP.hpp"
+#include "trainer/supervisedTrainers/neuralNetworkTrainers/PopulationTrainer.hpp"
 #include "trainer/supervisedTrainers/neuralNetworkTrainers/LearningParams.hpp"
 #include "utilities/ImageProcessing.hpp"
 #include "utilities/GeneralUtilities.hpp"
