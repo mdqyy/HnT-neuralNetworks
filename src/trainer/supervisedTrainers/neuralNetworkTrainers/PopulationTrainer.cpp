@@ -83,9 +83,9 @@ void threadForwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint _k, Reg
 
 
 // Thread process per network forward and backward to train min error networks
-void threadForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint _k, RegressionDataset* _regData, vector<vector<uint> >* _learningAffectations, realv _learningRate){
+void threadForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint _k, RegressionDataset* _regData, vector<vector<uint> >* _learningAffectations, realv _learningRate,uint _maxTrained){
   FeatureVector blackTarget = FeatureVector(_regData->getTargetSample(0, 0).getLength());
-  for(uint i=0; i< (*_learningAffectations)[_k].size(); i++){
+  for(uint i=0; i< _maxTrained && i< (*_learningAffectations)[_k].size(); i++){
     /* forward backward good sample */
     uint index = (*_learningAffectations)[_k][i];
     (*_neuralNets)[_k]->forward((*_regData)[index][0]);
@@ -95,11 +95,11 @@ void threadForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint
     randomK.next();
     uint randK = 0;
     uint randI = 0;
-    do {
-      randK = randomK.uniform(0, (*_neuralNets).size());
-    } while (randK == _k);
-    randomK.next();
-    if((*_learningAffectations)[randK].size() > 0 ) {
+    for(uint i = 0; i < (*_neuralNets).size()-1; i++){
+      do {
+	randK = randomK.uniform(0, (*_neuralNets).size());
+      } while( (randK == _k) && (*_learningAffectations)[randK].size() > 0);
+      randomK.next();
       randI = randomK.uniform(0, (*_learningAffectations)[randK].size());
       index = (*_learningAffectations)[randK][randI];
       (*_neuralNets)[_k]->forward((*_regData)[index][0]);
@@ -144,7 +144,7 @@ void PopulationTrainer::trainOneIteration() {
   vector<NeuralNetworkPtr> neuralNets = population.getPopulation();
   AEMeasurer mae;
   DiversityMeasurer diversity = DiversityMeasurer(population, validationDataset, mae);
-
+  uint maxTrained = regData.getNumSequences()*params.getMaxTrainedPercentage()/neuralNets.size();
   vector< vector<realv> > errors;
   vector<uint> histogramOfTrainees(neuralNets.size(),0);
   for (uint k = 0; k < neuralNets.size(); k++) {
@@ -179,7 +179,7 @@ void PopulationTrainer::trainOneIteration() {
   /*Train according to learning affectations*/
   vector<boost::thread * > threadsForwardBackward;
   for(uint k=0; k<neuralNets.size();k++){
-    threadsForwardBackward.push_back(new boost::thread(threadForwardBackwardPerNetwork, &neuralNets, k, &regData, &learningAffectations, params.getLearningRate()));
+    threadsForwardBackward.push_back(new boost::thread(threadForwardBackwardPerNetwork, &neuralNets, k, &regData, &learningAffectations, params.getLearningRate(), maxTrained));
   }
   for(uint k=0; k<neuralNets.size();k++){
     threadsForwardBackward[k]->join();
