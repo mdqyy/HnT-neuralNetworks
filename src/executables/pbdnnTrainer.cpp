@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
   if(simpleMode == 0) {
     cout << "Recording Data" << endl;
     vector<NeuralNetworkPtr> population = pop.getPopulation();
-    vector<Vec3b> colors = createColorRepartition(pop.size());
+    vector<Vec3b> colors = createColorRepartition(population.size());
     vector<vector<int> > assignedTo = diversity.findBestNetwork();
     vector<vector<FeatureVector> > recomposed = diversity.buildBestOutput();
     vector<int> pngParams = vector<int>();

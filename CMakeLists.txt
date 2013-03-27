@@ -95,7 +95,6 @@ target_link_libraries(executables/createImagesFromDB Machines TinyXML ${OpenCV_L
 add_executable(executables/createImagesFromNetwork src/executables/createImageFromNetwork.cpp)
 target_link_libraries(executables/createImagesFromNetwork Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
-
 add_executable(executables/createPixelRimes src/executables/createPixelRimes.cpp)
 target_link_libraries(executables/createPixelRimes Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
@@ -122,6 +121,12 @@ target_link_libraries(executables/createHTKHundredDictionnaries Machines TinyXML
 
 add_executable(executables/createToyClusterDatasets src/executables/createToyClusterDatasets.cpp)
 target_link_libraries(executables/createToyClusterDatasets Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
+
+add_executable(executables/createSignalFromNetwork src/executables/createSignalFromNetwork.cpp)
+target_link_libraries(executables/createSignalFromNetwork Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
+
+add_executable(executables/createImageFromClusters src/executables/createImageFromClusters.cpp)
+target_link_libraries(executables/createImageFromClusters Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
 
 
 ## Various tasks
