@@ -62,6 +62,15 @@ vector<FeatureVector> extractOverlappingFrames(Mat _image, int _frameLength) {
   return features;
 }
 
+vector<FeatureVector> extractOverlappingFramesPPerP(Mat _image, int _frameLength) {
+  vector<FeatureVector> features = vector<FeatureVector>();
+  for (int i = 0; i < _image.cols - _frameLength; i++) {
+      features.push_back(extractBlackAndWhiteFrame(_image, i, _frameLength));
+  }
+  return features;
+}
+
+
 vector<FeatureVector> extractFrames(Mat _image, int _frameLength, pair<int,int> _frameZone) {
   int subparts = floor(((float) _image.cols) / ((float) _frameLength));
   vector<FeatureVector> features = vector<FeatureVector>();

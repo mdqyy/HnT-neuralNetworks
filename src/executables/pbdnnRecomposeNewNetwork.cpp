@@ -67,5 +67,6 @@ int main(int argc, char* argv[]) {
 	PBDNN recomposedPopulation(newPopulation);
 	ofstream outStream(argv[4]);
 	outStream << recomposedPopulation;
+	cout << "pop final size : " << newPopulation.size() << endl; 
 	return EXIT_SUCCESS;
 }
