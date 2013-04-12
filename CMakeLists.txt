@@ -61,6 +61,9 @@ target_link_libraries(executables/pbdnnClusterBestNetwork Machines TinyXML ${Ope
 add_executable(executables/pbdnnTrainer src/executables/pbdnnTrainer.cpp)
 target_link_libraries(executables/pbdnnTrainer Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
+add_executable(executables/pbdnnInverseTrainer src/executables/pbdnnInverseTrainer.cpp)
+target_link_libraries(executables/pbdnnInverseTrainer Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
 add_executable(executables/pbdnnRecomposer src/executables/pbdnnRecomposeNewNetwork.cpp)
 target_link_libraries(executables/pbdnnRecomposer Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
@@ -114,6 +117,9 @@ target_link_libraries(executables/createSignalFromNetwork Machines TinyXML ${Ope
 
 add_executable(executables/createImageFromClusters src/executables/createImageFromClusters.cpp)
 target_link_libraries(executables/createImageFromClusters Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
+
+add_executable(executables/imagesToHTK src/executables/ImagesToHTK.cpp)
+target_link_libraries(executables/imagesToHTK Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES}  ${Boost_LIBS})
 
 
 ## Various tasks

@@ -1,10 +1,10 @@
 /*!
- * \file PopulationTrainer.cpp
- * Body of the PopulationTrainer class.
+ * \file PopulationInverseTrainer.cpp
+ * Body of the PopulationInverseTrainer class.
  * \author Luc Mioulet
  */
 
-#include "PopulationTrainer.hpp"
+#include "PopulationInverseTrainer.hpp"
 #include "../../errorMeasurers/AEMeasurer.hpp"
 
 using namespace cv;
@@ -85,18 +85,11 @@ void threadForwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint _k, Reg
 // Thread process per network forward and backward to train min error networks
 void threadForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint _k, RegressionDataset* _regData, vector<vector<uint> >* _learningAffectations, realv _learningRate,uint _maxTrained){
   FeatureVector blackTarget = FeatureVector(_regData->getTargetSample(0, 0).getLength());
+  Mat inversed;
+  RNG randomK((uint) getTickCount());
+  uint index = 0;
+  /* first backward random bad sample*/
   for(uint i=0; i< _maxTrained && i< (*_learningAffectations)[_k].size(); i++){
-    /* forward backward good sample */
-    uint index = (*_learningAffectations)[_k][i];
-    (*_neuralNets)[_k]->forward((*_regData)[index][0]);
-    backwardTiedWeights((*_neuralNets)[_k], (*_regData).getTargetSample(index,0), _learningRate);
-    /* forward backward bad random sample */
-<<<<<<< HEAD
-    /*  RNG randomK;
-=======
-    /* Removed since fast backprop from Tied weights greatly improves the results, avoids killing diversity*/
-    /*    RNG randomK;
->>>>>>> 35282568fe5214ef404ec8a29c63bb8ed871d8bb
     randomK.next();
     uint randK = 0;
     uint randI = 0;
@@ -108,18 +101,27 @@ void threadForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint
       randI = randomK.uniform(0, (*_learningAffectations)[randK].size());
       index = (*_learningAffectations)[randK][randI];
       (*_neuralNets)[_k]->forward((*_regData)[index][0]);
+      bitwise_not((*_regData)[index][0].getMat(),inversed);
+      blackTarget = FeatureVector(inversed);
       backwardTiedWeights((*_neuralNets)[_k], blackTarget, _learningRate);
-      }*/
+    }
+  }
+  /* then backward good samples*/
+  for(uint i=0; i< _maxTrained && i< (*_learningAffectations)[_k].size(); i++){
+    /* forward backward good sample */
+    index = (*_learningAffectations)[_k][i];
+    (*_neuralNets)[_k]->forward((*_regData)[index][0]);
+    backwardTiedWeights((*_neuralNets)[_k], (*_regData).getTargetSample(index,0), _learningRate);
   }
 }
 
 
 /* Population trainer methods */
-PopulationTrainer::PopulationTrainer(PBDNN& _population, RegressionDataset& _data, LearningParams& _params, RegressionDataset& _valid, Mask& _featureMask, Mask& _indexMask, ostream& _log) : SupervisedTrainer(_population, _data, _featureMask, _indexMask, _log), population(_population), params(_params), regData(_data), validationDataset(_valid), endurance(vector<uint>(population.getPopulation().size(),params.getDodges())){
+PopulationInverseTrainer::PopulationInverseTrainer(PBDNN& _population, RegressionDataset& _data, LearningParams& _params, RegressionDataset& _valid, Mask& _featureMask, Mask& _indexMask, ostream& _log) : SupervisedTrainer(_population, _data, _featureMask, _indexMask, _log), population(_population), params(_params), regData(_data), validationDataset(_valid), endurance(vector<uint>(population.getPopulation().size(),params.getDodges())){
 
 }
 
-void PopulationTrainer::train() {
+void PopulationInverseTrainer::train() {
   uint i = params.getActualIteration();
   do {
     i++;
@@ -143,7 +145,7 @@ void PopulationTrainer::train() {
   } while (i < params.getMaxIterations());
 }
 
-void PopulationTrainer::trainOneIteration() {
+void PopulationInverseTrainer::trainOneIteration() {
   vector<uint> indexOrderSelection = defineIndexOrderSelection(data.getNumSequences());
   uint numberOfElementsToProcess = regData.getNumSequences()*params.getMaxTrainedPercentage();
   vector<NeuralNetworkPtr> neuralNets = population.getPopulation();
@@ -192,7 +194,7 @@ void PopulationTrainer::trainOneIteration() {
   }
 }
 
-void PopulationTrainer::validateIteration() {
+void PopulationInverseTrainer::validateIteration() {
   AEMeasurer mae;
   vector<NeuralNetworkPtr> neuralNets = population.getPopulation();
   DiversityMeasurer diversity = DiversityMeasurer(population, validationDataset, mae,params.getMaxTrainedPercentage());
@@ -204,16 +206,16 @@ void PopulationTrainer::validateIteration() {
     regMeasurer.measurePerformance();
     log << i << " \t | \t " << regMeasurer.getTotalError() << "\t | \t" << bestErrors[i] << "\t | \t" << validationAffectations[i] << endl;
   }
-  /*diversity.measurePerformance();
+  diversity.measurePerformance();
   log << "Diversity : " << endl << diversity.getDisagreementMatrix() << endl;
-  log << "Diversity scalar: " << endl << diversity.getDisagreementScalar() << endl;*/
+  log << "Diversity scalar: " << endl << diversity.getDisagreementScalar() << endl;
 }
 
-PopulationTrainer::~PopulationTrainer() {
+PopulationInverseTrainer::~PopulationInverseTrainer() {
 
 }
 
-vector<vector<uint > > PopulationTrainer::determineLearningAffectations(vector<vector<realv> >& _errors, vector<uint>& _indexOrderSelection, uint _numberOfElementsToProcess, realv _maxError){
+vector<vector<uint > > PopulationInverseTrainer::determineLearningAffectations(vector<vector<realv> >& _errors, vector<uint>& _indexOrderSelection, uint _numberOfElementsToProcess, realv _maxError){
   vector<vector<uint > > learningAffectations = vector<vector<uint> >();
   for(uint k=0;k<_errors.size();k++){
     learningAffectations.push_back(vector<uint >());

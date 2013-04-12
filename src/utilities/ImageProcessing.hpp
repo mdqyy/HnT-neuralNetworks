@@ -48,6 +48,14 @@ std::vector<FeatureVector> extractFrames(cv::Mat _image, int _frameLength);
 std::vector<FeatureVector> extractOverlappingFrames(cv::Mat _image, int _frameLength);
 
 /*!
+ * Extract overlapping frames of an image. Overlapping is pixel per pixel.
+ * \param _image The image.
+ * \param _frameLength Frame Length.
+ * \return The feature vector of frames.
+ */
+std::vector<FeatureVector> extractOverlappingFramesPPerP(cv::Mat _image, int _frameLength);
+
+/*!
  * Extract frames of an image.
  * \param _image The image.
  * \param _frameLength Frame Length.
