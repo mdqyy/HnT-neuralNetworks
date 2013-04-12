@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
   params.setLearningRate(0.001);
   params.setMaxTrainedPercentage(0.1);
   params.setDodges(1);
-  params.setProximity(0.35);
+  params.setProximity(1.0);
   params.setSavedDuringProcess(true);
   params.setValidateEveryNIteration(100);
   ofstream log("training.log");

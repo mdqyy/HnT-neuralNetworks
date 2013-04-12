@@ -91,7 +91,7 @@ void threadForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint
     (*_neuralNets)[_k]->forward((*_regData)[index][0]);
     backwardTiedWeights((*_neuralNets)[_k], (*_regData).getTargetSample(index,0), _learningRate);
     /* forward backward bad random sample */
-    RNG randomK;
+    /*  RNG randomK;
     randomK.next();
     uint randK = 0;
     uint randI = 0;
@@ -104,7 +104,7 @@ void threadForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint
       index = (*_learningAffectations)[randK][randI];
       (*_neuralNets)[_k]->forward((*_regData)[index][0]);
       backwardTiedWeights((*_neuralNets)[_k], blackTarget, _learningRate);
-    }
+      }*/
   }
 }
 
@@ -199,9 +199,9 @@ void PopulationTrainer::validateIteration() {
     regMeasurer.measurePerformance();
     log << i << " \t | \t " << regMeasurer.getTotalError() << "\t | \t" << bestErrors[i] << "\t | \t" << validationAffectations[i] << endl;
   }
-  diversity.measurePerformance();
+  /*diversity.measurePerformance();
   log << "Diversity : " << endl << diversity.getDisagreementMatrix() << endl;
-  log << "Diversity scalar: " << endl << diversity.getDisagreementScalar() << endl;
+  log << "Diversity scalar: " << endl << diversity.getDisagreementScalar() << endl;*/
 }
 
 PopulationTrainer::~PopulationTrainer() {
