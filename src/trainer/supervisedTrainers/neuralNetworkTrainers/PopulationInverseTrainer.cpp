@@ -85,11 +85,10 @@ void threadForwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint _k, Reg
 // Thread process per network forward and backward to train min error networks
 void threadForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint _k, RegressionDataset* _regData, vector<vector<uint> >* _learningAffectations, realv _learningRate,uint _maxTrained){
   FeatureVector blackTarget = FeatureVector(_regData->getTargetSample(0, 0).getLength());
-  Mat inversed;
   RNG randomK((uint) getTickCount());
   uint index = 0;
-  /* first backward random bad sample*/
-  for(uint i=0; i< _maxTrained && i< (*_learningAffectations)[_k].size(); i++){
+  /* first backward random bad sample, pb ?*/
+ /* for(uint i=0; i< _maxTrained && i< (*_learningAffectations)[_k].size(); i++){
     randomK.next();
     uint randK = 0;
     uint randI = 0;
@@ -105,13 +104,36 @@ void threadForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint
       blackTarget = FeatureVector(inversed);
       backwardTiedWeights((*_neuralNets)[_k], blackTarget, _learningRate);
     }
-  }
+  }*/
   /* then backward good samples*/
   for(uint i=0; i< _maxTrained && i< (*_learningAffectations)[_k].size(); i++){
+    /* first backward random bad sample*/
+    randomK.next();
+    uint randK = 0;
+    uint randI = 0;
+    for(uint i = 0; i < (*_neuralNets).size()-1; i++){
+      do {
+	randK = randomK.uniform(0, (*_neuralNets).size());
+      } while( (randK == _k) && (*_learningAffectations)[randK].size() > 0);
+      randomK.next();
+      randI = randomK.uniform(0, (*_learningAffectations)[randK].size());
+      index = (*_learningAffectations)[randK][randI];
+      (*_neuralNets)[_k]->forward((*_regData)[index][0]);
+     for (uint v =0 ; v <  ((*_regData)[index][0]).getLength();v++){
+       if((*_regData)[index][0][v]==0.0){
+          blackTarget[v] = 1.0;
+        }   
+        else{
+            blackTarget[v] = 0.0; 
+        } 
+      }
+      backwardTiedWeights((*_neuralNets)[_k], blackTarget, _learningRate*0.1);
+    }
+
     /* forward backward good sample */
     index = (*_learningAffectations)[_k][i];
     (*_neuralNets)[_k]->forward((*_regData)[index][0]);
-    backwardTiedWeights((*_neuralNets)[_k], (*_regData).getTargetSample(index,0), _learningRate);
+    backwardTiedWeights((*_neuralNets)[_k], (*_regData).getTargetSample(index,0), _learningRate*10);
   }
 }
 

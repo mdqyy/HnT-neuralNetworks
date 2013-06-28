@@ -91,12 +91,9 @@ void threadForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint
     (*_neuralNets)[_k]->forward((*_regData)[index][0]);
     backwardTiedWeights((*_neuralNets)[_k], (*_regData).getTargetSample(index,0), _learningRate);
     /* forward backward bad random sample */
-<<<<<<< HEAD
     /*  RNG randomK;
-=======
     /* Removed since fast backprop from Tied weights greatly improves the results, avoids killing diversity*/
     /*    RNG randomK;
->>>>>>> 35282568fe5214ef404ec8a29c63bb8ed871d8bb
     randomK.next();
     uint randK = 0;
     uint randI = 0;
