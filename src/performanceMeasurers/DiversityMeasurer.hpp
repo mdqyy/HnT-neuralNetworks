@@ -132,7 +132,8 @@ public:
 	std::vector<std::vector<FeatureVector> > buildBestOutput();
 
 	/*!
-	 * \todo document
+	 * Outputs the mean output of every network. Only mean output of besties.
+	 * \return The mean output of every network on best samples.
 	 */
 	std::vector<FeatureVector> getMeanGoodOutput();
 

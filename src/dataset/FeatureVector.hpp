@@ -36,6 +36,12 @@ class FeatureVector : public ValueVector{
   FeatureVector(cv::Mat _data);
 
   /*!
+   * Concatenate a vector of vectors.
+   * \param _vecs Vector of vectors.
+   */
+  FeatureVector(std::vector<FeatureVector> _vecs);
+
+  /*!
    * Destructor.
    */
   ~FeatureVector();

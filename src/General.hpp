@@ -17,4 +17,6 @@ typedef double realv;
 typedef float realv;
 #endif
 
+typedef std::vector< std::vector<realv> > weights;
+
 #endif

@@ -107,4 +107,13 @@ cv::Mat buildColorFrame(FeatureVector _fv, int _frameLength, cv::Vec3b _color);
  * \return A vector of colors.
  */
 std::vector<cv::Vec3b> createColorRepartition(uint _numColors, uint _saturation = 200, uint _value = 200);
+
+/*!
+ * Build a weight image vector to show the weight as a filter.
+ * \param _weights The weight matrix.
+ * \param _inputHeight Input image height.
+ * \param _i Output weight row.
+ * \return The weight filter image
+ */
+cv::Mat createWeightImage(cv::Mat weights,int _inputHeight, uint _i);
 #endif /* IMAGEPROCESSING_HPP_ */

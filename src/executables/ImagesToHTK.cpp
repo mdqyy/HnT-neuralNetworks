@@ -58,6 +58,7 @@ int main(int argc, char* argv[]) {
     cerr << "Not enough arguments, " << argc-1 << " given and "<< arguments.size()<<" required" << endl;
     return EXIT_FAILURE;
   }
+
   string groundTruthFile = argv[1];
   string groundTruthFolder = argv[2];
   int imageHeight = atoi(argv[3]);
@@ -68,9 +69,14 @@ int main(int argc, char* argv[]) {
   ifstream inStream(argv[7]);
   bool testMode = (1==atoi(argv[8]));
   uint dictionnarySize = atoi(argv[9]);
+
   inStream >> pop;
   vector<string> words = vector<string>();
   vector<NeuralNetworkPtr> population = pop.getPopulation();
+  if(pop.getPopulation().size()==0){
+    cerr << "population has no elements, check input file "<< endl;
+    return EXIT_FAILURE;
+  }
   ostringstream dictionnaryFileLocation;
   ostringstream htkScpFileLocation;
   ostringstream labScpFileLocation;
@@ -155,9 +161,10 @@ int main(int argc, char* argv[]) {
 	    threadsForward[k]->join();
 	    delete threadsForward[k];
 	  }
+	  
 	  for (uint k = 0; k < frames.size(); k++) {
 	    for (uint i = 0; i < population.size(); i++) {
-	    	      outputSequence << errors[k][i] <<" " ;
+	      outputSequence << (((realv)population[0]->getInputLayer()->getNumUnits())-errors[k][i]) <<" " ;
 	    }
 	    outputSequence << endl;
 	  }

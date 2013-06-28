@@ -45,6 +45,13 @@ class ValueVector {
    */
   ValueVector(const ValueVector& _vv);
 
+
+  /*!
+   * Concatenate a vector of vectors.
+   * \param _vecs Vector of vectors.
+   */
+  ValueVector(std::vector<ValueVector> _vecs);
+
   /*!
    * Get the Opencv matrix.
    * \return The OpenCv mat.

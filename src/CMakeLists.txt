@@ -34,6 +34,7 @@ add_library(Machines dataset/Dataset.cpp
   machines/neuralMachines/layers/InputLayer.cpp
   machines/neuralMachines/layers/LayerCTC.cpp
   machines/neuralMachines/connections/Connection.cpp
+  machines/neuralMachines/connections/Connector.cpp
   machines/neuralMachines/connections/FullConnection.cpp
   machines/neuralMachines/connections/RecurrentConnection.cpp
   trainer/Trainer.cpp
@@ -60,6 +61,7 @@ add_library(Machines dataset/Dataset.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/LearningParams.cpp
   utilities/ImageProcessing.cpp
   utilities/GeneralUtilities.cpp
+  utilities/ImageFrameExtractor.cpp
   utilities/TextUtilities.cpp
   utilities/ToyDatasets.cpp
 )
