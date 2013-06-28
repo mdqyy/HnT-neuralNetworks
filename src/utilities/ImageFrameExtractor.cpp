@@ -48,7 +48,12 @@ vector<FeatureVector> ImageFrameExtractor::getFrames(Mat _image){
     int index = 0;
     for(uint col = i*interFrameSpace;col<i*interFrameSpace+frameSize && col<imageProc.cols-1;col++){
       for(uint row = 0; row<imageProc.rows;row++){
-	vec[index]=(realv)imageProc.at<uchar>(row,col);
+	if((int)imageProc.at<uchar>(row,col) > 120){/*Bad hard coded threshold ! */
+	  vec[index]=1;
+	}
+	else{
+	  vec[index]=0;
+	}
 	index++;
       }
     }

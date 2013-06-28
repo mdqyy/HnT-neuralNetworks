@@ -24,11 +24,13 @@ int main(int argc, char* argv[]) {
   arguments.push_back("learning dataset");
   arguments.push_back("validation dataset");
   arguments.push_back("simple load mode");
+  arguments.push_back("noise");
   cout << helper("Pbdnn cluster", "Train a population of neural networks on a regression task.", arguments) << endl;
   if (argc != arguments.size() + 1) {
     cerr << "Not enough arguments, " << argc - 1 << " given and " << arguments.size() << " required" << endl;
     return EXIT_FAILURE;
   }
+  realv noise= atof(argv[7]);
   int simpleMode = atoi(argv[6]);
   RegressionDataset dataset;
   RegressionDataset dataset2;
@@ -64,6 +66,7 @@ int main(int argc, char* argv[]) {
   params.setProximity(1.0);
   params.setSavedDuringProcess(true);
   params.setValidateEveryNIteration(100);
+  params.setNoise(noise);
   ofstream log("training.log");
   PopulationInverseTrainer pbp(pop, dataset, params, dataset2, mask, mask, log);
   // 07/02/13 : Not sure if useful or not so stop doing it
