@@ -10,8 +10,8 @@ using namespace cv;
 using namespace std;
 
 LearningParams::LearningParams(realv _learningRate, realv _learningRateDecrease, uint _maxIterations, uint _actualIteration, uint _maxTrained, realv _maxTrainedPercentage,
-			       realv _errorToFirst, realv _errorToFirstIncrease, bool _savedDuringProcess, string _saveLocation, bool _validatedDuringProcess, int _validateEveryNIteration, int _dodges, realv _proximity) :
-learningRate(_learningRate), learningRateDecrease(_learningRateDecrease), maxIterations(_maxIterations), maxTrained(_maxTrained), maxTrainedPercentage(_maxTrainedPercentage), errorToFirst(_errorToFirst), errorToFirstIncrease(_errorToFirstIncrease), savedDuringProcess(_savedDuringProcess), saveLocation(_saveLocation), validatedDuringProcess(_validatedDuringProcess), validateEveryNIteration(_validateEveryNIteration), dodges(_dodges), proximity(_proximity) {
+			       realv _errorToFirst, realv _errorToFirstIncrease, bool _savedDuringProcess, string _saveLocation, bool _validatedDuringProcess, int _validateEveryNIteration, int _dodges, realv _proximity, realv _noise) :
+learningRate(_learningRate), learningRateDecrease(_learningRateDecrease), maxIterations(_maxIterations), maxTrained(_maxTrained), maxTrainedPercentage(_maxTrainedPercentage), errorToFirst(_errorToFirst), errorToFirstIncrease(_errorToFirstIncrease), savedDuringProcess(_savedDuringProcess), saveLocation(_saveLocation), validatedDuringProcess(_validatedDuringProcess), validateEveryNIteration(_validateEveryNIteration), dodges(_dodges), proximity(_proximity) , noise(_noise){
 
 }
 
@@ -61,6 +61,10 @@ realv LearningParams::getProximity() const {
 
 realv LearningParams::getMaxTrainedPercentage() const {
 	return maxTrainedPercentage;
+}
+
+realv LearningParams::getNoise() const {
+	return noise;
 }
 
 std::string LearningParams::getSaveLocation() const {
@@ -159,6 +163,10 @@ void LearningParams::setProximity(realv _proximity){
   this->proximity = _proximity;
 }
 
+void LearningParams::setNoise(realv _noise){
+  this->noise = _noise;
+}
+
 LearningParams::~LearningParams() {
 
 }
@@ -174,6 +182,7 @@ ofstream& operator<<(ofstream& _ofs, const LearningParams& _p) {
 	_ofs << " " << _p.getMaxTrainedPercentage();
 	_ofs << " " << _p.isSavedDuringProcess();
 	_ofs << " " << _p.getSaveLocation();
+	_ofs << " " << _p.getNoise();
 	_ofs << " >";
 	return _ofs;
 }
@@ -210,6 +219,9 @@ ifstream& operator>>(ifstream& _ifs, LearningParams& _p) {
 	_p.setSavedDuringProcess(boolValues);
 	_ifs >> stringValues;
 	_p.setSaveLocation(stringValues);
+	_ifs >> realValues;
+	_p.setNoise(realValues);
 	_ifs >> stringValues;
+
 	return _ifs;
 }

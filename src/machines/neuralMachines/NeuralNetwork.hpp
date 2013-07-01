@@ -128,6 +128,11 @@ public:
 	void forward(FeatureVector _signal);
 
 	/*!
+	 * Suppress the last layer, the next to last will replace it.
+	 */
+	void suppressLastLayer();
+
+	/*!
 	 * Backward an error vector.
 	 * \param _target Neural network target.
 	 * \param _learningRate Weight change rate.

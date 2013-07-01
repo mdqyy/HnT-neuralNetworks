@@ -97,6 +97,9 @@ target_link_libraries(executables/createPixelDB Machines TinyXML ${OpenCV_LIBS} 
 add_executable(executables/createRegressionPixelRimes src/executables/createRegressionPixelRimes.cpp)
 target_link_libraries(executables/createRegressionPixelRimes Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
 
+add_executable(executables/createRegressionPixelRimesIFE src/executables/createRegressionPixelRimesIFE.cpp)
+target_link_libraries(executables/createRegressionPixelRimesIFE Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
+
 add_executable(executables/createRegressionPixelRimesPerPart src/executables/createRegressionPixelRimesPerPart.cpp)
 target_link_libraries(executables/createRegressionPixelRimesPerPart Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
 
@@ -135,3 +138,12 @@ target_link_libraries(executables/diversityMeasurement Machines TinyXML ${OpenCV
 
 add_executable(executables/createFoldRimes src/executables/createFoldRimes.cpp)
 target_link_libraries(executables/createFoldRimes Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
+add_executable(executables/meanImage src/executables/meanImage.cpp)
+target_link_libraries(executables/meanImage Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
+add_executable(executables/weightImages src/executables/weightImages.cpp)
+target_link_libraries(executables/weightImages Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
+add_executable(executables/connectorTest src/executables/connectorTest.cpp)
+target_link_libraries(executables/connectorTest Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})

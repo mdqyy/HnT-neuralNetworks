@@ -81,31 +81,35 @@ void threadForwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint _k, Reg
   }
 }
 
+FeatureVector randomSwap(FeatureVector _vec, realv _noise){
+  RNG random((uint) getTickCount());
+  FeatureVector result(_vec.getLength());
+  realv val;
+  if(_noise>0.0){
+    for(uint i=0;i<_vec.getLength();i++){
+      random.next();
+      val = random.uniform(0.0,1.0);
+      if(val > _noise){
+	result[i]=abs(_vec[i]-1);
+      }
+      else{
+	result[i]=_vec[i];
+      }
+    }
+  }
+  else{
+    result = _vec;
+  }
+  return result;
+}
 
 // Thread process per network forward and backward to train min error networks
-void threadForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint _k, RegressionDataset* _regData, vector<vector<uint> >* _learningAffectations, realv _learningRate,uint _maxTrained){
+void threadForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint _k, RegressionDataset* _regData, vector<vector<uint> >* _learningAffectations, realv _learningRate,uint _maxTrained, realv _noise){
   FeatureVector blackTarget = FeatureVector(_regData->getTargetSample(0, 0).getLength());
   RNG randomK((uint) getTickCount());
   uint index = 0;
-  /* first backward random bad sample, pb ?*/
- /* for(uint i=0; i< _maxTrained && i< (*_learningAffectations)[_k].size(); i++){
-    randomK.next();
-    uint randK = 0;
-    uint randI = 0;
-    for(uint i = 0; i < (*_neuralNets).size()-1; i++){
-      do {
-	randK = randomK.uniform(0, (*_neuralNets).size());
-      } while( (randK == _k) && (*_learningAffectations)[randK].size() > 0);
-      randomK.next();
-      randI = randomK.uniform(0, (*_learningAffectations)[randK].size());
-      index = (*_learningAffectations)[randK][randI];
-      (*_neuralNets)[_k]->forward((*_regData)[index][0]);
-      bitwise_not((*_regData)[index][0].getMat(),inversed);
-      blackTarget = FeatureVector(inversed);
-      backwardTiedWeights((*_neuralNets)[_k], blackTarget, _learningRate);
-    }
-  }*/
-  /* then backward good samples*/
+  FeatureVector input,target;
+
   for(uint i=0; i< _maxTrained && i< (*_learningAffectations)[_k].size(); i++){
     /* first backward random bad sample*/
     randomK.next();
@@ -118,7 +122,8 @@ void threadForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint
       randomK.next();
       randI = randomK.uniform(0, (*_learningAffectations)[randK].size());
       index = (*_learningAffectations)[randK][randI];
-      (*_neuralNets)[_k]->forward((*_regData)[index][0]);
+      input = randomSwap((*_regData)[index][0], _noise); 
+      (*_neuralNets)[_k]->forward(input);
      for (uint v =0 ; v <  ((*_regData)[index][0]).getLength();v++){
        if((*_regData)[index][0][v]==0.0){
           blackTarget[v] = 1.0;
@@ -131,9 +136,11 @@ void threadForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint
     }
 
     /* forward backward good sample */
+    input = randomSwap((*_regData)[index][0],_noise);
+    target = (*_regData).getTargetSample(index,0);
     index = (*_learningAffectations)[_k][i];
-    (*_neuralNets)[_k]->forward((*_regData)[index][0]);
-    backwardTiedWeights((*_neuralNets)[_k], (*_regData).getTargetSample(index,0), _learningRate*10);
+    (*_neuralNets)[_k]->forward(input);
+    backwardTiedWeights((*_neuralNets)[_k], target, _learningRate);
   }
 }
 
@@ -208,7 +215,7 @@ void PopulationInverseTrainer::trainOneIteration() {
   /*Train according to learning affectations*/
   vector<boost::thread * > threadsForwardBackward;
   for(uint k=0; k<neuralNets.size();k++){
-    threadsForwardBackward.push_back(new boost::thread(threadForwardBackwardPerNetwork, &neuralNets, k, &regData, &learningAffectations, params.getLearningRate(), maxTrained));
+    threadsForwardBackward.push_back(new boost::thread(threadForwardBackwardPerNetwork, &neuralNets, k, &regData, &learningAffectations, params.getLearningRate(), maxTrained,params.getNoise()));
   }
   for(uint k=0; k<neuralNets.size();k++){
     threadsForwardBackward[k]->join();

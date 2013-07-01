@@ -80,6 +80,9 @@ protected:
 	/* Proximity */
 	realv proximity;
 
+	/*Added noise when doing denoising auto encoders */
+	realv noise;
+
 public:
 
 	/*!
@@ -87,7 +90,7 @@ public:
 	 */
 	LearningParams(realv _learningRate = 0.001, realv _learningRateDecrease = 0.95, uint _maxIterations = 10, uint _actualIteration = 0, uint _maxTrained = 5,
 			realv _maxTrainedPercentage = 0.25, realv _errorToFirst = 0.5, realv errorToFirstIncrease = 1.1, bool _savedDuringProcess = false,
-		       std::string _saveLocation = ".", bool _validatedDuringProcess = true, int _validateEveryNIteration=5, int _dodges = 2, realv proximity = 0.30);
+		       std::string _saveLocation = ".", bool _validatedDuringProcess = true, int _validateEveryNIteration=5, int _dodges = 2, realv _proximity = 0.30, realv _noise=0.0);
 
 	/*!
 	 * Do stochastic.
@@ -165,6 +168,12 @@ public:
 	 * \return Proximity.
 	 */
 	realv getProximity() const;
+
+	/*!
+	 * Get noise .
+	 * \return Noise.
+	 */
+	realv getNoise() const;
 
 	/*!
 	 * Get validated during process.
@@ -297,6 +306,13 @@ public:
 	 * \param _proximity The proximity as a precentage.
 	 */
 	void setProximity(realv _proximity);
+
+	/*!
+	 * Set the noise.
+	 * \param _noise The noise as a percentage.
+	 */
+	void setNoise(realv _noise);
+
 
 	/*!
 	 * Destructor.

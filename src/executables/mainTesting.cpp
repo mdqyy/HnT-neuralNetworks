@@ -124,5 +124,14 @@ int main (int argc, char* argv[]){
 //  /*delete &clc;
 //  delete &clth;
 //  delete &clil;*/
+  ImageFrameExtractor ife(0.5,2,3);
+  vector<FeatureVector> output;
+  Mat image = imread(string(argv[1]),0);
+  output = ife.getFrames(image);
+  cout << output.size() << endl;
+  cout << "First " << endl;
+  cout << output.front() << endl;
+  cout << "Last " << endl;
+  cout << output.back() << endl;
   return EXIT_SUCCESS;
 }

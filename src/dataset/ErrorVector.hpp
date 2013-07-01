@@ -35,6 +35,12 @@ class ErrorVector : public ValueVector{
   ErrorVector(cv::Mat _data);
 
   /*!
+   * Concatenate a vector of vectors.
+   * \param _vecs Vector of vectors.
+   */
+  ErrorVector(std::vector<ErrorVector> _vecs);
+
+  /*!
    * Destructor.
    */
   ~ErrorVector();

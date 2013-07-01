@@ -13,7 +13,7 @@ ValueVector::ValueVector(int _length){
   #ifdef REAL_DOUBLE
   data = Mat(_length,1,CV_64FC1,0.0);
   #else
-  data = Mat(_length,1CV_32FC1,0.0);
+  data = Mat(_length,1,CV_32FC1,0.0);
   #endif
 }
 
@@ -24,6 +24,25 @@ ValueVector::ValueVector(Mat _data) : data(_data){
   assert(data.type()==CV_32FC1);
   #endif
   assert(data.rows>0 && data.cols==1);
+}
+
+ValueVector::ValueVector(vector<ValueVector> _vecs){
+  uint length = 0;
+  for(uint i=0;i<_vecs.size();i++){
+    length += _vecs[i].getLength();
+  }
+  #ifdef REAL_DOUBLE
+  data = Mat(length,1,CV_64FC1,0.0);
+  #else
+  data = Mat(length,1,CV_32FC1,0.0);
+  #endif
+  int index = 0;
+  for(uint i=0;i<_vecs.size();i++){
+    for(uint j=0;j<_vecs[i].getLength();j++){
+      data.at<realv>(index,0)= _vecs[i][j];
+      index++;
+    }
+  }
 }
 
 ValueVector::ValueVector(const ValueVector& _vv) : data(_vv.getMat().clone()){

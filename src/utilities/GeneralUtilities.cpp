@@ -17,3 +17,18 @@ string helper(string _name, string _aim, vector<string> _arguments) {
 	return os.str();
 }
 
+ValueVector concatenate(vector<ValueVector> _vecs){
+  uint length = 0;
+  for(uint i=0;i<_vecs.size();i++){
+    length += _vecs[i].getLength();
+  }
+  ValueVector result(length);
+  int index = 0;
+  for(uint i=0;i<_vecs.size();i++){
+    for(uint j=0;j<_vecs[i].getLength();j++){
+      result[index]= _vecs[i][j];
+      index++;
+    }
+  }
+  return result;
+}

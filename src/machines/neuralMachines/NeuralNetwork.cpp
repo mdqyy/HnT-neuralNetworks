@@ -92,6 +92,12 @@ void NeuralNetwork::forward(FeatureVector _signal){
   getInputLayer()->forward(_signal);
 }
 
+void NeuralNetwork::suppressLastLayer(){
+  hiddenLayers.pop_back();
+  connections.pop_back();
+  hiddenLayers[hiddenLayers.size()-1]->setOutputConnection(0);
+}
+
 void NeuralNetwork::print(ostream& _os) const{
   int numWeights = 0;
   for(uint i=0;i<connections.size();i++){

@@ -17,6 +17,25 @@ FeatureVector::FeatureVector(Mat _data) : ValueVector(_data){
 
 }
 
+FeatureVector::FeatureVector(vector<FeatureVector> _vecs){
+  uint length = 0;
+  for(uint i=0;i<_vecs.size();i++){
+    length += _vecs[i].getLength();
+  }
+  #ifdef REAL_DOUBLE
+  data = Mat(length,1,CV_64FC1,0.0);
+  #else
+  data = Mat(length,1,CV_32FC1,0.0);
+  #endif
+  int index = 0;
+  for(uint i=0;i<_vecs.size();i++){
+    for(uint j=0;j<_vecs[i].getLength();j++){
+      data.at<realv>(index,0)= _vecs[i][j];
+      index++;
+    }
+  }
+}
+
 FeatureVector::~FeatureVector(){
 
 }

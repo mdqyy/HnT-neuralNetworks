@@ -24,6 +24,7 @@
 #include "machines/neuralMachines/connections/Connection.hpp"
 #include "machines/neuralMachines/connections/FullConnection.hpp"
 #include "machines/neuralMachines/connections/RecurrentConnection.hpp"
+#include "machines/neuralMachines/connections/Connector.hpp"
 #include "trainer/Trainer.hpp"
 #include "trainer/errorMeasurers/ErrorMeasurer.hpp"
 #include "trainer/errorMeasurers/SEMeasurer.hpp"
@@ -48,6 +49,7 @@
 #include "trainer/supervisedTrainers/neuralNetworkTrainers/LearningParams.hpp"
 #include "utilities/ImageProcessing.hpp"
 #include "utilities/GeneralUtilities.hpp"
+#include "utilities/ImageFrameExtractor.hpp"
 #include "utilities/TextUtilities.hpp"
 #include "utilities/ToyDatasets.hpp"
 

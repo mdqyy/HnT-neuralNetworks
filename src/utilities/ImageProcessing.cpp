@@ -167,3 +167,20 @@ vector<Vec3b> createColorRepartition(uint _numColors, uint _saturation, uint _va
   }
   return colors;
 }
+
+
+Mat createWeightImage(Mat _weights, int _inputHeight, uint _i){
+  Mat tileImage = Mat(_inputHeight, _weights.cols/_inputHeight,CV_8UC1,Scalar(0));
+  realv max = 0;
+  realv min = 0;
+  minMaxLoc(_weights,&min,&max);
+  Mat scaledWeights;  
+  _weights.convertTo(scaledWeights,CV_8UC1,255.0/(max-min),-255.0/min);
+  Mat rowI(1,scaledWeights.cols-1,CV_8UC1,Scalar(0)) ;
+  for(uint i=0;i<rowI.cols;i++){
+    rowI.at<uchar>(0,i)=scaledWeights.at<uchar>(_i,i);
+  }
+  tileImage  = rowI.reshape(0,_inputHeight/*, _weights.cols/_inputHeight*/);
+  return tileImage;
+}
+
