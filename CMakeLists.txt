@@ -3,7 +3,7 @@ project(PhD)
 #make flags
 set(CMAKE_CXX_FLAGS "-Wall -pedantic -std=c99")
 
-SET(OpenCV_DIR "/home/entitees/labo-litis/partages/maurdor-labo-litis/libraries_install/share/OpenCV")
+#$SET(OpenCV_DIR "/home/entitees/labo-litis/partages/maurdor-labo-litis/libraries_install/share/OpenCV")
 find_package(OpenCV REQUIRED)
 
 set(Boost_USE_STATIC_LIBS   ON)

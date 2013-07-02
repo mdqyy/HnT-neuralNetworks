@@ -17,20 +17,21 @@
  * \class MixedEnsembles
  * Description
  */
-class MixedEnsembles {
+class MixedEnsembles : private {
  private :
 
  protected:
   std::vector<NeuralNetworkPtr> networks;
   std::vector<ImageFrameExtractor> ifes;
   Connector connector;
+  NeuralNetwork outputNetwork;
 
  public:
 
   /*!
    * Default constructor.
    */
-  MixedEnsembles();
+  MixedEnsembles(std::vector<NeuralNetworkPtr> _networks,std::vector<ImageFrameExtractor> _ifes, Connector _connector, NeuralNetwork _outputNetwork);
 
   /* Todo : Methods*/
 
