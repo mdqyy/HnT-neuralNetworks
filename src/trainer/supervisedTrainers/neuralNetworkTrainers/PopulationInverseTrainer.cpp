@@ -89,7 +89,7 @@ FeatureVector randomSwap(FeatureVector _vec, realv _noise){
     for(uint i=0;i<_vec.getLength();i++){
       random.next();
       val = random.uniform(0.0,1.0);
-      if(val > _noise){
+      if(val < _noise){
 	result[i]=abs(_vec[i]-1);
       }
       else{
