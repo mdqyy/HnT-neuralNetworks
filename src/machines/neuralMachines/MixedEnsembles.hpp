@@ -6,6 +6,7 @@
  * \author Luc Mioulet
  */
 
+#include <opencv/cv.h>
 #include "NeuralNetwork.hpp"
 #include "connections/Connection.hpp"
 #include "connections/Connector.hpp"
@@ -17,13 +18,22 @@
  * \class MixedEnsembles
  * Description
  */
-class MixedEnsembles : private {
+class MixedEnsembles : private NeuralMachine{
  private :
 
  protected:
+  /*! population of networks */
   std::vector<NeuralNetworkPtr> networks;
+  
+  /*! Ife corresponding to each network */
   std::vector<ImageFrameExtractor> ifes;
+
+  std::vector<uint> linkedToIFE;
+
+  /* Connector media */
   Connector connector;
+  
+  /* Final output network */
   NeuralNetwork outputNetwork;
 
  public:
@@ -31,9 +41,25 @@ class MixedEnsembles : private {
   /*!
    * Default constructor.
    */
-  MixedEnsembles(std::vector<NeuralNetworkPtr> _networks,std::vector<ImageFrameExtractor> _ifes, Connector _connector, NeuralNetwork _outputNetwork);
+  MixedEnsembles(std::vector<NeuralNetworkPtr> _networks,std::vector<ImageFrameExtractor> _ifes, std::vector<uint> _linkedToIFE,Connector _connector, NeuralNetwork _outputNetwork);
 
-  /* Todo : Methods*/
+  /*!
+   * Forward a sequence.
+   * \param _sequence Sequence to pass forward.
+   */
+  void forwardMatrix(cv::Mat _matrix);
+
+  /*!
+   * Forward a sequence.
+   * \param _sequence Sequence to pass forward.
+   */
+  void forwardSequence(std::vector<FeatureVector> _sequence);
+  
+  /*!
+   * Forward a sample of a sequence.
+   * \param _sample Feature vector to pass forward.
+   */
+  void forward(FeatureVector _sample);
 
   /*!
    * Destructor.

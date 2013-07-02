@@ -4,7 +4,7 @@
 using namespace std;
 using namespace cv;
 
-Connector::Connector() : layers(vector<LayerPtr>()){
+Connector::Connector() : layers(vector<LayerPtr>()),length(0){
 	
 }
 
@@ -13,6 +13,11 @@ Connector::Connector(vector<LayerPtr> _outputLayers) : layers(_outputLayers){
   for (uint i = 0; i < layers.size(); i++){
     length += layers[i]->getNumUnits();
   }
+}
+
+
+uint Connector::getLength(){
+  return length;
 }
 
 FeatureVector Connector::concatenateOutputs(){

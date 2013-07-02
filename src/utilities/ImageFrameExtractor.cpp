@@ -30,7 +30,30 @@ uint ImageFrameExtractor::getInterFrameSpace(){
 }
 
 FeatureVector ImageFrameExtractor::getOneFrame(Mat _image,uint _frame){
-  
+  Mat imageProc;
+  bool residue = false;
+  resize(_image,imageProc,Size(0,0),scale,scale,INTER_LINEAR);
+  uint numberOfFrames = imageProc.cols/interFrameSpace;
+  uint fvLength = imageProc.rows*frameSize;
+  FeatureVector result(fvLength);
+  if(imageProc.cols%interFrameSpace!=0){ 
+    numberOfFrames ++;
+  }
+  if(_frame>numberOfFrames){
+    cerr << "The frame you want does not exist" << endl;
+  }
+  for(uint col = _frame*interFrameSpace;col<_frame*interFrameSpace+frameSize && col<imageProc.cols-1;col++){
+    for(uint row = 0; row<imageProc.rows;row++){
+      if((int)imageProc.at<uchar>(row,col) > 120){/*Bad hard coded threshold ! */
+	fvLength[index]=1;
+      }
+      else{
+	fvLength[index]=0;
+      }
+      index++;
+    }
+  }
+  return result;
 }
 
 vector<FeatureVector> ImageFrameExtractor::getFrames(Mat _image){
