@@ -7,18 +7,23 @@
  */
 
 #include <opencv/cv.h>
+#include "NeuralMachine.hpp"
 #include "NeuralNetwork.hpp"
 #include "connections/Connection.hpp"
 #include "connections/Connector.hpp"
 #include "layers/Layer.hpp"
 #include "layers/InputLayer.hpp"
 #include "layers/LayerSigmoid.hpp"
+#include "../../utilities/ImageFrameExtractor.hpp"
+#include <vector>
+#include <iostream>
+#include <boost/thread/thread.hpp>
 
 /*!
  * \class MixedEnsembles
  * Description
  */
-class MixedEnsembles : private NeuralMachine{
+class MixedEnsembles{
  private :
 
  protected:
@@ -50,16 +55,11 @@ class MixedEnsembles : private NeuralMachine{
   void forwardMatrix(cv::Mat _matrix);
 
   /*!
-   * Forward a sequence.
-   * \param _sequence Sequence to pass forward.
+   * Forward on frames extracted around a pixel.
+   * \param _matrix Image to use.
+   * \param _i Row pixel.
    */
-  void forwardSequence(std::vector<FeatureVector> _sequence);
-  
-  /*!
-   * Forward a sample of a sequence.
-   * \param _sample Feature vector to pass forward.
-   */
-  void forward(FeatureVector _sample);
+  void forwardOnPixel(cv::Mat _matrix, uint _i);
 
   /*!
    * Destructor.

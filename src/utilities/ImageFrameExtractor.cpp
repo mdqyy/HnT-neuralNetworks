@@ -29,13 +29,37 @@ uint ImageFrameExtractor::getInterFrameSpace(){
   return interFrameSpace;
 }
 
+FeatureVector ImageFrameExtractor::getFrameCenteredOn(Mat _image,uint _row){
+  Mat imageProc;
+  resize(_image,imageProc,Size(0,0),scale,scale,INTER_LINEAR);
+  uint fvLength = imageProc.rows*frameSize;
+  FeatureVector result(fvLength);
+  int start = _row*scale-frameSize/2;
+  int stop = start + frameSize;
+  uint index = 0;
+  for(int col = start;col<stop && col<imageProc.cols-1;col++){
+    for(int row = 0; row<imageProc.rows;row++){
+      if(col >=0){
+	if((int)imageProc.at<uchar>(row,col) > 120){/*Bad hard coded threshold ! */
+	  result[index]=1.0;
+	}
+	else{
+	  result[index]=0.0;
+	}
+      }
+      index++;
+    }
+  }
+  return result;
+}
+
 FeatureVector ImageFrameExtractor::getOneFrame(Mat _image,uint _frame){
   Mat imageProc;
-  bool residue = false;
   resize(_image,imageProc,Size(0,0),scale,scale,INTER_LINEAR);
   uint numberOfFrames = imageProc.cols/interFrameSpace;
   uint fvLength = imageProc.rows*frameSize;
   FeatureVector result(fvLength);
+  uint index = 0;
   if(imageProc.cols%interFrameSpace!=0){ 
     numberOfFrames ++;
   }
@@ -45,10 +69,10 @@ FeatureVector ImageFrameExtractor::getOneFrame(Mat _image,uint _frame){
   for(uint col = _frame*interFrameSpace;col<_frame*interFrameSpace+frameSize && col<imageProc.cols-1;col++){
     for(uint row = 0; row<imageProc.rows;row++){
       if((int)imageProc.at<uchar>(row,col) > 120){/*Bad hard coded threshold ! */
-	fvLength[index]=1;
+	result[index]=1.0;
       }
       else{
-	fvLength[index]=0;
+	result[index]=0.0;
       }
       index++;
     }
@@ -72,10 +96,10 @@ vector<FeatureVector> ImageFrameExtractor::getFrames(Mat _image){
     for(uint col = i*interFrameSpace;col<i*interFrameSpace+frameSize && col<imageProc.cols-1;col++){
       for(uint row = 0; row<imageProc.rows;row++){
 	if((int)imageProc.at<uchar>(row,col) > 120){/*Bad hard coded threshold ! */
-	  vec[index]=1;
+	  vec[index]=1.0;
 	}
 	else{
-	  vec[index]=0;
+	  vec[index]=0.0;
 	}
 	index++;
       }

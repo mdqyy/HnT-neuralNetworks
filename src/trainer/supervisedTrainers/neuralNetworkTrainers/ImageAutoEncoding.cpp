@@ -10,7 +10,7 @@ using namespace std;
 using namespace cv;
 
 
-ImageAutoEncoding::ImageAutoEncoding(Machine& _machine, ImageDataset& _dataset, LearningParams _params, std::ostream& _log), machine(_machine),dataset(_dataset),params(_params), log(_log){
+ImageAutoEncoding::ImageAutoEncoding(Machine& _machine, ImageDataset& _dataset, LearningParams _params, std::ostream& _log) : machine(_machine),dataset(_dataset),params(_params), log(_log){
 
 }
 
@@ -38,25 +38,25 @@ void ImageAutoEncoding::train(){
 }
 
 void ImageAutoEncoding::trainOneIteration(){
-  vector<uint> indexOrderSelection = defineIndexOrderSelection(dataset.getNumImages);
-  uint numberOfElementsToProcess = dataset.getNumImages()*params.getMaxTrainedPercentage();
+  vector<uint> indexOrderSelection = defineIndexOrderSelection(dataset.getNumberOfImages());
+  uint numberOfElementsToProcess = dataset.getNumberOfImages()*params.getMaxTrainedPercentage();
   AEMeasurer mae;
   uint index = 0;
   FeatureVector input,target;
   for(uint i = 0;i<numberOfElementsToProcess;i++){
     index = indexOrderSelection[i];
-    vector<FeatureVector> image= dataset.getImageMatrix(index);
+    vector<FeatureVector> image= dataset.getFeatures(index);
     for(uint j = 0; j< image.size();j++){
 	input = noiseTarget(image[j]);
 	target = image[j];
       	machine.forward(input);
-	error+=measureSampleError(neuralNet.getOutputSignal(),target);
-	backward(target, params.getLearningRate()); 
+	/*	error+=measureSampleError(machine.getOutputSignal(),target);*/
+	backward(target); 
     }
   }
 }
 
-FeatureVector ImageAutoEncoding::noiseTarget(FeatureVector _fv){
+FeatureVector ImageAutoEncoding::noiseTarget(FeatureVector _vec){
   RNG random((uint) getTickCount());
   FeatureVector result(_vec.getLength());
   realv val;
@@ -128,13 +128,13 @@ void ImageAutoEncoding::backward(FeatureVector _target) {
   for (uint i = layers.size() - 1; i > 0; i--) {
     ValueVector derivatives = layers[i]->getDerivatives();
     if (i == layers.size() - 1) {
-      deltas.push_back(calculateOutputDeltasTiedWeights(layers[i], _target, derivatives));
+      deltas.push_back(calculateOutputDeltas(layers[i], _target, derivatives));
     } else {
-      deltas.push_back(calculateDeltasTiedWeights(layers[i], _target, derivatives, deltas[deltas.size() - 1]));
+      deltas.push_back(calculateDeltas(layers[i], _target, derivatives, deltas[deltas.size() - 1]));
     }
   }
   for (uint i = 0; i < connections.size(); i++) {
-    updateConnectionTiedWeights(connections[i], deltas[connections.size() - i - 1]);
+    updateConnection(connections[i], deltas[connections.size() - i - 1]);
   }
   /* tied weights */
   Mat ts = connections[1]->getWeights();
@@ -145,6 +145,10 @@ void ImageAutoEncoding::backward(FeatureVector _target) {
     }
   }
   connections[0]->setWeights(td);
+}
+
+void validateIteration(){
+  /*! TODO */
 }
 
 ImageAutoEncoding::~ImageAutoEncoding(){

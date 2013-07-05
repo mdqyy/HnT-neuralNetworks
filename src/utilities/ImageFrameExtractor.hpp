@@ -55,6 +55,14 @@ class ImageFrameExtractor {
    * \return The space between two frames.
    */
   uint getInterFrameSpace();
+  
+  /*!
+   * Get the frame i at a particuliar position on the base image.
+   * \param _image The input image.
+   * \param _frame The original central colon.
+   * \return The feature vector of this frame.
+   */
+  FeatureVector getFrameCenteredOn(cv::Mat _image,uint _row);
 
   /*!
    * Get the frame i in an image.

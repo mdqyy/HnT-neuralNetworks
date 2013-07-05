@@ -28,6 +28,7 @@ add_library(Machines dataset/Dataset.cpp
   machines/neuralMachines/NeuralMachine.cpp
   machines/neuralMachines/NeuralNetwork.cpp
   machines/neuralMachines/PBDNN.cpp
+  machines/neuralMachines/MixedEnsembles.cpp
   machines/neuralMachines/layers/Layer.cpp
   machines/neuralMachines/layers/LayerTanh.cpp
   machines/neuralMachines/layers/LayerSigmoid.cpp
@@ -60,6 +61,7 @@ add_library(Machines dataset/Dataset.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/PopulationTrainer.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/PopulationInverseTrainer.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/LearningParams.cpp
+  #trainer/supervisedTrainers/neuralNetworkTrainers/ImageAutoEncoding.cpp
   utilities/ImageProcessing.cpp
   utilities/GeneralUtilities.cpp
   utilities/ImageFrameExtractor.cpp

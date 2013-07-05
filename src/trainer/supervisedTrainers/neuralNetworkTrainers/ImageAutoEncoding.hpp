@@ -6,8 +6,16 @@
  * \author Luc Mioulet
  */
 
-#include "../../machines/Machine.hpp"
-#include "../../dataset/ImageDataset.hpp"
+#include "../../../machines/Machine.hpp"
+#include "../../../dataset/ImageDataset.hpp"
+#include "../../../dataset/ErrorVector.hpp"
+#include "../../../dataset/FeatureVector.hpp"
+#include "../../../dataset/ValueVector.hpp"
+#include "../../../machines/neuralMachines/layers/Layer.hpp"
+#include "../../../machines/neuralMachines/connections/Connection.hpp"
+#include "../../errorMeasurers/AEMeasurer.hpp"
+#include <vector>
+#include <opencv/cv.h>
 #include "LearningParams.hpp"
 
 /*!
@@ -86,13 +94,9 @@ class ImageAutoEncoding {
    */
   std::vector<uint> defineIndexOrderSelection(uint _numSequences);
 
-  /*!
-   * Used to define the index order call of the different sequences during learning.
-   * \param _numSequences Number of sequences in the data.
-   * \return Vector of unsigned integers.
+  /*
+   * Validate an iteration.
    */
-  std::vector<uint> defineIndexOrderSelection(uint _numSequences);
-
   void validateIteration();
 
   /*!
