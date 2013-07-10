@@ -72,7 +72,7 @@ void backwardTiedWeights(NeuralNetworkPtr _neuralNet, FeatureVector _target, rea
 void threadForwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint _k, RegressionDataset* _regData, uint _numberOfElementsToProcess, vector<uint>* _indexOrderSelection, vector<vector<realv> > *_errors){
   uint index = 0;
   AEMeasurer mae;
-  for (uint i = 0; i < _numberOfElementsToProcess; i++) {
+  for (uint i = 0; i < 1/* _numberOfElementsToProcess*/; i++) {
     index = (*_indexOrderSelection)[i];
     FeatureVector fv = (*_regData)[index][0];
     (*_neuralNets)[_k]->forward(fv);
@@ -109,30 +109,56 @@ void threadForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint
   RNG randomK((uint) getTickCount());
   uint index = 0;
   FeatureVector input,target;
-
   for(uint i=0; i< _maxTrained && i< (*_learningAffectations)[_k].size(); i++){
     /* first backward random bad sample*/
     randomK.next();
     uint randK = 0;
     uint randI = 0;
-    for(uint i = 0; i < (*_neuralNets).size()-1; i++){
+    /*   for(uint j = 0; j < (*_neuralNets).size()-1; j++){
       do {
 	randK = randomK.uniform(0, (*_neuralNets).size());
       } while( (randK == _k) && (*_learningAffectations)[randK].size() > 0);
+      cout << " 4 1 " << _k << endl;
       randomK.next();
+      cout << " 4 2 " << _k << endl;
       randI = randomK.uniform(0, (*_learningAffectations)[randK].size());
+      cout << " 4 3 " << _k << "rand i " << randI<< endl;
       index = (*_learningAffectations)[randK][randI];
+      cout << " 4 4 " << _k << endl;
       input = randomSwap((*_regData)[index][0], _noise); 
+      cout << " 4 5 " << _k << endl;
       (*_neuralNets)[_k]->forward(input);
-     for (uint v =0 ; v <  ((*_regData)[index][0]).getLength();v++){
-       if((*_regData)[index][0][v]==0.0){
+      cout << " 4 6 " << _k << endl;
+      for (uint v =0 ; v <  ((*_regData)[index][0]).getLength();v++){
+	  cout << " 5 " << _k << endl;
+	if((*_regData)[index][0][v]==0.0){
           blackTarget[v] = 1.0;
         }   
         else{
 	  blackTarget[v] = 0.0; 
         } 
       }
+      cout << " 6 " << _k << endl;
       backwardTiedWeights((*_neuralNets)[_k], blackTarget, _learningRate*0.1);
+      cout << " 7 " << _k << endl;      
+      }*/ /* This code was bugged so it was changed, I now go through all, problem after step 4_3 when selecting an empty net */
+    for(uint j = 0; j < (*_neuralNets).size()-1; j++){
+      if((*_learningAffectations)[j].size()>0 && j!=_k){
+	randomK.next();
+	index = (*_learningAffectations)[j][randI];
+	randI = randomK.uniform(0, (*_learningAffectations)[j].size());
+	input = randomSwap((*_regData)[index][0], _noise); 
+	(*_neuralNets)[_k]->forward(input);
+	for (uint v =0 ; v <  ((*_regData)[index][0]).getLength();v++){
+	  if((*_regData)[index][0][v]==0.0){
+	    blackTarget[v] = 1.0;
+	  }   
+	  else{
+	    blackTarget[v] = 0.0; 
+	  } 
+	  
+	}
+      }
     }
 
     /* forward backward good sample */
@@ -207,7 +233,7 @@ void PopulationInverseTrainer::trainOneIteration() {
 	endurance[k] = params.getDodges();
 	population.regenerate(k);
       }
-   } 
+    } 
     else{
       endurance[k] = params.getDodges();
     }
