@@ -72,7 +72,7 @@ void backwardTiedWeights(NeuralNetworkPtr _neuralNet, FeatureVector _target, rea
 void threadForwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint _k, RegressionDataset* _regData, uint _numberOfElementsToProcess, vector<uint>* _indexOrderSelection, vector<vector<realv> > *_errors){
   uint index = 0;
   AEMeasurer mae;
-  for (uint i = 0; i < 1/* _numberOfElementsToProcess*/; i++) {
+  for (uint i = 0; i <  _numberOfElementsToProcess; i++) {
     index = (*_indexOrderSelection)[i];
     FeatureVector fv = (*_regData)[index][0];
     (*_neuralNets)[_k]->forward(fv);
