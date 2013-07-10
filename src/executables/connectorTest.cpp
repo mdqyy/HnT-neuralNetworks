@@ -65,7 +65,5 @@ int main(int argc, char* argv[]) {
   cout << population.back()->getHiddenLayers()[1]->getOutputSignal()[1] << endl;
   cout << population.back()->getOutputSignal()[1] << endl;
   
-
-  
   return EXIT_SUCCESS;
 }

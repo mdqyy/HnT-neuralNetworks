@@ -145,8 +145,8 @@ void threadForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint
     for(uint j = 0; j < (*_neuralNets).size()-1; j++){
       if((*_learningAffectations)[j].size()>0 && j!=_k){
 	randomK.next();
-	index = (*_learningAffectations)[j][randI];
 	randI = randomK.uniform(0, (*_learningAffectations)[j].size());
+	index = (*_learningAffectations)[j][randI];
 	input = randomSwap((*_regData)[index][0], _noise); 
 	(*_neuralNets)[_k]->forward(input);
 	for (uint v =0 ; v <  ((*_regData)[index][0]).getLength();v++){

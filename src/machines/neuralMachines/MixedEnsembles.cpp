@@ -70,8 +70,59 @@ NeuralNetworkPtr MixedEnsembles::getOutputNetwork(){
 void MixedEnsembles::setOutputNetwork(NeuralNetworkPtr _outputNet){
   outputNetwork = _outputNet;
 }
+/*
+vector<NeuralNetworkPtr> MixedEnsembles::getNetworks(){
+  return networks;
+}
+
+void MixedEnsembles::setNetworks(NeuralNetworkPtr _networks){
+  networks = _networks;
+}
+
+vector<ImageFrameExtractor> MixedEnsembles::getIFEs(){
+  return ifes;
+}
+
+void MixedEnsembles::setIFEe(vector<ImageFrameExtractor> _ifes){
+  ifes=_ifes;
+}
+
+vector<uint> MixedEnsembles::getLinkedToIFE(){
+  return linkedToIFE;
+}
+
+void MixedEnsembles::setLinkedToIFE(){
+
+}*/
 
 
 MixedEnsembles::~MixedEnsembles(){
 
 }
+
+/*ofstream& operator<<(ofstream& _ofs, const MixedEnsembles& _pop){
+  _ofs << " < ";
+  vector<NeuralNetworkPtr> population= _pop.getPopulation();
+  _ofs << population.size() << endl;
+  for(uint i = 0; i<population.size();i++){
+    _ofs << *(population[i].get()) << endl;
+  }
+  _ofs << " > ";
+  return _ofs;
+}
+
+ifstream& operator>>(ifstream& _ifs, PBDNN& _pop){
+  string temp;
+  int popSize;
+  vector<NeuralNetworkPtr> population = vector<NeuralNetworkPtr>();
+  _ifs >> temp;
+  _ifs >> popSize;
+  for(uint i = 0; i<popSize;i++){
+    NeuralNetwork nnTemp;
+    _ifs >> nnTemp;
+    population.push_back(NeuralNetworkPtr(new NeuralNetwork(nnTemp)));
+  }
+  _pop = PBDNN(population);
+  _ifs >> temp;
+  return _ifs;
+  }*/
