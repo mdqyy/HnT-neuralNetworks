@@ -39,14 +39,14 @@ class MixedEnsembles{
   Connector connector;
   
   /* Final output network */
-  NeuralNetwork outputNetwork;
+  NeuralNetworkPtr outputNetwork;
 
  public:
 
   /*!
    * Default constructor.
    */
-  MixedEnsembles(std::vector<NeuralNetworkPtr> _networks,std::vector<ImageFrameExtractor> _ifes, std::vector<uint> _linkedToIFE,Connector _connector, NeuralNetwork _outputNetwork);
+  MixedEnsembles(std::vector<NeuralNetworkPtr> _networks,std::vector<ImageFrameExtractor> _ifes, std::vector<uint> _linkedToIFE,Connector _connector, NeuralNetworkPtr _outputNetwork);
 
   /*!
    * Forward a sequence.
@@ -60,6 +60,26 @@ class MixedEnsembles{
    * \param _i Row pixel.
    */
   void forwardOnPixel(cv::Mat _matrix, uint _i);
+
+  /*!
+   * Get the output network
+   * \return the output network.
+   */
+  NeuralNetworkPtr getOutputNetwork();
+
+  /*!
+   * Get the output of the connector layer.
+   * The connector output is not passed forward to the output network.
+   * \param _matrix Image to use.
+   * \param _i Row pixel.
+   */
+  FeatureVector getConnectorOutput(cv::Mat _matrix,uint _i);
+
+  /*!
+   * Set the output network
+   * \param The output network.
+   */
+  void setOutputNetwork(NeuralNetworkPtr _outputNet);
 
   /*!
    * Destructor.

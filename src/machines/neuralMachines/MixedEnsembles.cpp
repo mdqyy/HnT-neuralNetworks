@@ -9,7 +9,7 @@
 using namespace std;
 using namespace cv;
 
-MixedEnsembles::MixedEnsembles(std::vector<NeuralNetworkPtr> _networks,std::vector<ImageFrameExtractor> _ifes, std::vector<uint> _linkedToIFE, Connector _connector, NeuralNetwork _outputNetwork) : networks(_networks), ifes(_ifes), linkedToIFE(_linkedToIFE),outputNetwork(_outputNetwork){
+MixedEnsembles::MixedEnsembles(std::vector<NeuralNetworkPtr> _networks,std::vector<ImageFrameExtractor> _ifes, std::vector<uint> _linkedToIFE, Connector _connector, NeuralNetworkPtr _outputNetwork) : networks(_networks), ifes(_ifes), linkedToIFE(_linkedToIFE),outputNetwork(_outputNetwork){
   if(networks.size()!=linkedToIFE.size()){
     cerr << "wrong network/ifes size" <<networks.size()<< "/" << ifes.size() << endl;
   }
@@ -38,6 +38,11 @@ void MixedEnsembles::forwardMatrix(Mat _matrix){
 }
 
 void MixedEnsembles::forwardOnPixel(Mat _matrix, uint _i){
+  FeatureVector connectedOutput = getConnectorOutput(_matrix,_i);
+  outputNetwork->forward(connectedOutput);
+}
+
+FeatureVector MixedEnsembles::getConnectorOutput(Mat _matrix, uint _i){
     vector<FeatureVector> inputs;
     FeatureVector connectedOutput;
     vector<boost::thread * > threadsForward;
@@ -55,7 +60,15 @@ void MixedEnsembles::forwardOnPixel(Mat _matrix, uint _i){
       delete threadsForward[n];
     }
     connectedOutput = connector.concatenateOutputs();
-    outputNetwork.forward(connectedOutput);
+    return connectedOutput;
+}
+
+NeuralNetworkPtr MixedEnsembles::getOutputNetwork(){
+  return outputNetwork;
+}
+
+void MixedEnsembles::setOutputNetwork(NeuralNetworkPtr _outputNet){
+  outputNetwork = _outputNet;
 }
 
 
