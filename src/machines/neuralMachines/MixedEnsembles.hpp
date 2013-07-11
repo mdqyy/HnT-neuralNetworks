@@ -42,11 +42,15 @@ class MixedEnsembles{
   NeuralNetworkPtr outputNetwork;
 
  public:
-
-  /*!
+  /*
    * Default constructor.
    */
-  MixedEnsembles(std::vector<NeuralNetworkPtr> _networks,std::vector<ImageFrameExtractor> _ifes, std::vector<uint> _linkedToIFE,Connector _connector, NeuralNetworkPtr _outputNetwork);
+  MixedEnsembles();
+
+  /*!
+   * Parameter constructor.
+   */
+  MixedEnsembles(std::vector<NeuralNetworkPtr> _networks,std::vector<ImageFrameExtractor> _ifes, std::vector<uint> _linkedToIFE, NeuralNetworkPtr _outputNetwork);
 
   /*!
    * Forward a sequence.
@@ -62,12 +66,6 @@ class MixedEnsembles{
   void forwardOnPixel(cv::Mat _matrix, uint _i);
 
   /*!
-   * Get the output network
-   * \return the output network.
-   */
-  NeuralNetworkPtr getOutputNetwork();
-
-  /*!
    * Get the output of the connector layer.
    * The connector output is not passed forward to the output network.
    * \param _matrix Image to use.
@@ -76,15 +74,58 @@ class MixedEnsembles{
   FeatureVector getConnectorOutput(cv::Mat _matrix,uint _i);
 
   /*!
+   * Get the output network
+   * \return the output network.
+   */
+  NeuralNetworkPtr getOutputNetwork() const ;
+
+  /*!
    * Set the output network
-   * \param The output network.
+   * \param _outputNet The output network.
    */
   void setOutputNetwork(NeuralNetworkPtr _outputNet);
+
+  /* Get input networks.
+   * \return The input networks.
+   */
+  std::vector<NeuralNetworkPtr> getNetworks() const;
+
+  /*!
+   * Set the input networks
+   * \param _networks The input networks.
+   */
+  void setNetworks(std::vector<NeuralNetworkPtr> _networks);
+
+  /* Get the image frame extractors.
+   * \return The image frame extractors.
+   */
+  std::vector<ImageFrameExtractor> getIFEs() const;
+
+  /*!
+   * Set the Image frame extractors used.
+   * \param _ifes The new Image frame extractor.
+   */
+  void setIFEe(std::vector<ImageFrameExtractor> _ifes);
+
+  /* Get the linked to image frame extractor.
+   * \return The links to the image frame extractors.
+   */
+  std::vector<uint> getLinkedToIFE() const;
+
+  /*!
+   * Set the links to IFE
+   * \param _linkedToIFE The links to IFE.
+   */
+  void setLinkedToIFE(std::vector<uint> _linkedToIFE);
 
   /*!
    * Destructor.
    */
   ~MixedEnsembles();
+
+  friend std::ofstream& operator<<(std::ofstream& _ofs, const MixedEnsembles& _ensemble);
+
+  friend std::ifstream& operator>>(std::ifstream& _ifs, MixedEnsembles& _pop);
 
 };
 

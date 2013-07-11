@@ -147,3 +147,6 @@ target_link_libraries(executables/weightImages Machines TinyXML ${OpenCV_LIBS} $
 
 add_executable(executables/connectorTest src/executables/connectorTest.cpp)
 target_link_libraries(executables/connectorTest Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
+add_executable(executables/mixedEnsemblesComposers src/executables/mixedEnsemblesComposers.cpp)
+target_link_libraries(executables/mixedEnsemblesComposers Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})

@@ -17,19 +17,31 @@ ImageFrameExtractor::ImageFrameExtractor(realv _scale, uint _frameSize, uint _in
 
 }
 
-realv ImageFrameExtractor::getScale(){
+realv ImageFrameExtractor::getScale() const{
   return scale;
 }
 
-uint ImageFrameExtractor::getFrameSize(){
+void ImageFrameExtractor::setScale(realv _scale){
+  scale = _scale;
+}
+
+uint ImageFrameExtractor::getFrameSize() const{
   return frameSize;
 }
 
-uint ImageFrameExtractor::getInterFrameSpace(){
+void ImageFrameExtractor::setFrameSize(uint _frameSize){
+  frameSize = _frameSize;
+}
+
+uint ImageFrameExtractor::getInterFrameSpace() const{
   return interFrameSpace;
 }
 
-FeatureVector ImageFrameExtractor::getFrameCenteredOn(Mat _image,uint _row){
+void ImageFrameExtractor::setInterFrameSpace(uint _interFrameSpace){
+  interFrameSpace = _interFrameSpace;
+}
+
+FeatureVector ImageFrameExtractor::getFrameCenteredOn(Mat _image,uint _row) const{
   Mat imageProc;
   resize(_image,imageProc,Size(0,0),scale,scale,INTER_LINEAR);
   uint fvLength = imageProc.rows*frameSize;
@@ -53,7 +65,7 @@ FeatureVector ImageFrameExtractor::getFrameCenteredOn(Mat _image,uint _row){
   return result;
 }
 
-FeatureVector ImageFrameExtractor::getOneFrame(Mat _image,uint _frame){
+FeatureVector ImageFrameExtractor::getOneFrame(Mat _image,uint _frame) const{
   Mat imageProc;
   resize(_image,imageProc,Size(0,0),scale,scale,INTER_LINEAR);
   uint numberOfFrames = imageProc.cols/interFrameSpace;
@@ -111,4 +123,27 @@ vector<FeatureVector> ImageFrameExtractor::getFrames(Mat _image){
 
 ImageFrameExtractor::~ImageFrameExtractor(){
 
+}
+
+
+ofstream& operator<<(ofstream& _ofs, const ImageFrameExtractor& _ife){
+  _ofs << " < ";
+  _ofs << _ife.getScale() <<" " << _ife.getFrameSize() << " " << _ife.getInterFrameSpace()<< endl;
+  _ofs << " > ";
+  return _ofs;
+}
+
+ifstream& operator>>(ifstream& _ifs, ImageFrameExtractor& _ife){
+  string temp;
+  uint uintValue;
+  realv realValue;
+  _ifs >> temp;
+  _ifs >> realValue;
+  _ife.setScale(realValue);
+  _ifs >> uintValue ;
+  _ife.setFrameSize(uintValue);
+  _ifs >> uintValue;
+  _ife.setInterFrameSpace(uintValue);
+  _ifs >> temp;
+  return _ifs;
 }

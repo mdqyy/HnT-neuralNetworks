@@ -9,7 +9,11 @@
 using namespace std;
 using namespace cv;
 
-MixedEnsembles::MixedEnsembles(std::vector<NeuralNetworkPtr> _networks,std::vector<ImageFrameExtractor> _ifes, std::vector<uint> _linkedToIFE, Connector _connector, NeuralNetworkPtr _outputNetwork) : networks(_networks), ifes(_ifes), linkedToIFE(_linkedToIFE),outputNetwork(_outputNetwork){
+MixedEnsembles::MixedEnsembles() : networks(vector<NeuralNetworkPtr>()),ifes(vector<ImageFrameExtractor>()), linkedToIFE(vector<uint>()),outputNetwork(NeuralNetworkPtr()){
+  
+}
+
+MixedEnsembles::MixedEnsembles(vector<NeuralNetworkPtr> _networks,vector<ImageFrameExtractor> _ifes, vector<uint> _linkedToIFE, NeuralNetworkPtr _outputNetwork) : networks(_networks), ifes(_ifes), linkedToIFE(_linkedToIFE),outputNetwork(_outputNetwork){
   if(networks.size()!=linkedToIFE.size()){
     cerr << "wrong network/ifes size" <<networks.size()<< "/" << ifes.size() << endl;
   }
@@ -63,23 +67,23 @@ FeatureVector MixedEnsembles::getConnectorOutput(Mat _matrix, uint _i){
     return connectedOutput;
 }
 
-NeuralNetworkPtr MixedEnsembles::getOutputNetwork(){
+NeuralNetworkPtr MixedEnsembles::getOutputNetwork() const{
   return outputNetwork;
 }
 
 void MixedEnsembles::setOutputNetwork(NeuralNetworkPtr _outputNet){
   outputNetwork = _outputNet;
 }
-/*
-vector<NeuralNetworkPtr> MixedEnsembles::getNetworks(){
+
+vector<NeuralNetworkPtr> MixedEnsembles::getNetworks() const{
   return networks;
 }
 
-void MixedEnsembles::setNetworks(NeuralNetworkPtr _networks){
+void MixedEnsembles::setNetworks(vector<NeuralNetworkPtr> _networks){
   networks = _networks;
 }
 
-vector<ImageFrameExtractor> MixedEnsembles::getIFEs(){
+vector<ImageFrameExtractor> MixedEnsembles::getIFEs() const{
   return ifes;
 }
 
@@ -87,42 +91,75 @@ void MixedEnsembles::setIFEe(vector<ImageFrameExtractor> _ifes){
   ifes=_ifes;
 }
 
-vector<uint> MixedEnsembles::getLinkedToIFE(){
+vector<uint> MixedEnsembles::getLinkedToIFE() const{
   return linkedToIFE;
 }
 
-void MixedEnsembles::setLinkedToIFE(){
-
-}*/
+void MixedEnsembles::setLinkedToIFE(vector<uint> _linkedToIFE){
+  linkedToIFE = _linkedToIFE;
+}
 
 
 MixedEnsembles::~MixedEnsembles(){
 
 }
 
-/*ofstream& operator<<(ofstream& _ofs, const MixedEnsembles& _pop){
+ofstream& operator<<(ofstream& _ofs, const MixedEnsembles& _ensemble){
   _ofs << " < ";
-  vector<NeuralNetworkPtr> population= _pop.getPopulation();
-  _ofs << population.size() << endl;
-  for(uint i = 0; i<population.size();i++){
-    _ofs << *(population[i].get()) << endl;
+  vector<NeuralNetworkPtr> inputNets = _ensemble.getNetworks();
+  vector<uint> links = _ensemble.getLinkedToIFE();
+  vector<ImageFrameExtractor> ifes = _ensemble.getIFEs();
+  _ofs << inputNets.size() << endl;
+  for(uint i=0;i<inputNets.size();i++){
+    _ofs << *(inputNets[i].get())<< endl;
   }
+  _ofs << links.size() << endl;
+  _ofs <<" [ ";
+  for(uint i=0;i<links.size();i++){
+    _ofs << links[i] << " " ;
+  }
+  _ofs <" ] ";
+  _ofs << ifes.size() << endl;
+  for(uint i=0;i<ifes.size();i++){
+    _ofs << ifes[i] << endl;
+  }
+  _ofs <<  *(_ensemble.getOutputNetwork().get()) << endl;
   _ofs << " > ";
   return _ofs;
 }
 
-ifstream& operator>>(ifstream& _ifs, PBDNN& _pop){
+ifstream& operator>>(ifstream& _ifs, MixedEnsembles& _ensemble){
   string temp;
-  int popSize;
+  int count;
+  uint link;
   vector<NeuralNetworkPtr> population = vector<NeuralNetworkPtr>();
+  vector<uint> links = vector<uint>();
+  vector<ImageFrameExtractor> ifes =  vector<ImageFrameExtractor>();
   _ifs >> temp;
-  _ifs >> popSize;
-  for(uint i = 0; i<popSize;i++){
+  _ifs >> count;
+  for(uint i = 0; i<count;i++){
     NeuralNetwork nnTemp;
     _ifs >> nnTemp;
     population.push_back(NeuralNetworkPtr(new NeuralNetwork(nnTemp)));
   }
-  _pop = PBDNN(population);
+  _ifs >> count;
+  _ifs >> temp;
+  for(uint i= 0; i < count; i++){
+    _ifs >> link;
+    links.push_back(link);
+  }
+  _ifs >> temp;
+  _ifs >> count;
+  for(uint i= 0; i < count; i++){
+    ImageFrameExtractor ife;
+    _ifs >> ife;
+    ifes.push_back(ife);
+  }
+  NeuralNetwork outputNet;
+  _ifs >> outputNet;
+  NeuralNetworkPtr outputNetPtr(new NeuralNetwork(outputNet));
+  _ifs >> temp;
+  _ensemble = MixedEnsembles(population,ifes,links,outputNetPtr);
   _ifs >> temp;
   return _ifs;
-  }*/
+}

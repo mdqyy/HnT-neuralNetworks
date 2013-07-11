@@ -42,19 +42,37 @@ class ImageFrameExtractor {
    * Get the scale
    * \return The scale used on the images.
    */
-  realv getScale();
+  realv getScale() const;
+
+  /*!
+   * Set the scale
+   * \param _scale The new scale.
+   */
+  void setScale(realv _scale);
 
   /*!
    * Get the frame size.
    * \return The frame size.
    */
-  uint getFrameSize();
+  uint getFrameSize() const;
+
+  /*!
+   * Set the frame size.
+   * \param _frameSize The frame size.
+   */
+  void setFrameSize(uint _frameSize);
 
   /*!
    * Get the space between the extraction of two frames.
    * \return The space between two frames.
    */
-  uint getInterFrameSpace();
+  uint getInterFrameSpace() const;
+  
+  /*!
+   * Get the inter frame space.
+   * \return _interFrameSpace 
+   */
+  void setInterFrameSpace(uint _interFrameSpace);
   
   /*!
    * Get the frame i at a particuliar position on the base image.
@@ -62,7 +80,7 @@ class ImageFrameExtractor {
    * \param _frame The original central colon.
    * \return The feature vector of this frame.
    */
-  FeatureVector getFrameCenteredOn(cv::Mat _image,uint _row);
+  FeatureVector getFrameCenteredOn(cv::Mat _image,uint _row) const;
 
   /*!
    * Get the frame i in an image.
@@ -71,7 +89,7 @@ class ImageFrameExtractor {
    * \return The feature vector of this frame.
    * \warning The frame must exist in the image !!
    */
-  FeatureVector getOneFrame(cv::Mat _image,uint _frame);
+  FeatureVector getOneFrame(cv::Mat _image,uint _frame) const;
 
   /*!
    * Get the frames from an image.
@@ -84,6 +102,10 @@ class ImageFrameExtractor {
    * Destructor.
    */
   ~ImageFrameExtractor();
+
+  friend std::ofstream& operator<<(std::ofstream& _ofs, const ImageFrameExtractor& _ife);
+
+  friend std::ifstream& operator>>(std::ifstream& _ifs, ImageFrameExtractor& _ife);
 
 };
 
