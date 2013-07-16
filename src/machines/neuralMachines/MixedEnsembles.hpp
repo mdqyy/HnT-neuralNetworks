@@ -74,6 +74,12 @@ class MixedEnsembles{
   FeatureVector getConnectorOutput(cv::Mat _matrix,uint _i);
 
   /*!
+   * Get the mixed ensemble output.
+   * \return The output.
+   */
+  FeatureVector getOutput() const;
+
+  /*!
    * Get the output network
    * \return the output network.
    */

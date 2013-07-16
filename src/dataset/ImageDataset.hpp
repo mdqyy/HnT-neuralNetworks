@@ -34,7 +34,7 @@ class ImageDataset {
    * \param _ife Image Frame Extractor.
    * \param _images Vector of strings.
    */
-  ImageDataset(std::vector< std::string > _images, ImageFrameExtractor _ife=ImageFrameExtractor());
+  ImageDataset(std::vector< std::string > _images, ImageFrameExtractor _ife=ImageFrameExtractor(1.0,1,1));
 
   /*! Add an image.
    * \param _image image name.

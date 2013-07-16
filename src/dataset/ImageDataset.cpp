@@ -9,7 +9,7 @@
 using namespace std;
 using namespace cv;
 
-ImageDataset::ImageDataset() :images(vector<string>()), ife(ImageFrameExtractor()) {
+ImageDataset::ImageDataset() :images(vector<string>()), ife(ImageFrameExtractor(1.0,1,1)) {
 }
 
 ImageDataset::ImageDataset(vector< string > _images,ImageFrameExtractor _ife) : images(_images) ,  ife(_ife){

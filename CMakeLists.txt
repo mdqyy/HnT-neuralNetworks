@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(PhD)
 #make flags
-set(CMAKE_CXX_FLAGS "-Wall -pedantic -std=c99")
+set(CMAKE_CXX_FLAGS "-Wall -pedantic -std=c99 -g")
 
 #$SET(OpenCV_DIR "/home/entitees/labo-litis/partages/maurdor-labo-litis/libraries_install/share/OpenCV")
 find_package(OpenCV REQUIRED)
@@ -123,6 +123,9 @@ target_link_libraries(executables/createImageFromClusters Machines TinyXML ${Ope
 
 add_executable(executables/imagesToHTK src/executables/ImagesToHTK.cpp)
 target_link_libraries(executables/imagesToHTK Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES}  ${Boost_LIBS})
+
+add_executable(executables/createImageDataset src/executables/createImageDataset.cpp)
+target_link_libraries(executables/createImageDataset Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
 
 
 ## Various tasks

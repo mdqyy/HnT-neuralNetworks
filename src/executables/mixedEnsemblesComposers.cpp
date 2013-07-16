@@ -16,13 +16,11 @@
 using namespace std;
 using namespace cv;
 
-
-void suppressLastLayer(vector<NeuralNetworkPtr> _nets){
-  for(uint i = 0; i < _nets.size(); i++) {
+void suppressLastLayers(vector<NeuralNetworkPtr> _nets) {
+  for (uint i = 0; i < _nets.size(); i++) {
     _nets[i]->suppressLastLayer();
   }
 }
-
 
 int main(int argc, char* argv[]) {
   vector<string> arguments;
@@ -33,32 +31,37 @@ int main(int argc, char* argv[]) {
   arguments.push_back("ife frame size");
   arguments.push_back("ife inter frame size");
   cout << helper("Mixed ensemble connector", "Connector test", arguments) << endl;
-  if (argc-3%4!=0) {
-    cerr << "Not enough arguments, " << argc - 1 << " given and " << arguments.size() << " times X required" << endl;
+  if ((argc - 3) % 4 != 0) {
+    cerr << "Not enough arguments, " << argc - 1 << " given and 2 + 4 times X required" << endl;
     return EXIT_FAILURE;
   }
   uint hiddenNeurons = atoi(argv[1]);
   uint outputNeurons = atoi(argv[2]);
   uint inputs = 0;
-  uint numberOfPops = (argc-3)/(arguments.size());
+  uint numberOfPops = (argc - 3) / ((int) arguments.size() - 2);
+  cout << "num pops " << numberOfPops << " arg size " << arguments.size() << endl;
   vector<NeuralNetworkPtr> nets = vector<NeuralNetworkPtr>();
-  vector<ImageFrameExtractor> ifse = vector<ImageFrameExtractor>();
+  vector<ImageFrameExtractor> ifes = vector<ImageFrameExtractor>();
   vector<uint> links = vector<uint>();
-  for(uint i=0;i<numberOfPops;i++){
-    ifstream in(argv[i*arguments.size()+1]);
+  for (uint i = 0; i < numberOfPops; i++) {
+    char* name = argv[i * arguments.size() + 3];
+    realv scale = atof(argv[i * arguments.size() + 4]);
+    uint frameSize = atoi(argv[i * arguments.size() + 5]);
+    uint interFrameSpace = atoi(argv[i * arguments.size() + 6]);
+    ifstream in(name);
     PBDNN pop;
     in >> pop;
     vector<NeuralNetworkPtr> localNets = pop.getPopulation();
-    suppressLastLayer(localNets);
-    realv scale = 0.0;
-    uint frameSize= 0;
-    uint interFrameSpace = 0;
-    ImageFrameExtractor ife(scale,frameSize,interFrameSpace);
-    links.push_back(i);
-    for(uint j = 0;j<localNets.size();j++){
+    suppressLastLayers(localNets);
+    ImageFrameExtractor ife(scale, frameSize, interFrameSpace);
+    for (uint j = 0; j < localNets.size(); j++) {
+      links.push_back(i);
       inputs += localNets[j]->getHiddenLayers().back()->getNumUnits();
     }
+    nets.insert(nets.end(),localNets.begin(),localNets.end());
+    ifes.push_back(ImageFrameExtractor(scale, frameSize, interFrameSpace));
   }
+  cout << "inputs " << inputs << endl;
   RNG random(getTickCount());
   random.next();
   ValueVector mean(inputs); /*no idea how to initialize this, yabi(yet another bad idea)*/
@@ -66,13 +69,15 @@ int main(int argc, char* argv[]) {
   LayerPtr il = LayerPtr(new InputLayer(inputs, mean, stdDev));
   LayerPtr th = LayerPtr(new LayerSigmoid(hiddenNeurons));
   LayerPtr out = LayerPtr(new LayerSigmoid(outputNeurons));
-  ConnectionPtr c1 = ConnectionPtr(new Connection(il.get(),th.get(), random.next()));
-  ConnectionPtr c2 = ConnectionPtr(new Connection(th.get(),out.get(), random.next()));
+  ConnectionPtr c1 = ConnectionPtr(
+      new Connection(il.get(), th.get(), random.next()));
+  ConnectionPtr c2 = ConnectionPtr(
+      new Connection(th.get(), out.get(), random.next()));
   Mat ts = c1->getWeights();
   Mat td = c2->getWeights();
-  for(int i=0;i<ts.cols-1;i++){
-    for(int j=i;j<td.cols-1;j++){
-      td.at<realv>(i,j)=ts.at<realv>(j,i);
+  for (int i = 0; i < ts.cols - 1; i++) {
+    for (int j = i; j < td.cols - 1; j++) {
+      td.at<realv>(i, j) = ts.at<realv>(j, i);
     }
   }
   c2->setWeights(td.clone());
@@ -83,9 +88,19 @@ int main(int argc, char* argv[]) {
   vector<ConnectionPtr> connections;
   connections.push_back(c1);
   connections.push_back(c2);
-  NeuralNetworkPtr net = NeuralNetworkPtr(new NeuralNetwork(layers,connections,"network"));
-  MixedEnsembles me = MixedEnsembles(nets,ifse,links,net);
+  NeuralNetworkPtr net = NeuralNetworkPtr(
+      new NeuralNetwork(layers, connections, "network"));
+  MixedEnsembles me = MixedEnsembles(nets, ifes, links, net);
+  ImageDataset id;
+  id.load("build/test.dat");
   ofstream os("mixedEnsemble.pop");
-  os << me ;
+  os << me;
+  ifstream is("mixedEnsemble.pop");
+  MixedEnsembles meloaded;
+  is >> meloaded;
+  meloaded.forwardOnPixel(id.getMatrix(0,0),1);
+  me.forwardOnPixel(id.getMatrix(0,0),1);
+  cout << meloaded.getOutput() << endl;
+  cout << me.getOutput() << endl;
   return EXIT_SUCCESS;
 }

@@ -46,6 +46,10 @@ void MixedEnsembles::forwardOnPixel(Mat _matrix, uint _i){
   outputNetwork->forward(connectedOutput);
 }
 
+FeatureVector MixedEnsembles::getOutput() const{
+  return outputNetwork->getOutputSignal();
+}
+
 FeatureVector MixedEnsembles::getConnectorOutput(Mat _matrix, uint _i){
     vector<FeatureVector> inputs;
     FeatureVector connectedOutput;
@@ -118,7 +122,7 @@ ofstream& operator<<(ofstream& _ofs, const MixedEnsembles& _ensemble){
   for(uint i=0;i<links.size();i++){
     _ofs << links[i] << " " ;
   }
-  _ofs <" ] ";
+  _ofs <<" ] " << endl;
   _ofs << ifes.size() << endl;
   for(uint i=0;i<ifes.size();i++){
     _ofs << ifes[i] << endl;
@@ -137,6 +141,7 @@ ifstream& operator>>(ifstream& _ifs, MixedEnsembles& _ensemble){
   vector<ImageFrameExtractor> ifes =  vector<ImageFrameExtractor>();
   _ifs >> temp;
   _ifs >> count;
+  cout << "nets " << count << endl;
   for(uint i = 0; i<count;i++){
     NeuralNetwork nnTemp;
     _ifs >> nnTemp;
@@ -144,12 +149,14 @@ ifstream& operator>>(ifstream& _ifs, MixedEnsembles& _ensemble){
   }
   _ifs >> count;
   _ifs >> temp;
+  cout << "links " << temp << count << endl;
   for(uint i= 0; i < count; i++){
     _ifs >> link;
     links.push_back(link);
   }
   _ifs >> temp;
   _ifs >> count;
+  cout << "ife count " << temp << count << endl;
   for(uint i= 0; i < count; i++){
     ImageFrameExtractor ife;
     _ifs >> ife;
@@ -158,7 +165,6 @@ ifstream& operator>>(ifstream& _ifs, MixedEnsembles& _ensemble){
   NeuralNetwork outputNet;
   _ifs >> outputNet;
   NeuralNetworkPtr outputNetPtr(new NeuralNetwork(outputNet));
-  _ifs >> temp;
   _ensemble = MixedEnsembles(population,ifes,links,outputNetPtr);
   _ifs >> temp;
   return _ifs;
