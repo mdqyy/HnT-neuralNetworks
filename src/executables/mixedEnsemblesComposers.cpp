@@ -91,16 +91,7 @@ int main(int argc, char* argv[]) {
   NeuralNetworkPtr net = NeuralNetworkPtr(
       new NeuralNetwork(layers, connections, "network"));
   MixedEnsembles me = MixedEnsembles(nets, ifes, links, net);
-  ImageDataset id;
-  id.load("build/test.dat");
   ofstream os("mixedEnsemble.pop");
   os << me;
-  ifstream is("mixedEnsemble.pop");
-  MixedEnsembles meloaded;
-  is >> meloaded;
-  meloaded.forwardOnPixel(id.getMatrix(0,0),1);
-  me.forwardOnPixel(id.getMatrix(0,0),1);
-  cout << meloaded.getOutput() << endl;
-  cout << me.getOutput() << endl;
   return EXIT_SUCCESS;
 }

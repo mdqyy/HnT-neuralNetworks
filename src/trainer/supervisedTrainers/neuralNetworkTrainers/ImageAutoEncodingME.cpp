@@ -10,7 +10,7 @@ using namespace std;
 using namespace cv;
 
 
-ImageAutoEncodingME::ImageAutoEncodingME(MixedEnsembles& _machine, ImageDataset& _dataset, LearningParams _params, std::ostream& _log) : machine(_machine),dataset(_dataset),params(_params), log(_log){
+ImageAutoEncodingME::ImageAutoEncodingME(MixedEnsembles& _machine, ImageDataset& _dataset, ImageDataset& _testDataset, LearningParams _params, std::ostream& _log) : machine(_machine),dataset(_dataset), testDataset(_testDataset),params(_params), log(_log){
 
 }
 
@@ -23,15 +23,15 @@ void ImageAutoEncodingME::train(){
     params.setActualIteration(i);
     params.setLearningRate(params.getLearningRate() * params.getLearningRateDecrease());
     if (params.isSavedDuringProcess()) {
-      /*      ostringstream name;
-      name << params.getSaveLocation() << "/populationIteration" << i << ".txt";
+      ostringstream name;
+      name << params.getSaveLocation() << "/mixedEnsembleIteration" << i << ".txt";
       ofstream outStream(name.str().c_str());
-      outStream << this->population;
+      outStream << this->machine;
       outStream << this->params;
-      outStream.close();*/
+      outStream.close();
     }
     if (params.isValidatedDuringProcess() && (i+1)%params.getValidateEveryNIteration()==0) {
-      log << "Validation "<< endl;
+      log << "Validation at step "<< i << endl;
       validateIteration();
     }
   } while (i < params.getMaxIterations());
@@ -150,8 +150,27 @@ void ImageAutoEncodingME::backward(FeatureVector _target) {
   connections[0]->setWeights(td);
 }
 
-void validateIteration(){
-  /*! TODO */
+void ImageAutoEncodingME::validateIteration(){
+  AEMeasurer ae;
+  uint testSampleSize = testDataset.getNumberOfImages()*params.getMaxTrainedPercentage();
+  vector<uint> order = defineIndexOrderSelection(testDataset.getNumberOfImages());
+  uint index = 0;
+  realv totalError = 0;
+  uint totalNumberOfFrames = 0;
+  NeuralNetworkPtr netPtr = machine.getOutputNetwork();
+  for(uint i = 0; i < testSampleSize; i++){
+    index = order[i];
+    Mat image = testDataset.getMatrix(index,0);
+    for(uint j = 0; j< image.cols; j=j+6){
+      FeatureVector intermediateOutput = machine.getConnectorOutput(image,j);
+      netPtr->forward(intermediateOutput);
+      FeatureVector output = machine.getOutput();
+      ae.processErrors(output,intermediateOutput);
+      totalError += ae.getError();
+      totalNumberOfFrames ++;
+    }
+    log << "Output Error is : " << totalError/((realv)totalNumberOfFrames)<<endl;
+  }
 }
 
 ImageAutoEncodingME::~ImageAutoEncodingME(){

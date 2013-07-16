@@ -70,6 +70,8 @@ target_link_libraries(executables/pbdnnRecomposer Machines TinyXML ${OpenCV_LIBS
 add_executable(executables/pbdnnTrainerPursuit src/executables/pbdnnTrainerPursuit.cpp)
 target_link_libraries(executables/pbdnnTrainerPursuit Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
+add_executable(executables/mixedEnsemblesTraining src/executables/mixedEnsemblesTraining.cpp)
+target_link_libraries(executables/mixedEnsemblesTraining Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
 ##Create databases 
 

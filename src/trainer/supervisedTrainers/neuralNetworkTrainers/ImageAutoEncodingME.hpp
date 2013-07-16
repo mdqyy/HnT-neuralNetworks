@@ -33,6 +33,9 @@ class ImageAutoEncodingME {
   /* Image dataset */
   ImageDataset& dataset;
 
+  /* Image test dataset */
+  ImageDataset& testDataset;
+
   /* Learning parameters */
   LearningParams params;
   
@@ -71,7 +74,7 @@ class ImageAutoEncodingME {
   /*!
    * Default constructor.
    */
-  ImageAutoEncodingME(MixedEnsembles& _machine, ImageDataset& _dataset, LearningParams _params, std::ostream& _log);
+  ImageAutoEncodingME(MixedEnsembles& _machine, ImageDataset& _dataset, ImageDataset& _testDataset, LearningParams _params, std::ostream& _log);
 
   /*!
    * Train on a number of iterations.

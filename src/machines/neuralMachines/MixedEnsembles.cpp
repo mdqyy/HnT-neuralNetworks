@@ -141,7 +141,6 @@ ifstream& operator>>(ifstream& _ifs, MixedEnsembles& _ensemble){
   vector<ImageFrameExtractor> ifes =  vector<ImageFrameExtractor>();
   _ifs >> temp;
   _ifs >> count;
-  cout << "nets " << count << endl;
   for(uint i = 0; i<count;i++){
     NeuralNetwork nnTemp;
     _ifs >> nnTemp;
@@ -149,14 +148,12 @@ ifstream& operator>>(ifstream& _ifs, MixedEnsembles& _ensemble){
   }
   _ifs >> count;
   _ifs >> temp;
-  cout << "links " << temp << count << endl;
   for(uint i= 0; i < count; i++){
     _ifs >> link;
     links.push_back(link);
   }
   _ifs >> temp;
   _ifs >> count;
-  cout << "ife count " << temp << count << endl;
   for(uint i= 0; i < count; i++){
     ImageFrameExtractor ife;
     _ifs >> ife;
