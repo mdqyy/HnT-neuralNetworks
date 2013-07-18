@@ -108,7 +108,7 @@ ErrorVector ImageAutoEncodingME::calculateOutputDeltas(LayerPtr _layer, FeatureV
   ErrorVector delta = ErrorVector(_layer->getNumUnits());
   for (uint i = 0; i < _target.getLength(); i++) {
     delta[i] = _derivatives[i] * (_target[i] - _layer->getOutputSignal()[i]); // error calculation if output layer with MSE
-    delta[i] =  _layer->getOutputSignal()[i] * (_target[i] - _layer->getOutputSignal()[i]); // error calculation if output layer with Cross-Entropy
+    //delta[i] =  _layer->getOutputSignal()[i] * (_target[i] - _layer->getOutputSignal()[i]); // error calculation if output layer with Cross-Entropy
   }
   return delta;
 }
@@ -169,8 +169,8 @@ void ImageAutoEncodingME::validateIteration(){
       totalError += ae.getError();
       totalNumberOfFrames ++;
     }
-    log << "Output Error is : " << totalError/((realv)totalNumberOfFrames)<<endl;
   }
+  log << "Output Error is : " << totalError/((realv)totalNumberOfFrames)<<endl;
 }
 
 ImageAutoEncodingME::~ImageAutoEncodingME(){

@@ -25,7 +25,7 @@ ErrorVector calculateDeltasTiedWeights(LayerPtr _layer, FeatureVector _target, V
 ErrorVector calculateOutputDeltasTiedWeights(LayerPtr _layer, FeatureVector _target, ValueVector _derivatives) {
   ErrorVector delta = ErrorVector(_layer->getNumUnits());
   for (uint i = 0; i < _target.getLength(); i++) {
-    delta[i] = _derivatives[i] * (_target[i] - _layer->getOutputSignal()[i]); // error calculation if output layer with MSE
+    //delta[i] = _derivatives[i] * (_target[i] - _layer->getOutputSignal()[i]); // error calculation if output layer with MSE
     delta[i] =  _layer->getOutputSignal()[i] * (_target[i] - _layer->getOutputSignal()[i]); // error calculation if output layer with Cross-Entropy
   }
   return delta;

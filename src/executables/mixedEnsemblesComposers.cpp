@@ -25,7 +25,7 @@ void suppressLastLayers(vector<NeuralNetworkPtr> _nets) {
 int main(int argc, char* argv[]) {
   vector<string> arguments;
   arguments.push_back("output net hidden neurons");
-  arguments.push_back("output net output neurons");
+  arguments.push_back("output net output neurons, 0 neurons will produce an auto-encoder");
   arguments.push_back("population file");
   arguments.push_back("ife scale");
   arguments.push_back("ife frame size");
@@ -44,10 +44,11 @@ int main(int argc, char* argv[]) {
   vector<ImageFrameExtractor> ifes = vector<ImageFrameExtractor>();
   vector<uint> links = vector<uint>();
   for (uint i = 0; i < numberOfPops; i++) {
-    char* name = argv[i * arguments.size() + 3];
-    realv scale = atof(argv[i * arguments.size() + 4]);
-    uint frameSize = atoi(argv[i * arguments.size() + 5]);
-    uint interFrameSpace = atoi(argv[i * arguments.size() + 6]);
+    char* name = argv[i * 4 + 3];
+    realv scale = atof(argv[i * 4 + 4]);
+    uint frameSize = atoi(argv[i * 4 + 5]);
+    uint interFrameSpace = atoi(argv[i * 4 + 6]);
+    cout << "ife scale"<<scale << " frame size " << frameSize << " interFrameSpace " << interFrameSpace<<endl;
     ifstream in(name);
     PBDNN pop;
     in >> pop;
@@ -64,6 +65,10 @@ int main(int argc, char* argv[]) {
   cout << "inputs " << inputs << endl;
   RNG random(getTickCount());
   random.next();
+  if(outputNeurons <= 0 ){
+    outputNeurons = inputs;
+  }
+  cout << "output neurons "<< outputNeurons << endl;
   ValueVector mean(inputs); /*no idea how to initialize this, yabi(yet another bad idea)*/
   ValueVector stdDev(inputs); /* idem */
   LayerPtr il = LayerPtr(new InputLayer(inputs, mean, stdDev));

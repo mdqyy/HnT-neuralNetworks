@@ -24,10 +24,12 @@ int main(int argc, char* argv[]) {
   arguments.push_back("output population");
   arguments.push_back("iterations");
   arguments.push_back("learning rate");
-  arguments.push_back("noise ratio");
+  arguments.push_back("input noise ratio");
+  arguments.push_back("max trained percentage");
+  arguments.push_back("validation step every N step");
   cout << helper("Mixed ensemble training", "Only trains the last layer, not the complete architecture", arguments) << endl;
   if (argc -1 != arguments.size()) {
-    cerr << "Not enough arguments, " << argc - 1 << " given and 2 + 4 times X required" << endl;
+    cerr << "Not enough arguments, " << argc - 1 << " given and " << arguments.size() <<" required" << endl;
     return EXIT_FAILURE;
   }
   ifstream is(argv[1]);
@@ -35,8 +37,10 @@ int main(int argc, char* argv[]) {
   string testFile(argv[3]);
   ofstream ofs(argv[4]);
   uint iterations = atoi(argv[5]);
-  realv learningRate = atoi(argv[6]);
-  realv noise = atoi(argv[7]);
+  realv learningRate = atof(argv[6]);
+  realv noise = atof(argv[7]);
+  realv maxTrainedPC = atof(argv[8]);
+  uint validationEveryNIter = atoi(argv[9]);
 
   MixedEnsembles me;
   is >> me ;
@@ -47,15 +51,17 @@ int main(int argc, char* argv[]) {
   LearningParams params;
   params.setActualIteration(0);
   params.setMaxIterations(iterations);
-  params.setLearningRate(0.001);
-  params.setMaxTrainedPercentage(0.1);
+  params.setLearningRate(learningRate);
+  params.setMaxTrainedPercentage(maxTrainedPC);
   params.setSavedDuringProcess(true);
-  params.setValidateEveryNIteration(100);
+  params.setValidateEveryNIteration(validationEveryNIter);
   params.setNoise(noise);
   ofstream log("training.log");
   ImageAutoEncodingME trainer = ImageAutoEncodingME(me,trainingDataset,testDataset,params,log);
+  double t = (double) getTickCount();
   trainer.train();
-
+  t = ((double) getTickCount() - t) / getTickFrequency();
+  cout << "Time :" << t << endl;
   ofs << me ;
   ofs.close();
   return EXIT_SUCCESS;

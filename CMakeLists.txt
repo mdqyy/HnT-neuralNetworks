@@ -70,8 +70,6 @@ target_link_libraries(executables/pbdnnRecomposer Machines TinyXML ${OpenCV_LIBS
 add_executable(executables/pbdnnTrainerPursuit src/executables/pbdnnTrainerPursuit.cpp)
 target_link_libraries(executables/pbdnnTrainerPursuit Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
-add_executable(executables/mixedEnsemblesTraining src/executables/mixedEnsemblesTraining.cpp)
-target_link_libraries(executables/mixedEnsemblesTraining Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
 ##Create databases 
 
@@ -153,5 +151,14 @@ target_link_libraries(executables/weightImages Machines TinyXML ${OpenCV_LIBS} $
 add_executable(executables/connectorTest src/executables/connectorTest.cpp)
 target_link_libraries(executables/connectorTest Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
+
+## Mixed ensembles
+
 add_executable(executables/mixedEnsemblesComposers src/executables/mixedEnsemblesComposers.cpp)
 target_link_libraries(executables/mixedEnsemblesComposers Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
+add_executable(executables/mixedEnsemblesTraining src/executables/mixedEnsemblesTraining.cpp)
+target_link_libraries(executables/mixedEnsemblesTraining Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
+add_executable(executables/mixedEnsemblesVisualisation src/executables/mixedEnsemblesVisualisation.cpp)
+target_link_libraries(executables/mixedEnsemblesVisualisation Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
