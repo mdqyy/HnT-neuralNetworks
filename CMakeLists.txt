@@ -37,8 +37,11 @@ target_link_libraries(executables/CTCTesting Machines TinyXML ${OpenCV_LIBS} ${B
 add_executable(executables/testRNN src/executables/recurrentLearning.cpp)
 target_link_libraries(executables/testRNN Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
+add_executable(executables/connectorTest src/executables/connectorTest.cpp)
+target_link_libraries(executables/connectorTest Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
-##Network training
+
+##Ensemble training
 
 add_executable(executables/pbdnnIAM src/executables/pbdnnIAM.cpp)
 target_link_libraries(executables/pbdnnIAM Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
@@ -69,6 +72,9 @@ target_link_libraries(executables/pbdnnRecomposer Machines TinyXML ${OpenCV_LIBS
 
 add_executable(executables/pbdnnTrainerPursuit src/executables/pbdnnTrainerPursuit.cpp)
 target_link_libraries(executables/pbdnnTrainerPursuit Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
+add_executable(executables/pbdnnImageInverseTrainer src/executables/pbdnnImageInverseTrainer.cpp)
+target_link_libraries(executables/pbdnnImageInverseTrainer Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
 
 ##Create databases 
@@ -147,9 +153,6 @@ target_link_libraries(executables/meanImage Machines TinyXML ${OpenCV_LIBS} ${Bo
 
 add_executable(executables/weightImages src/executables/weightImages.cpp)
 target_link_libraries(executables/weightImages Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
-
-add_executable(executables/connectorTest src/executables/connectorTest.cpp)
-target_link_libraries(executables/connectorTest Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
 
 ## Mixed ensembles

@@ -59,6 +59,7 @@ int main(int argc, char* argv[]) {
   ofstream log("training.log");
   ImageAutoEncodingME trainer = ImageAutoEncodingME(me,trainingDataset,testDataset,params,log);
   double t = (double) getTickCount();
+  trainer.validateIteration();
   trainer.train();
   t = ((double) getTickCount() - t) / getTickFrequency();
   cout << "Time :" << t << endl;

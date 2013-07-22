@@ -1,10 +1,10 @@
 /*!
- * \file PopulationInverseTrainer.cpp
- * Body of the PopulationInverseTrainer class.
+ * \file ImagePopulationInverseTrainer.cpp
+ * Body of the ImagePopulationInverseTrainer class.
  * \author Luc Mioulet
  */
 
-#include "PopulationInverseTrainer.hpp"
+#include "ImagePopulationInverseTrainer.hpp"
 #include "../../errorMeasurers/AEMeasurer.hpp"
 
 using namespace cv;
@@ -77,16 +77,16 @@ void backwardTiedWeights(NeuralNetworkPtr _neuralNet, FeatureVector _target, rea
 }
 
 // Thread process per network only forward to find min error networks
-void threadForwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint _k, RegressionDataset* _regData, uint _numberOfElementsToProcess, vector<
+void threadImageForwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint _k, ImageDataset* _trainingData, uint _numberOfElementsToProcess, vector<
     uint>* _indexOrderSelection, vector<vector<realv> > *_errors) {
   uint index = 0;
   AEMeasurer mae;
   for (uint i = 0; i < _numberOfElementsToProcess; i++) {
     index = (*_indexOrderSelection)[i];
-    FeatureVector fv = (*_regData)[index][0];
+    FeatureVector fv = (*_trainingData).getFeatures(index)[0];
     (*_neuralNets)[_k]->forward(fv);
     mae.processErrors((*_neuralNets)[_k]->getOutputSignal(),
-        (*_regData).getTargetSample(index, 0));
+        fv);
     (*_errors)[_k][i] = mae.getError();
   }
 }
@@ -114,10 +114,9 @@ FeatureVector randomSwap(FeatureVector _vec, realv _noise) {
 }
 
 // Thread process per network forward and backward to train min error networks
-void threadForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint _k, RegressionDataset* _regData, vector<
+void threadImageForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint _k, ImageDataset* _imageDataset, vector<
     vector<uint> >* _learningAffectations, realv _learningRate, uint _maxTrained, realv _noise) {
-  FeatureVector blackTarget = FeatureVector(
-      _regData->getTargetSample(0, 0).getLength());
+  FeatureVector blackTarget = FeatureVector(_imageDataset->getFeatures(0)[0]);
   RNG randomK((uint) getTickCount());
   uint index = 0;
   FeatureVector input, target;
@@ -125,45 +124,17 @@ void threadForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint
       i++) {
     /* first backward random bad sample*/
     randomK.next();
-    uint randK = 0;
     uint randI = 0;
-    /*   for(uint j = 0; j < (*_neuralNets).size()-1; j++){
-     do {
-     randK = randomK.uniform(0, (*_neuralNets).size());
-     } while( (randK == _k) && (*_learningAffectations)[randK].size() > 0);
-     cout << " 4 1 " << _k << endl;
-     randomK.next();
-     cout << " 4 2 " << _k << endl;
-     randI = randomK.uniform(0, (*_learningAffectations)[randK].size());
-     cout << " 4 3 " << _k << "rand i " << randI<< endl;
-     index = (*_learningAffectations)[randK][randI];
-     cout << " 4 4 " << _k << endl;
-     input = randomSwap((*_regData)[index][0], _noise);
-     cout << " 4 5 " << _k << endl;
-     (*_neuralNets)[_k]->forward(input);
-     cout << " 4 6 " << _k << endl;
-     for (uint v =0 ; v <  ((*_regData)[index][0]).getLength();v++){
-     cout << " 5 " << _k << endl;
-     if((*_regData)[index][0][v]==0.0){
-     blackTarget[v] = 1.0;
-     }
-     else{
-     blackTarget[v] = 0.0;
-     }
-     }
-     cout << " 6 " << _k << endl;
-     backwardTiedWeights((*_neuralNets)[_k], blackTarget, _learningRate*0.1);
-     cout << " 7 " << _k << endl;
-     }*//* This code was bugged so it was changed, I now go through all, problem after step 4_3 when selecting an empty net */
     for (uint j = 0; j < (*_neuralNets).size() - 1; j++) {
       if ((*_learningAffectations)[j].size() > 0 && j != _k) {
         randomK.next();
         randI = randomK.uniform(0, (*_learningAffectations)[j].size());
         index = (*_learningAffectations)[j][randI];
-        input = randomSwap((*_regData)[index][0], _noise);
+        input = randomSwap((*_imageDataset).getFeatures(index)[0], _noise);
+        target = (*_imageDataset).getFeatures(index)[0];
         (*_neuralNets)[_k]->forward(input);
-        for (uint v = 0; v < ((*_regData)[index][0]).getLength(); v++) {
-          if ((*_regData)[index][0][v] == 0.0) {
+        for (uint v = 0; v < target.getLength(); v++) {
+          if (target[v] == 0.0) {
             blackTarget[v] = 1.0;
           }
           else {
@@ -173,26 +144,62 @@ void threadForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint
         }
       }
     }
-    backwardTiedWeights((*_neuralNets)[_k], blackTarget,_learningRate / ((realv) _neuralNets->size()));
+    backwardTiedWeights((*_neuralNets)[_k], blackTarget, _learningRate);
     /* forward backward good sample */
     index = (*_learningAffectations)[_k][i];
-    input = randomSwap((*_regData)[index][0], _noise);
-    target = (*_regData).getTargetSample(index, 0);
+    input = randomSwap((*_imageDataset).getFeatures(index)[0], _noise);
+    target = (*_imageDataset).getFeatures(index)[0];
     (*_neuralNets)[_k]->forward(input);
     backwardTiedWeights((*_neuralNets)[_k], target, _learningRate);
   }
 }
 
 /* Population trainer methods */
-PopulationInverseTrainer::PopulationInverseTrainer(PBDNN& _population, RegressionDataset& _data, LearningParams& _params, RegressionDataset& _valid, Mask& _featureMask, Mask& _indexMask, ostream& _log) :
-    SupervisedTrainer(_population, _data, _featureMask, _indexMask, _log), population(
-        _population), params(_params), regData(_data), validationDataset(
-        _valid), endurance(
-        vector<uint>(population.getPopulation().size(), params.getDodges())) {
+ImagePopulationInverseTrainer::ImagePopulationInverseTrainer(PBDNN& _population, ImageDataset& _trainingDataset, ImageDataset& _validationDataset, LearningParams& _params, ostream& _log) :
+    population(_population), trainingDataset(_trainingDataset), validationDataset(
+        _validationDataset), params(_params), log(_log), endurance(vector<uint>(_population.getPopulation().size(), _params.getDodges())) {
 
 }
 
-void PopulationInverseTrainer::train() {
+FeatureVector ImagePopulationInverseTrainer::noiseTarget(FeatureVector _vec) {
+  RNG random((uint) getTickCount());
+  FeatureVector result(_vec.getLength());
+  realv val;
+  if (params.getNoise() > 0.0) {
+    for (uint i = 0; i < _vec.getLength(); i++) {
+      random.next();
+      val = random.uniform(0.0, 1.0);
+      if (val < params.getNoise()) {
+        result[i] = abs(_vec[i] - 1);
+      }
+      else {
+        result[i] = _vec[i];
+      }
+    }
+  }
+  else {
+    result = _vec;
+  }
+  return result;
+}
+
+vector<uint> ImagePopulationInverseTrainer::defineIndexOrderSelection(uint _numSequences) {
+  vector<uint> indexOrder;
+  for (uint i = 0; i < _numSequences; i++) {
+    indexOrder.push_back(i);
+  }
+  int exchangeIndex = 0;
+  RNG random(getTickCount());
+  random.next();
+  for (uint i = 0; i < _numSequences; i++) {
+    random.next();
+    exchangeIndex = random.uniform(0, _numSequences);
+    swap(indexOrder[i], indexOrder[exchangeIndex]);
+  }
+  return indexOrder;
+}
+
+void ImagePopulationInverseTrainer::train() {
   uint i = params.getActualIteration();
   do {
     i++;
@@ -219,17 +226,14 @@ void PopulationInverseTrainer::train() {
   } while (i < params.getMaxIterations());
 }
 
-void PopulationInverseTrainer::trainOneIteration() {
+void ImagePopulationInverseTrainer::trainOneIteration() {
   vector<uint> indexOrderSelection = defineIndexOrderSelection(
-      data.getNumSequences());
-  uint numberOfElementsToProcess = regData.getNumSequences()
+      trainingDataset.getNumberOfImages());
+  uint numberOfElementsToProcess = trainingDataset.getNumberOfImages()
       * params.getMaxTrainedPercentage();
   vector<NeuralNetworkPtr> neuralNets = population.getPopulation();
   AEMeasurer mae;
-  DiversityMeasurer diversity = DiversityMeasurer(population, validationDataset,
-      mae);
-  uint maxTrained = regData.getNumSequences() * params.getMaxTrainedPercentage()
-      / neuralNets.size();
+  uint maxTrained = numberOfElementsToProcess / neuralNets.size();
   vector<vector<realv> > errors;
   vector<uint> histogramOfTrainees(neuralNets.size(), 0);
   for (uint k = 0; k < neuralNets.size(); k++) {
@@ -239,8 +243,9 @@ void PopulationInverseTrainer::trainOneIteration() {
   vector<boost::thread *> threadsForward;
   for (uint k = 0; k < neuralNets.size(); k++) {
     threadsForward.push_back(
-        new boost::thread(threadForwardPerNetwork, &neuralNets, k, &regData,
-            numberOfElementsToProcess, &indexOrderSelection, &errors));
+        new boost::thread(threadImageForwardPerNetwork, &neuralNets, k,
+            &trainingDataset, numberOfElementsToProcess, &indexOrderSelection,
+            &errors));
   }
   for (uint k = 0; k < neuralNets.size(); k++) {
     threadsForward[k]->join();
@@ -269,8 +274,8 @@ void PopulationInverseTrainer::trainOneIteration() {
   vector<boost::thread *> threadsForwardBackward;
   for (uint k = 0; k < neuralNets.size(); k++) {
     threadsForwardBackward.push_back(
-        new boost::thread(threadForwardBackwardPerNetwork, &neuralNets, k,
-            &regData, &learningAffectations, params.getLearningRate(),
+        new boost::thread(threadImageForwardBackwardPerNetwork, &neuralNets, k,
+            &trainingDataset, &learningAffectations, params.getLearningRate(),
             maxTrained, params.getNoise()));
   }
   for (uint k = 0; k < neuralNets.size(); k++) {
@@ -279,30 +284,28 @@ void PopulationInverseTrainer::trainOneIteration() {
   }
 }
 
-void PopulationInverseTrainer::validateIteration() {
-  AEMeasurer mae;
-  vector<NeuralNetworkPtr> neuralNets = population.getPopulation();
-  DiversityMeasurer diversity = DiversityMeasurer(population, validationDataset,
-      mae, params.getMaxTrainedPercentage());
-  vector<int> validationAffectations = diversity.sampleRepartition();
-  vector<realv> bestErrors = diversity.errorsOnBestSample();
-  log << "network  | \t Global error \t|\t Best errors \t| \t timesSelected" << endl;
-  for (uint i = 0; i < neuralNets.size(); i++) {
-    RegressionMeasurer regMeasurer = RegressionMeasurer(*(neuralNets[i].get()),
-        regData, mae, params.getMaxTrainedPercentage());
-    regMeasurer.measurePerformance();
-    log << i << " \t | \t " << regMeasurer.getTotalError() << "\t | \t" << bestErrors[i] << "\t | \t" << validationAffectations[i] << endl;
-  }
-  diversity.measurePerformance();
-  log << "Diversity : " << endl << diversity.getDisagreementMatrix() << endl;
-  log << "Diversity scalar: " << endl << diversity.getDisagreementScalar() << endl;
+void ImagePopulationInverseTrainer::validateIteration() {
+  /*AEMeasurer mae;
+   vector<NeuralNetworkPtr> neuralNets = population.getPopulation();
+   DiversityMeasurer diversity = DiversityMeasurer(population, validationDataset, mae,params.getMaxTrainedPercentage());
+   vector<int> validationAffectations = diversity.sampleRepartition();
+   vector<realv> bestErrors = diversity.errorsOnBestSample();
+   log << "network  | \t Global error \t|\t Best errors \t| \t timesSelected" << endl;
+   for (uint i = 0; i < neuralNets.size(); i++) {
+   RegressionMeasurer regMeasurer = RegressionMeasurer(*(neuralNets[i].get()), validationDataset, mae, params.getMaxTrainedPercentage());
+   regMeasurer.measurePerformance();
+   log << i << " \t | \t " << regMeasurer.getTotalError() << "\t | \t" << bestErrors[i] << "\t | \t" << validationAffectations[i] << endl;
+   }
+   diversity.measurePerformance();
+   log << "Diversity : " << endl << diversity.getDisagreementMatrix() << endl;
+   log << "Diversity scalar: " << endl << diversity.getDisagreementScalar() << endl;*/
 }
 
-PopulationInverseTrainer::~PopulationInverseTrainer() {
+ImagePopulationInverseTrainer::~ImagePopulationInverseTrainer() {
 
 }
 
-vector<vector<uint> > PopulationInverseTrainer::determineLearningAffectations(vector<
+vector<vector<uint> > ImagePopulationInverseTrainer::determineLearningAffectations(vector<
     vector<realv> >& _errors, vector<uint>& _indexOrderSelection, uint _numberOfElementsToProcess, realv _maxError) {
   vector<vector<uint> > learningAffectations = vector<vector<uint> >();
   for (uint k = 0; k < _errors.size(); k++) {

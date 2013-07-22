@@ -83,14 +83,15 @@ protected:
 	/*Added noise when doing denoising auto encoders */
 	realv noise;
 
-public:
+	/*Inter frame space */
+	uint interFrameSpace;
 
+public:
 	/*!
-	 * Default constructor.
+	 * Parameter constructor.
+	 * Use setters to initialize all the data.
 	 */
-	LearningParams(realv _learningRate = 0.001, realv _learningRateDecrease = 0.95, uint _maxIterations = 10, uint _actualIteration = 0, uint _maxTrained = 5,
-			realv _maxTrainedPercentage = 0.25, realv _errorToFirst = 0.5, realv errorToFirstIncrease = 1.1, bool _savedDuringProcess = false,
-		       std::string _saveLocation = ".", bool _validatedDuringProcess = true, int _validateEveryNIteration=5, int _dodges = 2, realv _proximity = 0.30, realv _noise=0.0);
+	LearningParams();
 
 	/*!
 	 * Do stochastic.

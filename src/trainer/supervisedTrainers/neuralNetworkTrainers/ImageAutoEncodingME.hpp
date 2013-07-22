@@ -88,6 +88,7 @@ class ImageAutoEncodingME {
 
   /*!
    * Noise an input;
+   * \params _fv input feature vector.
    */ 
   FeatureVector noiseTarget(FeatureVector _fv);
 

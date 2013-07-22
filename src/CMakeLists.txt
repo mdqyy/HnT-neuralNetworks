@@ -60,6 +60,7 @@ add_library(Machines dataset/Dataset.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/PopulationClusterBP.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/PopulationTrainer.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/PopulationInverseTrainer.cpp
+  trainer/supervisedTrainers/neuralNetworkTrainers/ImagePopulationInverseTrainer.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/LearningParams.cpp
   #trainer/supervisedTrainers/neuralNetworkTrainers/ImageAutoEncoding.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/ImageAutoEncodingME.cpp

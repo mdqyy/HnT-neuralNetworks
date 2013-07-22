@@ -83,5 +83,6 @@ ImageDataset::~ImageDataset(){
 
 
 ostream& operator<<(ostream& _os, ImageDataset& _id){
-
+    _os << "Image dataset containing " <<_id.getNumberOfImages() << " images" << endl;
+    return _os;
 }

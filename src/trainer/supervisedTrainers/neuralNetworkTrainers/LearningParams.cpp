@@ -9,9 +9,8 @@
 using namespace cv;
 using namespace std;
 
-LearningParams::LearningParams(realv _learningRate, realv _learningRateDecrease, uint _maxIterations, uint _actualIteration, uint _maxTrained, realv _maxTrainedPercentage,
-			       realv _errorToFirst, realv _errorToFirstIncrease, bool _savedDuringProcess, string _saveLocation, bool _validatedDuringProcess, int _validateEveryNIteration, int _dodges, realv _proximity, realv _noise) :
-learningRate(_learningRate), learningRateDecrease(_learningRateDecrease), maxIterations(_maxIterations), maxTrained(_maxTrained), maxTrainedPercentage(_maxTrainedPercentage), errorToFirst(_errorToFirst), errorToFirstIncrease(_errorToFirstIncrease), savedDuringProcess(_savedDuringProcess), saveLocation(_saveLocation), validatedDuringProcess(_validatedDuringProcess), validateEveryNIteration(_validateEveryNIteration), dodges(_dodges), proximity(_proximity) , noise(_noise){
+LearningParams::LearningParams() :learningRate(0.001), learningRateDecrease(0.95), maxIterations(10), actualIteration(0), minError(0.0),minChangeError(0.05),maxTrained(5), maxTrainedPercentage(0.25), errorToFirst(0.5), errorToFirstIncrease(1.1), savedDuringProcess(false),
+    saveLocation("."), validatedDuringProcess(true), validateEveryNIteration(5), task(BP_REGRESSION),stochastic(true),dodges(2), proximity(0.30) , noise(0.0), interFrameSpace(0) {
 
 }
 
