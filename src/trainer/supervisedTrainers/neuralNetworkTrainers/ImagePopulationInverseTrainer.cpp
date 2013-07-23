@@ -235,7 +235,6 @@ void ImagePopulationInverseTrainer::trainOneIteration() {
   AEMeasurer mae;
   uint maxTrained = numberOfElementsToProcess / neuralNets.size();
   vector<vector<realv> > errors;
-  vector<uint> histogramOfTrainees(neuralNets.size(), 0);
   for (uint k = 0; k < neuralNets.size(); k++) {
     errors.push_back(vector<realv>(numberOfElementsToProcess, 10e+9));
   }
@@ -285,20 +284,41 @@ void ImagePopulationInverseTrainer::trainOneIteration() {
 }
 
 void ImagePopulationInverseTrainer::validateIteration() {
-  /*AEMeasurer mae;
-   vector<NeuralNetworkPtr> neuralNets = population.getPopulation();
-   DiversityMeasurer diversity = DiversityMeasurer(population, validationDataset, mae,params.getMaxTrainedPercentage());
-   vector<int> validationAffectations = diversity.sampleRepartition();
-   vector<realv> bestErrors = diversity.errorsOnBestSample();
-   log << "network  | \t Global error \t|\t Best errors \t| \t timesSelected" << endl;
-   for (uint i = 0; i < neuralNets.size(); i++) {
-   RegressionMeasurer regMeasurer = RegressionMeasurer(*(neuralNets[i].get()), validationDataset, mae, params.getMaxTrainedPercentage());
-   regMeasurer.measurePerformance();
-   log << i << " \t | \t " << regMeasurer.getTotalError() << "\t | \t" << bestErrors[i] << "\t | \t" << validationAffectations[i] << endl;
-   }
-   diversity.measurePerformance();
-   log << "Diversity : " << endl << diversity.getDisagreementMatrix() << endl;
-   log << "Diversity scalar: " << endl << diversity.getDisagreementScalar() << endl;*/
+  vector<uint> indexOrderSelection = defineIndexOrderSelection(
+      validationDataset.getNumberOfImages());
+  uint numberOfElementsToProcess = validationDataset.getNumberOfImages()
+      * params.getMaxTrainedPercentage();
+  vector<NeuralNetworkPtr> neuralNets = population.getPopulation();
+  AEMeasurer mae;
+  vector<vector<realv> > errors;
+  for (uint k = 0; k < neuralNets.size(); k++) {
+    errors.push_back(vector<realv>(numberOfElementsToProcess, 10e+9));
+  }
+  /* Use threaded forward process per network */
+  vector<boost::thread *> threadsForward;
+  for (uint k = 0; k < neuralNets.size(); k++) {
+    threadsForward.push_back(
+        new boost::thread(threadImageForwardPerNetwork, &neuralNets, k,
+            &validationDataset, numberOfElementsToProcess, &indexOrderSelection,
+            &errors));
+  }
+  for (uint k = 0; k < neuralNets.size(); k++) {
+    threadsForward[k]->join();
+    delete threadsForward[k];
+  }
+  /* Find learning affectations, regenerate if endurance is 0*/
+  realv maxError = params.getProximity()
+      * ((realv) neuralNets[0]->getInputLayer()->getNumUnits());
+  vector<vector<uint> > learningAffectations = determineLearningAffectations(
+      errors, indexOrderSelection, numberOfElementsToProcess, maxError);
+  vector<realv> netsError = vector<realv>(neuralNets.size(),0.0);
+  log << "network |\t Best errors \t| \t timesSelected" << endl;
+  for(uint k = 0;k < neuralNets.size();k++){
+    for(uint i = 0; i < learningAffectations[k].size(); i++){
+      netsError[k] += errors[k][i];
+    }
+    log << k << " \t | \t " << netsError[k]/((realv)learningAffectations[k].size()) << "\t | \t" << learningAffectations[k].size() << endl;
+  }
 }
 
 ImagePopulationInverseTrainer::~ImagePopulationInverseTrainer() {
