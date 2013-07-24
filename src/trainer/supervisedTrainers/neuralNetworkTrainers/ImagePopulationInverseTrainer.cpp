@@ -143,8 +143,9 @@ void threadImageForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets,
 
         }
       }
+      backwardTiedWeights((*_neuralNets)[_k], blackTarget, _learningRate/((realv)(*_neuralNets).size()));
     }
-    backwardTiedWeights((*_neuralNets)[_k], blackTarget, _learningRate);
+   
     /* forward backward good sample */
     index = (*_learningAffectations)[_k][i];
     input = randomSwap((*_imageDataset).getFeatures(index)[0], _noise);
