@@ -172,8 +172,9 @@ void threadForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint
 
         }
       }
+      backwardTiedWeights((*_neuralNets)[_k], blackTarget,_learningRate / ((realv) _neuralNets->size()));
     }
-    backwardTiedWeights((*_neuralNets)[_k], blackTarget,_learningRate / ((realv) _neuralNets->size()));
+
     /* forward backward good sample */
     index = (*_learningAffectations)[_k][i];
     input = randomSwap((*_regData)[index][0], _noise);
