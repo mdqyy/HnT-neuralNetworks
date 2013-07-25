@@ -143,7 +143,7 @@ void threadImageForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets,
 
         }
       }
-      backwardTiedWeights((*_neuralNets)[_k], blackTarget, _learningRate/((realv)(*_neuralNets).size()));
+      backwardTiedWeights((*_neuralNets)[_k], blackTarget, _learningRate/(10.0*(realv)(*_neuralNets).size()));
     }
    
     /* forward backward good sample */
