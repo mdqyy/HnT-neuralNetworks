@@ -46,8 +46,8 @@ void LayerSoftMax::forward(FeatureVector _signal){
   networkInputSignal = _signal;
   realv sum=0;
   for(uint i=0;i<numUnits;i++){
-    outputSignal[i]=signalWeighting(createInputSignal(), getInputConnection()->getWeightsToNeuron(i));
-    sum += signalWeighting(createInputSignal(), getInputConnection()->getWeightsToNeuron(i));
+    outputSignal[i]=exp(-signalWeighting(createInputSignal(), getInputConnection()->getWeightsToNeuron(i)));
+    sum += outputSignal[i];/*signalWeighting(createInputSignal(), getInputConnection()->getWeightsToNeuron(i));*/
   }
   for(uint i=0;i<numUnits;i++){
     outputSignal[i]=outputSignal[i]/sum;
@@ -58,7 +58,7 @@ void LayerSoftMax::forward(FeatureVector _signal){
 ValueVector LayerSoftMax::getDerivatives() const{
   ValueVector deriv = ValueVector(numUnits+1);
   for(uint i = 0 ; i < deriv.getLength() ; i++){
-    deriv[i] = 1.0;
+    deriv[i] = outputSignal[i]*(1-outputSignal[i]);
   }
   return deriv;
 }

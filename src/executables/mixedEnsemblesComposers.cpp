@@ -37,6 +37,7 @@ int main(int argc, char* argv[]) {
   }
   uint hiddenNeurons = atoi(argv[1]);
   uint outputNeurons = atoi(argv[2]);
+  uint outNeu = atoi(argv[2]);
   uint inputs = 0;
   uint numberOfPops = (argc - 3) / ((int) arguments.size() - 2);
   cout << "num pops " << numberOfPops << " arg size " << arguments.size() << endl;
@@ -73,19 +74,27 @@ int main(int argc, char* argv[]) {
   ValueVector stdDev(inputs); /* idem */
   LayerPtr il = LayerPtr(new InputLayer(inputs, mean, stdDev));
   LayerPtr th = LayerPtr(new LayerSigmoid(hiddenNeurons));
-  LayerPtr out = LayerPtr(new LayerSigmoid(outputNeurons));
+  LayerPtr out;
+  if(outNeu == 0){
+    out = LayerPtr(new LayerSigmoid(outputNeurons));
+  }
+  else{
+    out = LayerPtr(new LayerSoftMax(outputNeurons));
+  }
   ConnectionPtr c1 = ConnectionPtr(
       new Connection(il.get(), th.get(), random.next()));
   ConnectionPtr c2 = ConnectionPtr(
       new Connection(th.get(), out.get(), random.next()));
-  Mat ts = c1->getWeights();
-  Mat td = c2->getWeights();
-  for (int i = 0; i < ts.cols - 1; i++) {
-    for (int j = i; j < td.cols - 1; j++) {
-      td.at<realv>(i, j) = ts.at<realv>(j, i);
-    }
+ if(outNeu == 0 ){
+   Mat ts = c1->getWeights();
+   Mat td = c2->getWeights();
+   for (int i = 0; i < ts.cols - 1; i++) {
+     for (int j = i; j < td.cols - 1; j++) {
+       td.at<realv>(i, j) = ts.at<realv>(j, i);
+     }
+   }
+   c2->setWeights(td.clone());
   }
-  c2->setWeights(td.clone());
   vector<LayerPtr> layers;
   layers.push_back(il);
   layers.push_back(th);

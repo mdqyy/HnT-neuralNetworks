@@ -18,6 +18,7 @@ add_library(Machines dataset/Dataset.cpp
   dataset/ErrorVector.cpp 
   dataset/FeatureVector.cpp 
   dataset/ImageDataset.cpp
+  dataset/ClassDataset.cpp
   dataset/supervised/ClassificationDataset.cpp
   #dataset/supervised/AutoRegressionDataset.cpp
   #dataset/supervised/NRegressionDataset.cpp
@@ -64,6 +65,7 @@ add_library(Machines dataset/Dataset.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/LearningParams.cpp
   #trainer/supervisedTrainers/neuralNetworkTrainers/ImageAutoEncoding.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/ImageAutoEncodingME.cpp
+  trainer/supervisedTrainers/neuralNetworkTrainers/ImageBackPropME.cpp
   utilities/ImageProcessing.cpp
   utilities/GeneralUtilities.cpp
   utilities/ImageFrameExtractor.cpp

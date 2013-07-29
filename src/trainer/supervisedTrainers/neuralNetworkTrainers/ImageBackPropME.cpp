@@ -1,20 +1,25 @@
 /*!
- * \file ImageAutoEncodingME.cpp
- * Body of the ImageAutoEncodingME class.
+ * \file ImageBackPropME.cpp
+ * Body of the ImageBackPropME class.
  * \author Luc Mioulet
  */
 
-#include "ImageAutoEncodingME.hpp"
+#include "ImageBackPropME.hpp"
 
 using namespace std;
 using namespace cv;
 
 
-ImageAutoEncodingME::ImageAutoEncodingME(MixedEnsembles& _machine, ImageDataset& _dataset, ImageDataset& _testDataset, LearningParams _params, std::ostream& _log) : machine(_machine),dataset(_dataset), testDataset(_testDataset),params(_params), log(_log){
-
+ImageBackPropME::ImageBackPropME(MixedEnsembles& _machine, ImageDataset& _dataset, ClassDataset& _class , ImageDataset& _testDataset, ClassDataset& _testClassDataset, LearningParams _params, std::ostream& _log) : machine(_machine),dataset(_dataset), classDataset(_class), testDataset(_testDataset), testClassDataset(_testClassDataset),params(_params), log(_log){
+  if(_dataset.getNumberOfImages()!=_class.getClassesLength()){
+    cerr << "wrong length between training datasets : " << _dataset.getNumberOfImages() <<"  vs. " <<_class.getClassesLength() << endl;
+  }
+  if(_testDataset.getNumberOfImages()!=_testClassDataset.getClassesLength()){
+      cerr << "wrong length between training datasets : " << _dataset.getNumberOfImages() <<"  vs. " <<_class.getClassesLength() << endl;
+  }
 }
 
-void ImageAutoEncodingME::train(){
+void ImageBackPropME::train(){
   uint i = params.getActualIteration();
   do {
     i++;
@@ -37,7 +42,7 @@ void ImageAutoEncodingME::train(){
   } while (i < params.getMaxIterations());
 }
 
-void ImageAutoEncodingME::trainOneIteration(){
+void ImageBackPropME::trainOneIteration(){
   vector<uint> indexOrderSelection = defineIndexOrderSelection(dataset.getNumberOfImages());
   uint numberOfElementsToProcess = dataset.getNumberOfImages()*params.getMaxTrainedPercentage();
   AEMeasurer mae;
@@ -45,18 +50,18 @@ void ImageAutoEncodingME::trainOneIteration(){
   FeatureVector input,target;
   NeuralNetworkPtr netPtr = machine.getOutputNetwork();
   for(uint i = 0;i<numberOfElementsToProcess;i++){
+    cout << i << endl;
     index = indexOrderSelection[i];
     Mat image= dataset.getMatrix(index,0);
-    for(uint j = 0; j< image.rows;j++){
-      FeatureVector target = machine.getConnectorOutput(image,j);
-      FeatureVector input =  noiseTarget(target);
-      netPtr->forward(input);
-      backward(target); 
-    }
+    uint j=image.rows/2;
+    FeatureVector input =  machine.getConnectorOutput(image,j);
+    FeatureVector target = classDataset.getFeatureVector(index);
+    netPtr->forward(input);
+    backward(target);
   }
 }
 
-FeatureVector ImageAutoEncodingME::noiseTarget(FeatureVector _vec){
+FeatureVector ImageBackPropME::noiseTarget(FeatureVector _vec){
   RNG random((uint) getTickCount());
   FeatureVector result(_vec.getLength());
   realv val;
@@ -78,7 +83,7 @@ FeatureVector ImageAutoEncodingME::noiseTarget(FeatureVector _vec){
   return result;
 }
 
-vector<uint> ImageAutoEncodingME::defineIndexOrderSelection(uint _numSequences){
+vector<uint> ImageBackPropME::defineIndexOrderSelection(uint _numSequences){
   vector<uint> indexOrder;
   for(uint i=0 ;  i<_numSequences; i++){
     indexOrder.push_back(i);
@@ -94,7 +99,7 @@ vector<uint> ImageAutoEncodingME::defineIndexOrderSelection(uint _numSequences){
   return indexOrder;
 }
 
-ErrorVector ImageAutoEncodingME::calculateDeltas(LayerPtr _layer, FeatureVector _target, ValueVector _derivatives, ErrorVector _previousLayerDelta) {
+ErrorVector ImageBackPropME::calculateDeltas(LayerPtr _layer, FeatureVector _target, ValueVector _derivatives, ErrorVector _previousLayerDelta) {
   ErrorVector delta = ErrorVector(_layer->getNumUnits());
   for (uint i = 0; i < delta.getLength(); i++) {
     delta[i] = _derivatives[i] * _layer->errorWeighting(_previousLayerDelta, _layer->getOutputConnection()->getWeightsFromNeuron(i));
@@ -102,7 +107,7 @@ ErrorVector ImageAutoEncodingME::calculateDeltas(LayerPtr _layer, FeatureVector 
   return delta;
 }
 
-ErrorVector ImageAutoEncodingME::calculateOutputDeltas(LayerPtr _layer, FeatureVector _target, ValueVector _derivatives) {
+ErrorVector ImageBackPropME::calculateOutputDeltas(LayerPtr _layer, FeatureVector _target, ValueVector _derivatives) {
   ErrorVector delta = ErrorVector(_layer->getNumUnits());
   for (uint i = 0; i < _target.getLength(); i++) {
     delta[i] = _derivatives[i] * (_target[i] - _layer->getOutputSignal()[i]); // error calculation if output layer with MSE
@@ -111,7 +116,7 @@ ErrorVector ImageAutoEncodingME::calculateOutputDeltas(LayerPtr _layer, FeatureV
   return delta;
 }
 
-void ImageAutoEncodingME::updateConnection(ConnectionPtr _connection, ErrorVector _deltas) {
+void ImageBackPropME::updateConnection(ConnectionPtr _connection, ErrorVector _deltas) {
   Mat weights = _connection->getWeights();
   for (int i = 0; i < weights.rows; i++) {
     for (int j = 0; j < weights.cols; j++) {
@@ -121,7 +126,7 @@ void ImageAutoEncodingME::updateConnection(ConnectionPtr _connection, ErrorVecto
   _connection->setWeights(weights.clone());
 }
 
-void ImageAutoEncodingME::backward(FeatureVector _target) {
+void ImageBackPropME::backward(FeatureVector _target) {
   NeuralNetworkPtr outputNet = machine.getOutputNetwork();
   vector<ConnectionPtr> connections = outputNet->getConnections();
   vector<LayerPtr> layers = outputNet->getHiddenLayers();
@@ -137,40 +142,54 @@ void ImageAutoEncodingME::backward(FeatureVector _target) {
   for (uint i = 0; i < connections.size(); i++) {
     updateConnection(connections[i], deltas[connections.size() - i - 1]);
   }
-  /* tied weights */
-  Mat ts = connections[1]->getWeights();
-  Mat td = connections[0]->getWeights();
-  for(int i=0;i<ts.rows-1;i++){
-    for(int j=i;j<td.rows-1;j++){
-      td.at<realv>(j,i)=ts.at<realv>(i,j);
-    }
-  }
-  connections[0]->setWeights(td);
 }
 
-void ImageAutoEncodingME::validateIteration(){
+void ImageBackPropME::validateIteration(){
   AEMeasurer ae;
   uint testSampleSize = testDataset.getNumberOfImages()*params.getMaxTrainedPercentage();
   vector<uint> order = defineIndexOrderSelection(testDataset.getNumberOfImages());
   uint index = 0;
   realv totalError = 0;
+  realv totalGood = 0;
+  vector <vector <realv> > confusionMatrix = vector< vector<realv> >(testClassDataset.getNumberOfClasses(), vector<realv>(testClassDataset.getNumberOfClasses(),0.0));
   uint totalNumberOfFrames = 0;
   NeuralNetworkPtr netPtr = machine.getOutputNetwork();
   for(uint i = 0; i < testSampleSize; i++){
     index = order[i];
     Mat image = testDataset.getMatrix(index,0);
-    for(uint j = 0; j< image.cols; j=j+6){
-      FeatureVector intermediateOutput = machine.getConnectorOutput(image,j);
-      netPtr->forward(intermediateOutput);
-      FeatureVector output = machine.getOutput();
-      ae.processErrors(output,intermediateOutput);
-      totalError += ae.getError();
-      totalNumberOfFrames ++;
+    uint j=image.rows/2;
+    FeatureVector intermediateOutput = machine. getConnectorOutput(image,j);
+    netPtr->forward(intermediateOutput);
+    FeatureVector output = machine.getOutput();
+    uint target = testClassDataset.getClass(index);
+    uint maxIndex = 0;
+    realv maxValue = 0.0;
+    for(uint o=0;o<output.getLength();o++){
+      if(output[o]>maxValue){
+        maxIndex = o;
+        maxValue = output[o];
+      }
     }
+    if(maxIndex==target){
+      totalGood += 1.0;
+    }
+    else{
+      totalError += 1.0;
+    }
+    confusionMatrix[maxIndex][target] += 1.0;
+    totalNumberOfFrames ++;
   }
-  log << "Output Error is : " << totalError/((realv)totalNumberOfFrames)<<endl;
+  log << "Good classification : " << totalGood/((realv)totalNumberOfFrames)<<endl;
+  log << "Error classification : " << totalError/((realv)totalNumberOfFrames)<<endl;
+  log << "Confusion matrix :" << endl;
+  for(uint i= 0;i < confusionMatrix.size();i++){
+    for(uint j=0;j<confusionMatrix[i].size();j++){
+      log << confusionMatrix[i][j]/((realv)totalNumberOfFrames) << " ";
+    }
+    log << endl;
+  }
 }
 
-ImageAutoEncodingME::~ImageAutoEncodingME(){
+ImageBackPropME::~ImageBackPropME(){
 
 }

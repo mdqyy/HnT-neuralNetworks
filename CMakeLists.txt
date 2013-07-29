@@ -70,6 +70,9 @@ target_link_libraries(executables/pbdnnInverseTrainer Machines TinyXML ${OpenCV_
 add_executable(executables/pbdnnRecomposer src/executables/pbdnnRecomposeNewNetwork.cpp)
 target_link_libraries(executables/pbdnnRecomposer Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
+add_executable(executables/pbdnnSuppressNets src/executables/pbdnnSuppressNets.cpp)
+target_link_libraries(executables/pbdnnSuppressNets Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
 add_executable(executables/pbdnnTrainerPursuit src/executables/pbdnnTrainerPursuit.cpp)
 target_link_libraries(executables/pbdnnTrainerPursuit Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
@@ -165,3 +168,6 @@ target_link_libraries(executables/mixedEnsemblesTraining Machines TinyXML ${Open
 
 add_executable(executables/mixedEnsemblesVisualisation src/executables/mixedEnsemblesVisualisation.cpp)
 target_link_libraries(executables/mixedEnsemblesVisualisation Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
+add_executable(executables/mixedEnsemblesClassificationTraining src/executables/mixedEnsemblesClassificationTraining.cpp)
+target_link_libraries(executables/mixedEnsemblesClassificationTraining Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
