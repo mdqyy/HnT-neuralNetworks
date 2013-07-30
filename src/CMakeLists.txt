@@ -19,6 +19,7 @@ add_library(Machines dataset/Dataset.cpp
   dataset/FeatureVector.cpp 
   dataset/ImageDataset.cpp
   dataset/ClassDataset.cpp
+  dataset/SequenceClassDataset.cpp
   dataset/supervised/ClassificationDataset.cpp
   #dataset/supervised/AutoRegressionDataset.cpp
   #dataset/supervised/NRegressionDataset.cpp
@@ -56,6 +57,7 @@ add_library(Machines dataset/Dataset.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/NeuralNetworkTrainer.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/BackPropagation.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/CTCTrainer.cpp
+  trainer/supervisedTrainers/neuralNetworkTrainers/MECTCTrainer.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBP.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/PopulationBPBatch.cpp
   trainer/supervisedTrainers/neuralNetworkTrainers/PopulationClusterBP.cpp

@@ -142,6 +142,12 @@ class Layer : public Machine, public Clonable {
   FeatureVector createInputSignal();
 
   /*!
+   * Set the output vectors.
+   * \param _signals Output vectors.
+   */
+  void setOutputSignals(std::vector<FeatureVector> _signals);
+
+  /*!
    * Get Input signal.
    * \return Layer input signal.
    */

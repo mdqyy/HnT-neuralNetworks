@@ -79,6 +79,10 @@ FeatureVector Layer::createInputSignal() {
 	return inSig;
 }
 
+void Layer::setOutputSignals(vector<FeatureVector> _signals){
+  outputSignals = _signals;
+}
+
 FeatureVector Layer::getInputSignal() const {
 	return inputSignal;
 }
