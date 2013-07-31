@@ -1,5 +1,5 @@
 #ifndef __SEQUENCECLASSDATASET_HPP__
-#define __SEQUENCCLASSDATASET_HPP__
+#define __SEQUENCECLASSDATASET_HPP__
 /*!
  * \file SequenceClassDataset.hpp
  * Header of the SequenceClassDataset class.

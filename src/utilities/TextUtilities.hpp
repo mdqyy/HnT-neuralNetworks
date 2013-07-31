@@ -11,6 +11,7 @@
 #include <iostream>
 #include <sstream>
 #include "../dataset/supervised/ClassificationDataset.hpp"
+#include "../dataset/SequenceClassDataset.hpp"
 
 /*!
  * Extract a sequence label from a string.
@@ -25,6 +26,12 @@ std::vector<std::string> extractLabelSequence(std::string _label);
  * \param _dataset The classification dataset.
  */
 void addDictionaryClasses(ClassificationDataset* _dataset);
+
+/*!
+ * Add dictionnary classes using a french dictionnary.
+ * \param _dataset The classification dataset.
+ */
+void addDictionaryClasses(SequenceClassDataset* _dataset);
 
 std::string &ltrim(std::string &s);
 

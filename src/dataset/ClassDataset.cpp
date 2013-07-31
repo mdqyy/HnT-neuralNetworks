@@ -61,7 +61,6 @@ void ClassDataset::setNumberOfClasses(uint _numClasses) {
    numberOfClasses = _numClasses;
 }
 
-
 void ClassDataset::load(string _fileName){
   ifstream ifs;
   ifs.open(_fileName.c_str());

@@ -136,6 +136,9 @@ target_link_libraries(executables/imagesToHTK Machines TinyXML ${OpenCV_LIBS} ${
 add_executable(executables/createImageDataset src/executables/createImageDataset.cpp)
 target_link_libraries(executables/createImageDataset Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
 
+add_executable(executables/createClassDataset src/executables/createClassDataset.cpp)
+target_link_libraries(executables/createClassDataset Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBS})
+
 
 ## Various tasks
 
