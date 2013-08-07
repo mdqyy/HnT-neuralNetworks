@@ -172,7 +172,7 @@ void threadForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint
 
         }
       }
-      backwardTiedWeights((*_neuralNets)[_k], blackTarget,_learningRate / ((realv) _neuralNets->size()));
+      backwardTiedWeights((*_neuralNets)[_k], blackTarget,_learningRate / (10.0*((realv)_neuralNets->size())));
     }
 
     /* forward backward good sample */
@@ -180,7 +180,7 @@ void threadForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint
     input = randomSwap((*_regData)[index][0], _noise);
     target = (*_regData).getTargetSample(index, 0);
     (*_neuralNets)[_k]->forward(input);
-    backwardTiedWeights((*_neuralNets)[_k], target, _learningRate);
+    backwardTiedWeights((*_neuralNets)[_k], target, _learningRate*10.0);
   }
 }
 

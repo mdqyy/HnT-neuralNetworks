@@ -52,6 +52,7 @@ int main(int argc, char* argv[]) {
   params.setActualIteration(0);
   params.setMaxIterations(iterations);
   params.setLearningRate(learningRate);
+  params.setLearningRateDecrease(0.95);
   params.setMaxTrainedPercentage(maxTrainedPC);
   params.setSavedDuringProcess(true);
   params.setValidateEveryNIteration(validationEveryNIter);
