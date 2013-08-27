@@ -69,6 +69,9 @@ int main(int argc, char* argv[]) {
   params.setValidateEveryNIteration(validationEveryNIter);
   params.setNoise(noise);
   ofstream log("training.log");
+  LayerCTC* ctc = ((LayerCTC*)me.getOutputNetwork().get());
+  ctc->setClassLabelIndex(trainingClassDataset.getClassLabelIndex());
+  ctc->setClassLabels(trainingClassDataset.getClassLabels());
   MECTCTrainer trainer = MECTCTrainer(me,trainingDataset,trainingClassDataset,testDataset,testClassDataset,params,log);
   double t = (double) getTickCount();
   trainer.train();
