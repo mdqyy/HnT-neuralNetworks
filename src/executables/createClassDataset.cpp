@@ -18,7 +18,7 @@ using namespace std;
 using namespace cv;
 
 
-void rimesLoader(string groundTruthFile, string groundTruthFolder, int frameSize, SequenceClassDataset* dataset) {
+void rimesLoader(string groundTruthFile, string groundTruthFolder, SequenceClassDataset* dataset) {
 	string line, imageFile, label;
 	size_t position;
 	ifstream gtFile(groundTruthFile.c_str());
@@ -50,8 +50,6 @@ int main(int argc, char* argv[]) {
 	vector<string> arguments;
 	arguments.push_back("ground truth file containing the location of the datasets");
 	arguments.push_back("folder containing the datasets");
-	arguments.push_back("frame size in pixels");
-	arguments.push_back("dataset name");
 	arguments.push_back("dataset save location");
 	cout << helper("Create Rimes Classification Dataset", "Create a classification dataset from Rimes files", arguments) << endl;
 	if (argc != arguments.size() + 1) {
@@ -62,9 +60,8 @@ int main(int argc, char* argv[]) {
 	addDictionaryClasses(&dataset);
 	string groundTruthFile = argv[1];
 	string groundTruthFolder = argv[2];
-	int frameSize = atoi(argv[3]);
-	string saveLocation = argv[5];
-	rimesLoader(groundTruthFile, groundTruthFolder, frameSize, &dataset);
+	string saveLocation = argv[3];
+	rimesLoader(groundTruthFile, groundTruthFolder, &dataset);
 	dataset.save(saveLocation);
 	return EXIT_SUCCESS;
 }

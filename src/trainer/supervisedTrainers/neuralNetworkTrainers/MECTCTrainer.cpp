@@ -36,7 +36,7 @@ void MECTCTrainer::train() {
 	} while (i < params.getMaxIterations());
 }
 
-vector<uint> defineIndexOrderSelection(uint _numSequences) {
+vector<uint> MECTCTrainer::defineIndexOrderSelection(uint _numSequences) {
   vector<uint> indexOrder;
   for (uint i = 0; i < _numSequences; i++) {
     indexOrder.push_back(i);
@@ -58,10 +58,11 @@ void MECTCTrainer::trainOneIteration() {
 	uint index = 0;
 	for (uint i = 0; i < numberOfElementsToProcess; i++) {
 		index = indexOrderSelection[i];
+		log << i << " "<<trainingData.getImage(index);
 		Mat image = trainingData.getMatrix(index);
 		vector<int> targetSignal = trainingSequences.getSequenceClassesIndex(index);
 		trainOneSample(image, targetSignal);
-		log << i <<" trained image : "<< index << endl;
+		log << " trained image" << endl;
 	}
 }
 
@@ -81,7 +82,7 @@ void MECTCTrainer::trainOneSample(Mat _image, vector<int> _targetSignal) {
 	backwardSequence(derivatives);
 }
 
-void MECTCTrainer::backwardSequence(std::vector<ErrorVector> _derivatives) {
+void MECTCTrainer::backwardSequence(std::vector<ErrorVector> _derivatives/*worst name ever, actually is delta*/) {
     NeuralNetworkPtr outputNet = machine.getOutputNetwork();
     vector<ConnectionPtr> connections = outputNet->getConnections();
     vector<LayerPtr> layers = outputNet->getHiddenLayers();
@@ -90,7 +91,12 @@ void MECTCTrainer::backwardSequence(std::vector<ErrorVector> _derivatives) {
 		updateConnection(ctcLayer->getInputConnection(), _derivatives[t]); /* update first on CTC connections */
 	    for (uint i = layers.size() - 2; i > 0; i--) { /* Then on the underlying connections */
 	      ValueVector derivatives = layers[i]->getDerivatives();
+	      if(i==layers.size() - 2){
+	        deltas.push_back(calculateDeltas(layers[i],derivatives, _derivatives[t]));
+	      }
+	      else{
 	      deltas.push_back(calculateDeltas(layers[i],derivatives, deltas[deltas.size() - 1]));
+	      }
 	    }
 	}
 }
@@ -126,9 +132,9 @@ uint MECTCTrainer::calculateRequiredTime(vector<int> _targetSignal) const {
 }
 
 vector<ValueVector> MECTCTrainer::processForwardVariables(vector<FeatureVector> _outputSignals, vector<int> _targetSequence) {
-	uint blankIndex = _outputSignals[0].getLength() - 1;
-	uint requiredSegments = 2 * _targetSequence.size() + 1;
-	int previousLabel = -1;
+	uint blankIndex = _outputSignals[0].getLength() - 1; //position of the blank output
+	uint requiredSegments = 2 * _targetSequence.size() + 1; //required segments to model a sequence
+	int previousLabel = -1; //previous label value
 	vector<ValueVector> forwardVariables = vector<ValueVector>(_outputSignals.size(), ValueVector(requiredSegments));
 	normalizeC = vector<realv>(_outputSignals.size(), 0.0);
 	forwardVariables[0][0] = _outputSignals[0][blankIndex];
@@ -145,7 +151,9 @@ vector<ValueVector> MECTCTrainer::processForwardVariables(vector<FeatureVector> 
 				}
 			} else { /*is odd : label */
 				int label = _targetSequence[s / 2];
+				int problemLength = _outputSignals.size();
 				if (s >= 2 && label != previousLabel) {
+				  int probLen = _outputSignals[t].getLength();
 					forwardVariables[t][s] = _outputSignals[t][label]
 							* (forwardVariables[t - 1][s - 2] + forwardVariables[t - 1][s - 1] + forwardVariables[t - 1][s]);
 				} else {
@@ -208,6 +216,7 @@ vector<ErrorVector> MECTCTrainer::processDerivatives(vector<int> _targetSignal, 
 	vector<int> uniqueTargetLabels = findUniqueElements(_targetSignal);
 	for (uint t = 0; t < _outputSignals.size(); t++) {
 		for (uint l = 0; l < _targetSignal.size(); l++) {
+		    int tsl = _targetSignal[l];
 			derivatives[t][blankIndex] += _forwardVariables[t][2 * l] * _backwardVariables[t][2 * l];
 			derivatives[t][_targetSignal[l]] += _forwardVariables[t][2 * l + 1] * _backwardVariables[t][2 * l + 1];
 		}
@@ -261,21 +270,33 @@ uint MECTCTrainer::determineMinLabel(uint _t, uint _outputSignalsSize, uint _req
 void MECTCTrainer::validateIteration() {
 //	CERMEasurer mae;
 
-	log << "Target \t|\t Output\t| "<< endl;
+	//log << "Target \t|\t Output\t| "<< endl;
 	for(uint i = 0; i < validationData.getNumberOfImages();i++){
 	    Mat image = validationData.getMatrix(i);
 	    vector<FeatureVector> outputSignals;
+	    uint werGood = 0;
+	    uint werBad = 0;
 	    for(uint j=0;j<image.cols;j++){
 	      machine.forwardOnPixel(image,j);
 	      outputSignals.push_back(machine.getOutput());
 	    }
 		ctcLayer->setOutputSignals(outputSignals);
 		vector<string> target = validationSequences.getSequenceClasses(i);
-		cout << "output :" ;
-		for(int j = 0; j<target.size();j++){
-			cout << target[j];
+		string truth = "";
+		log << "truth :" ;
+		for(uint j = 0; j<target.size();j++){
+			log << target[j];
+			truth.append(target[j]);
 		}
-		cout <<" truth :" <<ctcLayer->outputWord()<< endl;
+		log <<"  :" <<ctcLayer->outputWord()<< endl;
+		if(truth.compare(ctcLayer->outputWord())){
+		  werGood++;
+		}
+		else{
+		  werBad++;
+		}
+		log << "wer good: " << werGood << endl;
+		log << "wer bad : " << werBad << endl;
 	}
 }
 

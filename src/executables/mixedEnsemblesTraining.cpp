@@ -62,6 +62,7 @@ int main(int argc, char* argv[]) {
   double t = (double) getTickCount();
   trainer.validateIteration();
   trainer.train();
+  cout << "trained" << endl;
   t = ((double) getTickCount() - t) / getTickFrequency();
   cout << "Time :" << t << endl;
   ofs << me ;

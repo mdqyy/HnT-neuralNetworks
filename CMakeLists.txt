@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(PhD)
 #make flags
-set(CMAKE_CXX_FLAGS "-Wall -pedantic -std=c99 -g")
+set(CMAKE_CXX_FLAGS "-Wall -pedantic -std=c99 ")
 
 #$SET(OpenCV_DIR "/home/entitees/labo-litis/partages/maurdor-labo-litis/libraries_install/share/OpenCV")
 find_package(OpenCV REQUIRED)
@@ -165,6 +165,12 @@ target_link_libraries(executables/weightImages Machines TinyXML ${OpenCV_LIBS} $
 
 add_executable(executables/mixedEnsemblesComposers src/executables/mixedEnsemblesComposers.cpp)
 target_link_libraries(executables/mixedEnsemblesComposers Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
+add_executable(executables/mixedEnsemblesCTCAdder src/executables/mixedEnsemblesCTCAdder.cpp)
+target_link_libraries(executables/mixedEnsemblesCTCAdder Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
+
+add_executable(executables/mixedEnsemblesCTCTraining src/executables/mixedEnsemblesCTCTraining.cpp)
+target_link_libraries(executables/mixedEnsemblesCTCTraining Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})
 
 add_executable(executables/mixedEnsemblesTraining src/executables/mixedEnsemblesTraining.cpp)
 target_link_libraries(executables/mixedEnsemblesTraining Machines TinyXML ${OpenCV_LIBS} ${Boost_LIBRARIES} ${Threads_LIBS})

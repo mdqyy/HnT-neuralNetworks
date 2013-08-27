@@ -30,7 +30,7 @@ void ImageAutoEncodingME::train(){
       outStream << this->params;
       outStream.close();
     }
-    if (params.isValidatedDuringProcess() && (i+1)%params.getValidateEveryNIteration()==0) {
+    if (params.isValidatedDuringProcess() && i%params.getValidateEveryNIteration()==0) {
       log << "Validation at step "<< i << endl;
       validateIteration();
     }
@@ -44,17 +44,19 @@ void ImageAutoEncodingME::trainOneIteration(){
   uint index = 0;
   FeatureVector input,target;
   NeuralNetworkPtr netPtr = machine.getOutputNetwork();
+  double t = (double) getTickCount();
   for(uint i = 0;i<numberOfElementsToProcess;i++){
     index = indexOrderSelection[i];
     Mat image= dataset.getMatrix(index,0);
-    //for(uint j = 0; j< image.rows;j++){
-      uint j = image.cols/2;
+    for(uint j = 0; j< image.rows;j=j+6){
       FeatureVector target = machine.getConnectorOutput(image,j);
       FeatureVector input =  noiseTarget(target);
       netPtr->forward(input);
       backward(target); 
-    //}
+    }
   }
+  t = ((double) getTickCount() - t) / getTickFrequency();
+      cout << "Time :" << t << endl;
 }
 
 FeatureVector ImageAutoEncodingME::noiseTarget(FeatureVector _vec){
@@ -160,15 +162,16 @@ void ImageAutoEncodingME::validateIteration(){
   for(uint i = 0; i < testSampleSize; i++){
     index = order[i];
     Mat image = testDataset.getMatrix(index,0);
-    uint j = image.cols/2;
-    //for(uint j = 0; j< image.cols; j=j+6){
+    //uint j = image.cols/2;
+    for(uint j = 0; j< image.cols; j=j+6){
       FeatureVector intermediateOutput = machine.getConnectorOutput(image,j);
       netPtr->forward(intermediateOutput);
       FeatureVector output = machine.getOutput();
       ae.processErrors(output,intermediateOutput);
       totalError += ae.getError();
       totalNumberOfFrames ++;
-    //}
+
+    }
   }
   log << "Output Error is : " << totalError/((realv)totalNumberOfFrames)<<endl;
 }

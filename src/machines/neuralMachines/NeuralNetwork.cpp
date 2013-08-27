@@ -98,6 +98,14 @@ void NeuralNetwork::suppressLastLayer(){
   hiddenLayers[hiddenLayers.size()-1]->setOutputConnection(0);
 }
 
+void NeuralNetwork::addLayer(LayerPtr lptr){
+  RNG random(getTickCount());
+  random.next();
+  ConnectionPtr cptr = ConnectionPtr(new Connection(hiddenLayers.back().get(),lptr.get(),random.next()));
+  connections.push_back(cptr);
+  hiddenLayers.push_back(lptr);
+}
+
 void NeuralNetwork::print(ostream& _os) const{
   int numWeights = 0;
   for(uint i=0;i<connections.size();i++){
@@ -143,6 +151,11 @@ ofstream& operator<<(ofstream& ofs, const NeuralNetwork& nn){
       ofs << layers[i]->getLayerType() <<" ";
       ofs << *tempSM;      
       break;}
+    case 5 : {
+      LayerCTC* tempCTC = (LayerCTC*)((layers[i].get()));
+      ofs << layers[i]->getLayerType() <<" ";
+      ofs << *tempCTC;
+    break;}
     default :{
       break;}
     }
@@ -201,6 +214,14 @@ ifstream& operator>>(ifstream& ifs, NeuralNetwork& nn){
       layers.push_back(temp);
       break;
     }
+    case 5 :{
+      LayerCTC tempLayer;
+      ifs >> tempLayer;
+      LayerPtr temp = LayerPtr(new LayerCTC(tempLayer));
+      layers.push_back(temp);
+      break;
+    }
+
     default :{
       break;
     }

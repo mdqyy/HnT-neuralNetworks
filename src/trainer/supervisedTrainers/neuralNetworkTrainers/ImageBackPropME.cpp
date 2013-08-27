@@ -35,7 +35,7 @@ void ImageBackPropME::train(){
       outStream << this->params;
       outStream.close();
     }
-    if (params.isValidatedDuringProcess() && (i+1)%params.getValidateEveryNIteration()==0) {
+    if (params.isValidatedDuringProcess() && i%params.getValidateEveryNIteration()==0) {
       log << "Validation at step "<< i << endl;
       validateIteration();
     }

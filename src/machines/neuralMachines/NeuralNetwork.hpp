@@ -12,6 +12,7 @@
 #include "layers/LayerTanh.hpp"
 #include "layers/LayerSoftMax.hpp"
 #include "layers/LayerSigmoid.hpp"
+#include "layers/LayerCTC.hpp"
 #include "connections/Connection.hpp"
 #include "../../General.hpp"
 #include "../../Clonable.hpp"
@@ -131,6 +132,11 @@ public:
 	 * Suppress the last layer, the next to last will replace it.
 	 */
 	void suppressLastLayer();
+
+	/*!
+	 * Add a new Layer on top of the others.
+	 */
+	void addLayer(LayerPtr lptr);
 
 	/*!
 	 * Backward an error vector.

@@ -85,8 +85,7 @@ void threadImageForwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets, uint _k
     index = (*_indexOrderSelection)[i];
     FeatureVector fv = (*_trainingData).getFeatures(index)[0];
     (*_neuralNets)[_k]->forward(fv);
-    mae.processErrors((*_neuralNets)[_k]->getOutputSignal(),
-        fv);
+    mae.processErrors((*_neuralNets)[_k]->getOutputSignal(), fv);
     (*_errors)[_k][i] = mae.getError();
   }
 }
@@ -143,21 +142,23 @@ void threadImageForwardBackwardPerNetwork(vector<NeuralNetworkPtr>* _neuralNets,
 
         }
       }
-      backwardTiedWeights((*_neuralNets)[_k], blackTarget, _learningRate/(10.0*(realv)(*_neuralNets).size()));
+      backwardTiedWeights((*_neuralNets)[_k], blackTarget,
+          _learningRate / (10.0 * (realv) (*_neuralNets).size()));
     }
     /* forward backward good sample */
     index = (*_learningAffectations)[_k][i];
     input = randomSwap((*_imageDataset).getFeatures(index)[0], _noise);
     target = (*_imageDataset).getFeatures(index)[0];
     (*_neuralNets)[_k]->forward(input);
-    backwardTiedWeights((*_neuralNets)[_k], target,10.0* _learningRate);
+    backwardTiedWeights((*_neuralNets)[_k], target, 10.0 * _learningRate);
   }
 }
 
 /* Population trainer methods */
 ImagePopulationInverseTrainer::ImagePopulationInverseTrainer(PBDNN& _population, ImageDataset& _trainingDataset, ImageDataset& _validationDataset, LearningParams& _params, ostream& _log) :
     population(_population), trainingDataset(_trainingDataset), validationDataset(
-        _validationDataset), params(_params), log(_log), endurance(vector<uint>(_population.getPopulation().size(), _params.getDodges())) {
+        _validationDataset), params(_params), log(_log), endurance(
+        vector<uint>(_population.getPopulation().size(), _params.getDodges())) {
 
 }
 
@@ -219,7 +220,7 @@ void ImagePopulationInverseTrainer::train() {
       outStream.close();
     }
     if (params.isValidatedDuringProcess()
-        && (i + 1) % params.getValidateEveryNIteration() == 0) {
+        && i%params.getValidateEveryNIteration() == 0) {
       log << "Validation " << endl;
       validateIteration();
     }
@@ -311,13 +312,14 @@ void ImagePopulationInverseTrainer::validateIteration() {
       * ((realv) neuralNets[0]->getInputLayer()->getNumUnits());
   vector<vector<uint> > learningAffectations = determineLearningAffectations(
       errors, indexOrderSelection, numberOfElementsToProcess, maxError);
-  vector<realv> netsError = vector<realv>(neuralNets.size(),0.0);
+  vector<realv> netsError = vector<realv>(neuralNets.size(), 0.0);
   log << "network |\t Best errors \t| \t timesSelected" << endl;
-  for(uint k = 0;k < neuralNets.size();k++){
-    for(uint i = 0; i < learningAffectations[k].size(); i++){
+  for (uint k = 0; k < neuralNets.size(); k++) {
+    for (uint i = 0; i < learningAffectations[k].size(); i++) {
       netsError[k] += errors[k][i];
     }
-    log << k << " \t | \t " << netsError[k]/((realv)learningAffectations[k].size()) << "\t | \t" << learningAffectations[k].size() << endl;
+    log << k << " \t | \t " << netsError[k]
+        / ((realv) learningAffectations[k].size()) << "\t | \t" << learningAffectations[k].size() << endl;
   }
 }
 

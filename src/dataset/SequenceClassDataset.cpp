@@ -176,7 +176,7 @@ void SequenceClassDataset::save(std::string _fileName) {
     ofs << (*it).first << " " << (*it).second << endl;
   }
   for(uint i=0;i< classes.size();i++){
-    ofs << classes[i].size();
+    ofs << classes[i].size() << " ";
     for(uint j=0; j<classes[i].size();j++){
       ofs << classes[i][j] << " ";
     }

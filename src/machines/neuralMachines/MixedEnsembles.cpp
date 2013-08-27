@@ -58,14 +58,14 @@ FeatureVector MixedEnsembles::getConnectorOutput(Mat _matrix, uint _i){
       inputs.push_back(ifes[j].getFrameCenteredOn(_matrix,_i));
     }
     uint index = 0;
-    for(uint l=0;l<linkedToIFE.size();l++){
-      index=linkedToIFE[l];
-      networks[l]->forward(inputs[index]);
-      threadsForward.push_back(new boost::thread(threadForwardPerNetwork,&networks, l, inputs[index]));
+    for(uint n=0;n<networks.size();n++){
+      index=linkedToIFE[n];
+      networks[n]->forward(inputs[index]); // not much time lost, faster on small matrices, slower on big matrices
+      //threadsForward.push_back(new boost::thread(threadForwardPerNetwork,&networks, n, inputs[index]));
     }
     for(uint n=0; n<networks.size();n++){
-      threadsForward[n]->join();
-      delete threadsForward[n];
+      //threadsForward[n]->join();
+     // delete threadsForward[n];
     }
     connectedOutput = connector.concatenateOutputs();
     return connectedOutput;

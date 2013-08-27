@@ -55,7 +55,7 @@ void LayerCTC::forward(FeatureVector _signal) {
 	networkInputSignal = _signal;
 	realv sum = 0;
 	for (uint i = 0; i < numUnits; i++) {
-		outputSignal[i] = signalWeighting(createInputSignal(), getInputConnection()->getWeightsToNeuron(i));
+		outputSignal[i] = exp(signalWeighting(createInputSignal(), getInputConnection()->getWeightsToNeuron(i)));
 		sum += outputSignal[i];
 	}
 	for (uint i = 0; i < numUnits; i++) {
